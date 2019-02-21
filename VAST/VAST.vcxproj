@@ -84,6 +84,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\jaron\source\repos\sumo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,14 +121,23 @@
     <ClCompile Include="cpp\main.cpp" />
     <ClCompile Include="cpp\Obstacle.cpp" />
     <ClCompile Include="cpp\Sensor.cpp" />
+    <ClCompile Include="cpp\socket.cpp" />
+    <ClCompile Include="cpp\storage.cpp" />
+    <ClCompile Include="cpp\TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="EventTree.h" />
     <ClInclude Include="h\AV.h" />
     <ClInclude Include="h\Environment.h" />
     <ClInclude Include="h\Obstacle.h" />
     <ClInclude Include="h\ScenarioMetric.h" />
     <ClInclude Include="h\Sensor.h" />
+    <ClInclude Include="h\socket.h" />
+    <ClInclude Include="h\storage.h" />
+    <ClInclude Include="h\TraCIAPI.h" />
+    <ClInclude Include="h\TraCIConstants.h" />
+    <ClInclude Include="h\TraCIDefs.h" />
     <ClInclude Include="h\VComponent.h" />
     <ClInclude Include="h\vector3.h" />
     <ClInclude Include="h\VType.h" />
