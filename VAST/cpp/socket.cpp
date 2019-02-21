@@ -15,6 +15,8 @@
 
 #ifdef BUILD_TCPIP
 
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
 #ifndef WIN32
 	#include <sys/types.h>
@@ -31,8 +33,8 @@
 		#undef ERROR
 	#endif
 
-	#include <winsock2.h>
-	#include <ws2tcpip.h>
+	//#include <winsock2.h>
+	//#include <ws2tcpip.h>
 
 	#ifndef vsnprintf
 		#define vsnprintf _vsnprintf
@@ -49,7 +51,6 @@
 #include <string>
 #include <algorithm>
 #include <string.h>
-
 
 #ifdef SHAWN
     extern "C" void init_tcpip( shawn::SimulationController& sc )

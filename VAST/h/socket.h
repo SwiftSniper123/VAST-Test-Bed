@@ -110,9 +110,9 @@ namespace tcpip
 	private:
 		void init();
 		static void BailOnSocketError(std::string context);
-#ifdef WIN32
+
 		static std::string GetWinsockErrorString(int err);
-#endif
+
 		bool atoaddr(std::string, struct sockaddr_in& addr);
 		bool datawaiting(int sock) const;
 
@@ -123,11 +123,11 @@ namespace tcpip
 		bool blocking_;
 
 		bool verbose_;
-#ifdef WIN32
+//#ifdef WIN32
 		static bool init_windows_sockets_;
 		static bool windows_sockets_initialized_;
 		static int instance_count_;
-#endif
+//#endif
 	};
 
 }	// namespace tcpip

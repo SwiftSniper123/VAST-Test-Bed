@@ -84,8 +84,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\jaron\source\repos\sumo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\jaron\source\repos\sumo\src\utils\traci\;C:\Users\jaron\source\repos\VAST-Test-Bed\VAST\h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -126,9 +129,9 @@
     <ClCompile Include="cpp\TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h" />
     <ClInclude Include="EventTree.h" />
     <ClInclude Include="h\AV.h" />
+    <ClInclude Include="h\config.h" />
     <ClInclude Include="h\Environment.h" />
     <ClInclude Include="h\Obstacle.h" />
     <ClInclude Include="h\ScenarioMetric.h" />

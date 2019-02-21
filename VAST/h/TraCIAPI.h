@@ -30,9 +30,9 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <foreign/tcpip/socket.h>
-#include <libsumo/TraCIConstants.h>
-#include <libsumo/TraCIDefs.h>
+#include <socket.h>
+#include <TraCIConstants.h>
+#include <TraCIDefs.h>
 
 // ===========================================================================
 // global definitions

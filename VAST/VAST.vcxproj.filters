@@ -77,16 +77,16 @@
     <ClInclude Include="h\storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="h\TraCIAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="h\TraCIConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="h\TraCIDefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
+    <ClInclude Include="h\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\TraCIAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

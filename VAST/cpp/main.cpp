@@ -7,6 +7,7 @@
 #include<variant>
 #include "..\h\VType.h"
 #include "..\h\AV.h"
+#include <Environment.h>
 
 using namespace std;
 
@@ -61,5 +62,24 @@ int main(int argc, char **argv1)
 	AVmap["currentPosition"] = currentPosition;
 	AVmap["initialPosition"] = initialPosition;
 
+	Client client;
+	client.connect("localhost", 1337);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	std::cout << "run 5 steps ...\n";
+	client.simulationStep(5 * 1000);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	client.close();
+
 	return 0;
 }
+
+/*
+void sumoConnection() {
+	Client client;
+	client.connect("localhost", 1337);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	std::cout << "run 5 steps ...\n";
+	client.simulationStep(5 * 1000);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	client.close();
+} */
