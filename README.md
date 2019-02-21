@@ -1,6 +1,9 @@
 # VAST-Test-Bed
 Test bed for testing the system
 
+# Installing SUMO
+Binaries for SUMO can be found here:
+https://sumo.dlr.de/wiki/Downloads#SUMO_-_Latest_Release_.28Version_1.1.0.29
 
 # SUMO Socket Connection
 This branch contains code for connecting with a running SUMO instance (GUI or cmd line) on port 1773.
