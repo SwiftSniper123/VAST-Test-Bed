@@ -10,13 +10,13 @@
 	#include <apps/tcpip/socket.h>
 	#include <sys/simulation/simulation_controller.h>
 #else
-	#include "socket.h"
+
+	#include "..\h\socket.h"
+
 #endif
 
 #ifdef BUILD_TCPIP
-
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#define WIN32
 
 #ifndef WIN32
 	#include <sys/types.h>
@@ -33,12 +33,12 @@
 		#undef ERROR
 	#endif
 
-	//#include <winsock2.h>
-	//#include <ws2tcpip.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
-	#ifndef vsnprintf
-		#define vsnprintf _vsnprintf
-	#endif
+#ifndef vsnprintf
+#define vsnprintf _vsnprintf
+#endif
 
 #endif
 
@@ -52,11 +52,12 @@
 #include <algorithm>
 #include <string.h>
 
+
 #ifdef SHAWN
-    extern "C" void init_tcpip( shawn::SimulationController& sc )
-    {
-            // std::cout << "tcpip init" << std::endl;
-    }
+extern "C" void init_tcpip(shawn::SimulationController& sc)
+{
+	// std::cout << "tcpip init" << std::endl;
+}
 #endif
 
 namespace tcpip
@@ -71,9 +72,9 @@ namespace tcpip
 
 	// ----------------------------------------------------------------------
 	Socket::
-		Socket(std::string host, int port) 
-		: host_( host ),
-		port_( port ),
+		Socket(std::string host, int port)
+		: host_(host),
+		port_(port),
 		socket_(-1),
 		server_socket_(-1),
 		blocking_(true),
@@ -84,9 +85,9 @@ namespace tcpip
 
 	// ----------------------------------------------------------------------
 	Socket::
-		Socket(int port) 
+		Socket(int port)
 		: host_(""),
-		port_( port ),
+		port_(port),
 		socket_(-1),
 		server_socket_(-1),
 		blocking_(true),
@@ -103,10 +104,10 @@ namespace tcpip
 #ifdef WIN32
 		instance_count_++;
 
-		if( init_windows_sockets_ && !windows_sockets_initialized_ )
+		if (init_windows_sockets_ && !windows_sockets_initialized_)
 		{
 			WSAData wsaData;
-			if( WSAStartup(MAKEWORD(1, 1), &wsaData) != 0 )
+			if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0)
 				BailOnSocketError("Unable to init WSA Sockets");
 			windows_sockets_initialized_ = true;
 		}
@@ -114,33 +115,33 @@ namespace tcpip
 	}
 
 
-    int
-        Socket::
-        getFreeSocketPort()
-    {
-        // Create socket to find a random free port that can be handed to the app
-        int sock = static_cast<int>(socket( AF_INET, SOCK_STREAM, 0 ));
-        struct sockaddr_in self;
-        memset(&self, 0, sizeof(self));
-        self.sin_family = AF_INET;
-        self.sin_port = htons(0);
-        self.sin_addr.s_addr = htonl(INADDR_ANY);
+	int
+		Socket::
+		getFreeSocketPort()
+	{
+		// Create socket to find a random free port that can be handed to the app
+		int sock = static_cast<int>(socket(AF_INET, SOCK_STREAM, 0));
+		struct sockaddr_in self;
+		memset(&self, 0, sizeof(self));
+		self.sin_family = AF_INET;
+		self.sin_port = htons(0);
+		self.sin_addr.s_addr = htonl(INADDR_ANY);
 
-        socklen_t address_len = sizeof(self);
-        // bind with port==0 assigns free port
-        if ( bind(sock, (struct sockaddr*) &self, address_len) < 0)
-            BailOnSocketError("tcpip::Socket::getFreeSocketPort() Unable to bind socket");
-        // get the assigned port with getsockname
-        if ( getsockname(sock, (struct sockaddr*) &self, &address_len) < 0)
-            BailOnSocketError("tcpip::Socket::getFreeSocketPort() Unable to get socket name");
-        const int port = ntohs(self.sin_port);
+		socklen_t address_len = sizeof(self);
+		// bind with port==0 assigns free port
+		if (bind(sock, (struct sockaddr*) &self, address_len) < 0)
+			BailOnSocketError("tcpip::Socket::getFreeSocketPort() Unable to bind socket");
+		// get the assigned port with getsockname
+		if (getsockname(sock, (struct sockaddr*) &self, &address_len) < 0)
+			BailOnSocketError("tcpip::Socket::getFreeSocketPort() Unable to get socket name");
+		const int port = ntohs(self.sin_port);
 #ifdef WIN32
-        ::closesocket( sock );
+		::closesocket(sock);
 #else
-        ::close( sock );
+		::close(sock);
 #endif
-        return port;
-    }
+		return port;
+	}
 
 
 	// ----------------------------------------------------------------------
@@ -154,40 +155,40 @@ namespace tcpip
 #endif
 
 		// ... then the server socket
-		if( server_socket_ >= 0 )
+		if (server_socket_ >= 0)
 		{
 #ifdef WIN32
-			::closesocket( server_socket_ );
+			::closesocket(server_socket_);
 #else
-			::close( server_socket_ );
+			::close(server_socket_);
 #endif
 			server_socket_ = -1;
 		}
 
 #ifdef WIN32
-		if( server_socket_ == -1 && socket_ == -1 
-		    && init_windows_sockets_ && instance_count_ == 0 )
-				WSACleanup();
-                windows_sockets_initialized_ = false;
+		if (server_socket_ == -1 && socket_ == -1
+			&& init_windows_sockets_ && instance_count_ == 0)
+			WSACleanup();
+		windows_sockets_initialized_ = false;
 #endif
 	}
 
 	// ----------------------------------------------------------------------
-	void 
+	void
 		Socket::
-		BailOnSocketError( std::string context)
+		BailOnSocketError(std::string context)
 	{
 #ifdef WIN32
 		int e = WSAGetLastError();
-		std::string msg = GetWinsockErrorString( e );
+		std::string msg = GetWinsockErrorString(e);
 #else
-		std::string msg = strerror( errno );
+		std::string msg = strerror(errno);
 #endif
-		throw SocketException( context + ": " + msg );
+		throw SocketException(context + ": " + msg);
 	}
 
 	// ----------------------------------------------------------------------
-	int  
+	int
 		Socket::
 		port()
 	{
@@ -196,25 +197,25 @@ namespace tcpip
 
 
 	// ----------------------------------------------------------------------
-	bool 
+	bool
 		Socket::
-		datawaiting(int sock) 
+		datawaiting(int sock)
 		const
 	{
 		fd_set fds;
-		FD_ZERO( &fds );
-		FD_SET( (unsigned int)sock, &fds );
+		FD_ZERO(&fds);
+		FD_SET((unsigned int)sock, &fds);
 
 		struct timeval tv;
 		tv.tv_sec = 0;
 		tv.tv_usec = 0;
 
-		int r = select( sock+1, &fds, nullptr, nullptr, &tv);
+		int r = select(sock + 1, &fds, nullptr, nullptr, &tv);
 
 		if (r < 0)
 			BailOnSocketError("tcpip::Socket::datawaiting @ select");
 
-		if( FD_ISSET( sock, &fds ) )
+		if (FD_ISSET(sock, &fds))
 			return true;
 		else
 			return false;
@@ -223,33 +224,33 @@ namespace tcpip
 	// ----------------------------------------------------------------------
 	bool
 		Socket::
-		atoaddr( std::string address, struct sockaddr_in& addr)
+		atoaddr(std::string address, struct sockaddr_in& addr)
 	{
-        int status;
-        struct addrinfo *servinfo; // will point to the results
+		int status;
+		struct addrinfo *servinfo; // will point to the results
 
-        struct addrinfo hints;
-        memset(&hints, 0, sizeof hints); // make sure the struct is empty
-        hints.ai_family = AF_INET; // restrict to IPv4?
-        hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
-        hints.ai_flags = AI_PASSIVE; // fill in my IP for me
+		struct addrinfo hints;
+		memset(&hints, 0, sizeof hints); // make sure the struct is empty
+		hints.ai_family = AF_INET; // restrict to IPv4?
+		hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+		hints.ai_flags = AI_PASSIVE; // fill in my IP for me
 
-        if ((status = getaddrinfo(address.c_str(), nullptr, &hints, &servinfo)) != 0) {
-            return false;
-        }
-        
-        bool valid = false;
+		if ((status = getaddrinfo(address.c_str(), nullptr, &hints, &servinfo)) != 0) {
+			return false;
+		}
 
-        for (struct addrinfo *p = servinfo; p != nullptr; p = p->ai_next) {
-            if (p->ai_family == AF_INET) { // IPv4
-                addr = *(struct sockaddr_in *)p->ai_addr;
-                addr.sin_port = htons((unsigned short)port_);
-                valid = true;
-                break;
-            }
-        }
+		bool valid = false;
 
-        freeaddrinfo(servinfo); // free the linked list
+		for (struct addrinfo *p = servinfo; p != nullptr; p = p->ai_next) {
+			if (p->ai_family == AF_INET) { // IPv4
+				addr = *(struct sockaddr_in *)p->ai_addr;
+				addr.sin_port = htons((unsigned short)port_);
+				valid = true;
+				break;
+			}
+		}
+
+		freeaddrinfo(servinfo); // free the linked list
 
 		return valid;
 	}
@@ -260,7 +261,7 @@ namespace tcpip
 		Socket::
 		accept(const bool create)
 	{
-		if( socket_ >= 0 )
+		if (socket_ >= 0)
 			return nullptr;
 
 		struct sockaddr_in client_addr;
@@ -270,25 +271,25 @@ namespace tcpip
 		socklen_t addrlen = sizeof(client_addr);
 #endif
 
-		if( server_socket_ < 0 )
+		if (server_socket_ < 0)
 		{
 			struct sockaddr_in self;
 
 			//Create the server socket
-			server_socket_ = static_cast<int>(socket( AF_INET, SOCK_STREAM, 0 ));
-			if( server_socket_ < 0 )
+			server_socket_ = static_cast<int>(socket(AF_INET, SOCK_STREAM, 0));
+			if (server_socket_ < 0)
 				BailOnSocketError("tcpip::Socket::accept() @ socket");
-			
+
 			//"Address already in use" error protection
 			{
 
-				#ifdef WIN32
-					//setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuseaddr, sizeof(reuseaddr));
-					// No address reuse in Windows!!!
-				#else
-    				int reuseaddr = 1;
-					setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
-				#endif
+#ifdef WIN32
+				//setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuseaddr, sizeof(reuseaddr));
+				// No address reuse in Windows!!!
+#else
+				int reuseaddr = 1;
+				setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
+#endif
 			}
 
 			// Initialize address/port structure
@@ -298,12 +299,12 @@ namespace tcpip
 			self.sin_addr.s_addr = htonl(INADDR_ANY);
 
 			// Assign a port number to the socket
-			if ( bind(server_socket_, (struct sockaddr*)&self, sizeof(self)) != 0 )
+			if (bind(server_socket_, (struct sockaddr*)&self, sizeof(self)) != 0)
 				BailOnSocketError("tcpip::Socket::accept() Unable to create listening socket");
 
 
 			// Make it a "listening socket"
-			if ( listen(server_socket_, 10) == -1 )
+			if (listen(server_socket_, 10) == -1)
 				BailOnSocketError("tcpip::Socket::accept() Unable to listen on server socket");
 
 			// Make the newly created socket blocking or not
@@ -312,83 +313,84 @@ namespace tcpip
 
 		socket_ = static_cast<int>(::accept(server_socket_, (struct sockaddr*)&client_addr, &addrlen));
 
-		if( socket_ >= 0 )
+		if (socket_ >= 0)
 		{
 			int x = 1;
 			setsockopt(socket_, IPPROTO_TCP, TCP_NODELAY, (const char*)&x, sizeof(x));
-            if (create) {
-                Socket* result = new Socket(0);
-                result->socket_ = socket_;
-                socket_ = -1;
-                return result;
-            }
+			if (create) {
+				Socket* result = new Socket(0);
+				result->socket_ = socket_;
+				socket_ = -1;
+				return result;
+			}
 		}
-        return nullptr;
+		return nullptr;
 	}
 
 	// ----------------------------------------------------------------------
-	void 
+	void
 		Socket::
-		set_blocking(bool blocking) 
+		set_blocking(bool blocking)
 	{
 		blocking_ = blocking;
 
-		if( server_socket_ > 0 )
+		if (server_socket_ > 0)
 		{
 #ifdef WIN32
 			ULONG NonBlock = blocking_ ? 0 : 1;
-		    if (ioctlsocket(server_socket_, FIONBIO, &NonBlock) == SOCKET_ERROR)
+			if (ioctlsocket(server_socket_, FIONBIO, &NonBlock) == SOCKET_ERROR)
 				BailOnSocketError("tcpip::Socket::set_blocking() Unable to initialize non blocking I/O");
 #else
 			long arg = fcntl(server_socket_, F_GETFL, NULL);
 			if (blocking_)
 			{
 				arg &= ~O_NONBLOCK;
-			} else {
+			}
+			else {
 				arg |= O_NONBLOCK;
 			}
 			fcntl(server_socket_, F_SETFL, arg);
 #endif
 		}
-	
+
 	}
 
 	// ----------------------------------------------------------------------
-	void 
+	void
 		Socket::
 		connect()
 	{
 		sockaddr_in address;
 
-		if( !atoaddr( host_.c_str(), address) )
+		if (!atoaddr(host_.c_str(), address))
 			BailOnSocketError("tcpip::Socket::connect() @ Invalid network address");
 
-		socket_ = static_cast<int>(socket( PF_INET, SOCK_STREAM, 0 ));
-		if( socket_ < 0 )
+		socket_ = static_cast<int>(socket(PF_INET, SOCK_STREAM, 0));
+		if (socket_ < 0)
 			BailOnSocketError("tcpip::Socket::connect() @ socket");
 
-		if( ::connect( socket_, (sockaddr const*)&address, sizeof(address) ) < 0 )
+		if (::connect(socket_, (sockaddr const*)&address, sizeof(address)) < 0)
 			BailOnSocketError("tcpip::Socket::connect() @ connect");
 
-		if( socket_ >= 0 )
+		if (socket_ >= 0)
 		{
 			int x = 1;
 			setsockopt(socket_, IPPROTO_TCP, TCP_NODELAY, (const char*)&x, sizeof(x));
 		}
-    }
+	}
 
 	// ----------------------------------------------------------------------
-	void 
+	void
 		Socket::
 		close()
 	{
 		// Close client-connection 
-		if( socket_ >= 0 )
+		if (socket_ >= 0)
 		{
 #ifdef WIN32
-			::closesocket( socket_ );
+			::closesocket(socket_);
 #else
-			::close( socket_ );
+			::close(socket_);
 #endif
 
 			socket_ = -1;
@@ -396,26 +398,26 @@ namespace tcpip
 	}
 
 	// ----------------------------------------------------------------------
-	void 
+	void
 		Socket::
-		send( const std::vector<unsigned char> &buffer)
+		send(const std::vector<unsigned char> &buffer)
 	{
-		if( socket_ < 0 )
+		if (socket_ < 0)
 			return;
 
 		printBufferOnVerbose(buffer, "Send");
 
 		size_t numbytes = buffer.size();
 		unsigned char const *bufPtr = &buffer[0];
-		while( numbytes > 0 )
+		while (numbytes > 0)
 		{
 #ifdef WIN32
-			int bytesSent = ::send( socket_, (const char*)bufPtr, static_cast<int>(numbytes), 0 );
+			int bytesSent = ::send(socket_, (const char*)bufPtr, static_cast<int>(numbytes), 0);
 #else
-			int bytesSent = ::send( socket_, bufPtr, numbytes, 0 );
+			int bytesSent = ::send(socket_, bufPtr, numbytes, 0);
 #endif
-			if( bytesSent < 0 )
-				BailOnSocketError( "send failed" );
+			if (bytesSent < 0)
+				BailOnSocketError("send failed");
 
 			numbytes -= bytesSent;
 			bufPtr += bytesSent;
@@ -428,7 +430,7 @@ namespace tcpip
 
 	void
 		Socket::
-		sendExact( const Storage &b)
+		sendExact(const Storage &b)
 	{
 		int length = static_cast<int>(b.size());
 		Storage length_storage;
@@ -451,14 +453,14 @@ namespace tcpip
 		const
 	{
 #ifdef WIN32
-		const int bytesReceived = recv( socket_, (char*)buffer, static_cast<int>(len), 0 );
+		const int bytesReceived = recv(socket_, (char*)buffer, static_cast<int>(len), 0);
 #else
-		const int bytesReceived = static_cast<int>(recv( socket_, buffer, len, 0 ));
+		const int bytesReceived = static_cast<int>(recv(socket_, buffer, len, 0));
 #endif
-		if( bytesReceived == 0 )
-			throw SocketException( "tcpip::Socket::recvAndCheck @ recv: peer shutdown" );
-		if( bytesReceived < 0 )
-			BailOnSocketError( "tcpip::Socket::recvAndCheck @ recv" );
+		if (bytesReceived == 0)
+			throw SocketException("tcpip::Socket::recvAndCheck @ recv: peer shutdown");
+		if (bytesReceived < 0)
+			BailOnSocketError("tcpip::Socket::recvAndCheck @ recv");
 
 		return static_cast<size_t>(bytesReceived);
 	}
@@ -487,7 +489,7 @@ namespace tcpip
 	{
 		if (verbose_)
 		{
-			std::cerr << label << " " << buffer.size() <<  " bytes via tcpip::Socket: [";
+			std::cerr << label << " " << buffer.size() << " bytes via tcpip::Socket: [";
 			// cache end iterator for performance
 			const std::vector<unsigned char>::const_iterator end = buffer.end();
 			for (std::vector<unsigned char>::const_iterator it = buffer.begin(); end != it; ++it)
@@ -498,16 +500,16 @@ namespace tcpip
 
 
 	// ----------------------------------------------------------------------
-	std::vector<unsigned char> 
+	std::vector<unsigned char>
 		Socket::
 		receive(int bufSize)
 	{
 		std::vector<unsigned char> buffer;
 
-		if( socket_ < 0 )
+		if (socket_ < 0)
 			connect();
 
-		if( !datawaiting( socket_) )
+		if (!datawaiting(socket_))
 			return buffer;
 
 		buffer.resize(bufSize);
@@ -521,11 +523,11 @@ namespace tcpip
 	}
 
 	// ----------------------------------------------------------------------
-	
+
 
 	bool
 		Socket::
-		receiveExact( Storage &msg )
+		receiveExact(Storage &msg)
 	{
 		// buffer for received bytes
 		// According to the C++ standard elements of a std::vector are stored
@@ -547,26 +549,26 @@ namespace tcpip
 		// copy message content into passed Storage
 		msg.reset();
 		msg.writePacket(&buffer[lengthLen], totalLen - lengthLen);
-		
+
 		printBufferOnVerbose(buffer, "Rcvd Storage with");
 
 		return true;
 	}
-	
-	
+
+
 	// ----------------------------------------------------------------------
-	bool 
+	bool
 		Socket::
-		has_client_connection() 
+		has_client_connection()
 		const
 	{
 		return socket_ >= 0;
 	}
 
 	// ----------------------------------------------------------------------
-	bool 
+	bool
 		Socket::
-		is_blocking() 
+		is_blocking()
 	{
 		return blocking_;
 	}
@@ -574,12 +576,12 @@ namespace tcpip
 
 #ifdef WIN32
 	// ----------------------------------------------------------------------
-	std::string 
+	std::string
 		Socket::
-		GetWinsockErrorString(int err) 
+		GetWinsockErrorString(int err)
 	{
 
-		switch( err)
+		switch (err)
 		{
 		case 0:					return "No error";
 		case WSAEINTR:			return "Interrupted system call";
