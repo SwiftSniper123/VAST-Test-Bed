@@ -2,7 +2,7 @@
 #include "Obstacle.h"
 #include "vector3.h"
 #include "VComponent.h"
-#include <TraCIAPI.h>
+#include "..\h\TraCIAPI.h"
 
 class Environment : public VComponent
 {
