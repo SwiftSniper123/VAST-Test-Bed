@@ -68,7 +68,20 @@ int main(int argc, char **argv1)
 	ZeroMemory(&StartupInfo, sizeof(StartupInfo));
 	StartupInfo.cb = sizeof StartupInfo; //Only compulsory field
 
-	LPSTR cmdArgs = "sumo -c C:\\Users\\PeterM\\Desktop\\SUMO\\hello.sumocfg --remote-port 1337";
+	//Need relative path for config file somehow 
+	/*
+	int bytes = GetModuleFileName(NULL, pBuf, len);
+	if (bytes == 0)
+		return -1;
+	else
+		return bytes; */
+	string sumoCfgString;
+	cout << "Input path to SUMO config file: ";
+	cin >> sumoCfgString;
+
+	string sumoCmd = "sumo -c " + sumoCfgString + " --remote-port 1337";
+
+	LPSTR cmdArgs = const_cast<char *>(sumoCmd.c_str()); //"sumo -c C:\\Users\\PeterM\\Desktop\\SUMO\\hello.sumocfg --remote-port 1337"
 
 	CreateProcess(NULL, cmdArgs,
 		NULL, NULL, FALSE, 0, NULL,
