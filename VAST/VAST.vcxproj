@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{EA385C50-5C66-4DB4-B094-B541E6BB03CF}</ProjectGuid>
     <RootNamespace>VAST</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -83,8 +83,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -120,14 +124,23 @@
     <ClCompile Include="cpp\main.cpp" />
     <ClCompile Include="cpp\Obstacle.cpp" />
     <ClCompile Include="cpp\Sensor.cpp" />
+    <ClCompile Include="cpp\socket.cpp" />
+    <ClCompile Include="cpp\storage.cpp" />
+    <ClCompile Include="cpp\TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventTree.h" />
     <ClInclude Include="h\AV.h" />
+    <ClInclude Include="h\config.h" />
     <ClInclude Include="h\Environment.h" />
     <ClInclude Include="h\Obstacle.h" />
     <ClInclude Include="h\ScenarioMetric.h" />
     <ClInclude Include="h\Sensor.h" />
+    <ClInclude Include="h\socket.h" />
+    <ClInclude Include="h\storage.h" />
+    <ClInclude Include="h\TraCIAPI.h" />
+    <ClInclude Include="h\TraCIConstants.h" />
+    <ClInclude Include="h\TraCIDefs.h" />
     <ClInclude Include="h\VComponent.h" />
     <ClInclude Include="h\vector3.h" />
     <ClInclude Include="h\VType.h" />

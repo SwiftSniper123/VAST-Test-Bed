@@ -18,7 +18,7 @@ class AVDataTypes
 public:
 	/*default constructor*/
 	AVDataTypes() { _name = ""; _type = ""; }
-	
+
 	/*constructor that stores the name and data type of variable*/
 	AVDataTypes(std::string name, std::string type)
 	{

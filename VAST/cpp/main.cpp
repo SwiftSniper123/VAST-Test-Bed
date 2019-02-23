@@ -7,6 +7,8 @@
 #include<variant>
 #include "..\h\VType.h"
 #include "..\h\AV.h"
+#include "..\h\Environment.h"
+#include <Windows.h>
 
 using namespace std;
 
@@ -61,5 +63,50 @@ int main(int argc, char **argv1)
 	AVmap["currentPosition"] = currentPosition;
 	AVmap["initialPosition"] = initialPosition;
 
+	PROCESS_INFORMATION ProcessInfo; //This is what we get as an [out] parameter
+	STARTUPINFO StartupInfo; //This is an [in] parameter
+	ZeroMemory(&StartupInfo, sizeof(StartupInfo));
+	StartupInfo.cb = sizeof StartupInfo; //Only compulsory field
+
+	//Need relative path for config file somehow 
+	/*
+	int bytes = GetModuleFileName(NULL, pBuf, len);
+	if (bytes == 0)
+		return -1;
+	else
+		return bytes; */
+	string sumoCfgString;
+	cout << "Input path to SUMO config file: ";
+	cin >> sumoCfgString;
+
+	string sumoCmd = "sumo -c " + sumoCfgString + " --remote-port 1337";
+
+	LPSTR cmdArgs = const_cast<char *>(sumoCmd.c_str()); //"sumo -c C:\\Users\\PeterM\\Desktop\\SUMO\\hello.sumocfg --remote-port 1337"
+
+	CreateProcess(NULL, cmdArgs,
+		NULL, NULL, FALSE, 0, NULL,
+		NULL, &StartupInfo, &ProcessInfo);
+
+
+	//CreateProcess("cmd.exe", "sumo -c C:\\Users\\PeterM\\Desktop\\SUMO\\hello.sumocfg --remote-port 1337", )
+	Client client;
+	client.connect("localhost", 1337);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	std::cout << "run 5 steps ...\n";
+	client.simulationStep(5 * 1000);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	client.close();
+
 	return 0;
 }
+
+/*
+void sumoConnection() {
+	Client client;
+	client.connect("localhost", 1337);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	std::cout << "run 5 steps ...\n";
+	client.simulationStep(5 * 1000);
+	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	client.close();
+} */
