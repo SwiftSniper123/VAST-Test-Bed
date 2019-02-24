@@ -1,10 +1,8 @@
-#include "..\AV.h"
-
+#include "..\VAST\h\AV.h"
 #include <iostream>
 #include <vector>
-//#include <cassert>
 #include "pch.h"
-#include "VComponent.h"
+#include "..\VAST\h\VComponent.h"
 
 using namespace std;
 
@@ -13,45 +11,40 @@ class Ext_A : public VComponent
 {
 public:
 
-	Ext_A(int &id) : VComponent()
+	Ext_A(int* numUpdate) : VComponent()
 	{
-		_numUpdate = 0;
-		_id = id;
+		_numUpdate = numUpdate;
 	};
 
 	void update()
 	{
-		*_id++;
-		cout << *_id << endl;
+		*_numUpdate = *_numUpdate + 1;
 	};
 
 	static const char type = 'A';
 
 private:
-	int _numUpdate;
-	int* _id;
+	int* _numUpdate;
 }; // end of Ext_A
 
 /* An extension of VComponent base class titled Ext_B for convenience.*/
 class Ext_B : public VComponent
 {
 public:
-	Ext_B(int& id) : VComponent()
+	Ext_B(int* numUpdate) : VComponent()
 	{
-		_numUpdate = 0;
-		_id = id;
+		_numUpdate = numUpdate;
 	};
 
 	void update()
 	{
-		_id++;
+		*_numUpdate = *_numUpdate - 1;
 	};
 
 	static const char type = 'B';
 
 private:
-	int _numUpdate;
-	int _id;
+	int* _numUpdate;
 }; // end Ext_B
 
 /* VCFactory is a helper factory for this test class to create many multiples
@@ -59,56 +52,56 @@ and call their inherited methods.*/
 class VCFactory
 {
 public:
-	VCFactory()
-	{};
-
-	VCFactory(int numToGen)
+	VCFactory(int* numToUpdate)
 	{
-		_num = numToGen;
+		_numToUpdate = numToUpdate;
+		totalCount = 0;
 	};
 
-	void generateExt(char ext)
+	~VCFactory()
 	{
-		for (int i = 0; i < _num; i++)
+		destroyAll();
+	};
+
+	void generateExt(int numToGen, char type)
+	{
+		totalCount += numToGen;
+		for (int i = 0; i < numToGen; i++)
 		{
-			switch (ext)
+			switch (type)
 			{
-			case 'A': _extA.push_back(new Ext_A(i));
+			case 'A': extended.push_back(new Ext_A(_numToUpdate));
 				break;
-			case 'B': _extB.push_back(new Ext_B(i));
+			case 'B': extended.push_back(new Ext_B(_numToUpdate));
+				break;
+			default :  ;// no default
 			}
 		}
 	}
 
-	void updateAll(char ext)
+	void updateAll()
 	{
-		for (int i = 0; i < _num; i++)
+		// Regardless of extended class's implemented type, all 
+		// registered VComponents can be told to update()
+		for (VComponent* vcomp : extended)
 		{
-			switch (ext)
-			{
-			case 'A': _extA[i]->update();
-				break;
-			case 'B': _extB[i]->update();
-			}
+			vcomp->update();
 		}
 	};
+
+	int getTotalExtended()
+	{
+		return totalCount;
+	}
 
 	void destroyAll()
 	{
-		for (unsigned int i = 0; i < _extA.size(); i++)
-		{
-			delete _extA[i];
-		}
-
-		for (unsigned int i = 0; i < _extB.size(); i++)
-		{
-			delete _extB[i];
-		}
+		extended.clear();
 	};
 private:
-	int _num;
-	vector<VComponent*> _extA;
-	vector<VComponent*> _extB;
+	int* _numToUpdate;
+	int totalCount;
+	vector<VComponent*> extended;
 }; // end of VCFactory class
 
 TEST(DefaultTest, TrueIsTrue)
@@ -133,11 +126,11 @@ TEST(DefaultTest, TrueIsTrue)
 TEST(VCTest, TestExtisVComponent)
 {
 	int i = 0;
-	Ext_A a(i);
+	Ext_A a(&i);
 	VComponent& vcomp1 = a;
 	ASSERT_TRUE(typeid(a) == typeid(vcomp1));
 
-	Ext_B b(i);
+	Ext_B b(&i);
 	VComponent& vcomp2 = b;
 	ASSERT_TRUE(typeid(b) == typeid(vcomp2));
 
@@ -145,21 +138,66 @@ TEST(VCTest, TestExtisVComponent)
 	ASSERT_TRUE(typeid(vcomp1) != typeid(vcomp2));
 }
 
-TEST(VCTest, ImplUpdate)
+/* TestImplUpdate - Tests that Ext_A and Ext_B extensions implement the 
+		update() function differently but are called the same, via 
+		VCFactory call to updateAll(), which is a serial call to update() 
+	Procedure
+		*Create an integer and pass its address through each extending
+		object.  For as many objects as get created, the update() 
+		function performs different implementations depending upon 
+		whether called by Ext_A (increment 1) or Ext_B (decrement 1). 
+	Pass
+		*The final value of integer i is predicted correctly.
+	Fail
+		*The final value of integer i is incorrect.
+	*/
+TEST(VCTest, TestImplUpdate)
 {
+	// update just one
 	int i = 0;
-	Ext_A a(i);
-	a.update();
+	Ext_A* a = new Ext_A(&i);
+	a->update();
 	EXPECT_EQ(i, 1);
+
+	// using the factory, generate 100 of each
+	VCFactory* factory = new VCFactory(&i);
+	factory->generateExt(100, 'A');
+	// 100 are definitely in the factory, 
+	EXPECT_EQ(factory->getTotalExtended(), 100);
+	// but until update() is called, integer i stays the same: 1
+	EXPECT_EQ(i, 1);
+
+	// Now all registered VComponents can be told to update()
+	factory->updateAll();
+	// and integer i should be: 101
+	EXPECT_EQ(i, 101);
+
+	// now generate 200 B type extensions, which are -1 updaters
+	factory->generateExt(50, 'B');
+	// 150 are definitely in the factory (100 A's, 50 B's), 
+	EXPECT_EQ(factory->getTotalExtended(), 150);
+	// but until update() is called, integer i stays the same: 101
+	EXPECT_EQ(i, 101);
+
+	// Now all registered VComponents can be told to update()
+	// the previous 100 A's will still add 100, so the B's generated cause:
+	// 101 + 100 - 50 = 151
+	factory->updateAll();
+	// and integer i should be: 151
+	EXPECT_EQ(i, 151);
+
+	//cleanup
+	delete factory;
+	delete a;
 }
 
-TEST(TestCaseName, TestName) {
-  vector3 pos;
-  pos.x = 0;
-  pos.y = 0;
-  pos.z = 0;
-  float maxV = 10.0f;
-  AV *vehicle = new GroundVehicle("ground", maxV, 15.0f, pos, 1); //create AV object
-  EXPECT_EQ(maxV, vehicle->GetMaxV());
-  EXPECT_TRUE(true);
-}
+//TEST(TestCaseName, TestName) {
+//  vector3 pos;
+//  pos.x = 0;
+//  pos.y = 0;
+//  pos.z = 0;
+//  float maxV = 10.0f;
+//  AV *vehicle = new GroundVehicle("ground", maxV, 15.0f, pos, 1); //create AV object
+//  EXPECT_EQ(maxV, vehicle->GetMaxV());
+//  EXPECT_TRUE(true);
+//}
