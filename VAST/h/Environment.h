@@ -2,7 +2,6 @@
 #include "Obstacle.h"
 #include "vector3.h"
 #include "VComponent.h"
-#include "..\h\TraCIAPI.h"
 
 class Environment : public VComponent
 {
@@ -17,10 +16,4 @@ private:
 	int numObstacles;
 	Obstacle **obstacles;
 	
-};
-
-class Client : public TraCIAPI {
-public:
-	Client() {};
-	~Client() {};
 };

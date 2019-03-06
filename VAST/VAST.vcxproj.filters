@@ -39,6 +39,9 @@
     <ClCompile Include="cpp\TraCIAPI.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\SumoTraciTestClass.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\AV.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="h\TraCIAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\SumoTraciTestClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
