@@ -79,7 +79,8 @@ int main(int argc, char **argv1)
 	cout << "Input path to SUMO config file: ";
 	cin >> sumoCfgString;
 
-	string sumoCmd = "sumo -c " + sumoCfgString + " --remote-port 1337";
+	//string sumoCmd = "sumo -c " + sumoCfgString + " --remote-port 1337";
+	string sumoCmd = "sumo-gui -c " + sumoCfgString + " --remote-port 1337";
 
 	LPSTR cmdArgs = const_cast<char *>(sumoCmd.c_str()); //"sumo -c C:\\Users\\PeterM\\Desktop\\SUMO\\hello.sumocfg --remote-port 1337"
 
@@ -90,12 +91,12 @@ int main(int argc, char **argv1)
 
 	//CreateProcess("cmd.exe", "sumo -c C:\\Users\\PeterM\\Desktop\\SUMO\\hello.sumocfg --remote-port 1337", )
 	Client client;
-	client.connect("localhost", 1337);
-	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
-	std::cout << "run 5 steps ...\n";
-	client.simulationStep(5 * 1000);
-	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
-	client.close();
+	//client.connect("localhost", 1337);
+	//std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	//std::cout << "run 5 steps ...\n";
+	//client.simulationStep(5 * 1000);
+	//std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
+	//client.close();
 
 	return 0;
 }

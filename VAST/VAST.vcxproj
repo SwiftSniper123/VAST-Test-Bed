@@ -126,6 +126,7 @@
     <ClCompile Include="cpp\Sensor.cpp" />
     <ClCompile Include="cpp\socket.cpp" />
     <ClCompile Include="cpp\storage.cpp" />
+    <ClCompile Include="cpp\SumoSim.cpp" />
     <ClCompile Include="cpp\TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +139,7 @@
     <ClInclude Include="h\Sensor.h" />
     <ClInclude Include="h\socket.h" />
     <ClInclude Include="h\storage.h" />
+    <ClInclude Include="h\SumoSim.h" />
     <ClInclude Include="h\TraCIAPI.h" />
     <ClInclude Include="h\TraCIConstants.h" />
     <ClInclude Include="h\TraCIDefs.h" />
