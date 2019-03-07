@@ -100,6 +100,8 @@ int main(int argc, char **argv1)
 
 	std::cout << "pull test1";
 
+	std::cout << "pull test1";
+
 	return 0;
 }
 
