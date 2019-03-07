@@ -4,7 +4,7 @@
 #include "..\h\VComponent.h"
 #include <iostream>
 #include <map>
-#include<variant>
+#include <variant>
 #include "..\h\VType.h"
 #include "..\h\AV.h"
 #include "..\h\Environment.h"
