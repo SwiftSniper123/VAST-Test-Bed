@@ -39,7 +39,7 @@
     <ClCompile Include="cpp\TraCIAPI.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\SumoTraciTestClass.cpp">
+    <ClCompile Include="cpp\TraciControlToSumo.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,7 +92,7 @@
     <ClInclude Include="h\TraCIAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="h\SumoTraciTestClass.h">
+    <ClInclude Include="h\TraciControlToSumo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

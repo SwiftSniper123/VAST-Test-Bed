@@ -8,7 +8,7 @@
 #include "..\h\VType.h"
 #include "..\h\AV.h"
 #include "..\h\Environment.h"
-#include "..\h\SumoTraciTestClass.h"
+#include "..\h\TraciControlToSumo.h"
 #include <Windows.h>
 
 
@@ -65,8 +65,9 @@ int main(int argc, char **argv1)
 	AVmap["currentPosition"] = currentPosition;
 	AVmap["initialPosition"] = initialPosition;
 
-	SumoTraciRandomTestClass test;
-	test.initialize();
-	test.runSumo(); //There will be a 2.5 second pause while SUMO boots up
-	test.runClient();
+	TraciControlToSumo* traciControl = new TraciControlToSumo();
+	traciControl->initialize();
+	traciControl->runSumo(); //There will be a 2.5 second pause while SUMO boots up
+	traciControl->runClient();
+	delete traciControl;
 }
