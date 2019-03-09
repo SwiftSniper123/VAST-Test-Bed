@@ -1,31 +1,43 @@
 #include "..\h\Environment.h"
 #include <iostream>
 
+
 //Adding SUMO Socket connection stuff
 
-Environment::Environment() {};
-
-Environment::Environment(std::string simPath, vector3 dimensions, int numObstacles, int port)
+Environment::Environment(Vector3 _dimensions, int _numObstacles)
 {
-	_simPath = simPath;
-	_dimensions = dimensions;
-	_numObstacles = numObstacles;
-	_port = port;
+
 }
 
+Environment::Environment(Vector3 _dimensions, int _numObstacles, std::map<string, VType> _dataMap)
+{
+
+}
 Environment::~Environment()
 {
 
 }
-void Environment::addObstacle()
+void Environment::AddObstacle(string name, Obstacle*obs)
 {
 
 }
-/*void Environment::updateAV(Command update)
-{
 
-}*/
-void Environment::update()
+Obstacle *Environment::getObstacle(string _name)
+{
+	return nullptr;
+}
+
+Vector3 Environment::getDimensions()
+{
+	return Vector3{};
+}
+
+int Environment::getNumObstacles()
+{
+	return 0;
+}
+
+void Environment::update(double time, Event event)
 {
 
 }

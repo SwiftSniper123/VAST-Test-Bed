@@ -98,6 +98,8 @@ int main(int argc, char **argv1)
 	//std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
 	//client.close();
 
+	std::cout << "pull test1";
+
 	return 0;
 }
 
