@@ -7,10 +7,11 @@
 class Environment : public VComponent
 {
 public:
+	Environment();
 	Environment(std::string simPath, vector3 dimensions, int numObstacles, int port);
 	~Environment();
 	void addObstacle();
-	virtual void InitializeSimulation() = 0;
+	//virtual void InitializeSimulation() = 0;
 	//void updateAV(Command update);
 	void update();
 private:

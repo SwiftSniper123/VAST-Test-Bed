@@ -3,6 +3,8 @@
 
 //Adding SUMO Socket connection stuff
 
+Environment::Environment() {};
+
 Environment::Environment(std::string simPath, vector3 dimensions, int numObstacles, int port)
 {
 	_simPath = simPath;

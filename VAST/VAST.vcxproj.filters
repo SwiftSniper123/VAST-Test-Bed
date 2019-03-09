@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SumoLib">
+      <UniqueIdentifier>{f33d9b8e-db5f-4256-aad9-08abd7dfc7bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\AV.cpp">
@@ -80,12 +83,6 @@
     <ClInclude Include="h\storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="h\TraCIConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\TraCIDefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="h\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -94,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="h\SumoSim.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\TraCIConstants.h">
+      <Filter>SumoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="h\TraCIDefs.h">
+      <Filter>SumoLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
