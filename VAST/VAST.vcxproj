@@ -129,7 +129,6 @@
     <ClCompile Include="cpp\TraciControlToSumo.cpp" />
     <ClCompile Include="cpp\SumoSim.cpp" />
     <ClCompile Include="cpp\TraCIAPI.cpp" />
-    <ClCompile Include="cpp\TraciControlToSumo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventTree.h" />
@@ -145,7 +144,6 @@
     <ClInclude Include="h\SumoSim.h" />
     <ClInclude Include="h\TraCIAPI.h" />
     <ClInclude Include="h\TraCIConstants.h" />
-    <ClInclude Include="h\TraciControlToSumo.h" />
     <ClInclude Include="h\TraCIDefs.h" />
     <ClInclude Include="h\VComponent.h" />
     <ClInclude Include="h\vector3.h" />
