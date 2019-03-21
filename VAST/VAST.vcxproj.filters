@@ -42,6 +42,9 @@
     <ClCompile Include="cpp\TraCIAPI.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\TraciControlToSumo.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
     <ClCompile Include="cpp\SumoSim.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="h\TraCIDefs.h">
       <Filter>SumoLib</Filter>
+    </ClInclude>
+    <ClInclude Include="h\TraciControlToSumo.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
