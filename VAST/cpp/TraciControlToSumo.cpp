@@ -53,3 +53,23 @@ void TraciControlToSumo::runClient()
 	client.close();
 	system("PAUSE");
 }
+
+std::string TraciControlToSumo::getSumoCmd()
+{
+	return sumoCmd;
+}
+
+bool TraciControlToSumo::getRandom()
+{
+	return random;
+}
+
+std::string TraciControlToSumo::getSumoCfgString()
+{
+	return sumoCfgString;
+}
+
+int TraciControlToSumo::getSeed()
+{
+	return seed;
+}

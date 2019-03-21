@@ -28,28 +28,23 @@ public:
 	void runSumo();
 	/*Runs a client that connects to Sumo and gives it commands*/
 	void runClient();
+	/*Returns sumoCfgString*/
+	std::string getSumoCfgString();
+	/* Returns sumoCmd*/
+	std::string getSumoCmd();
+	/*Returns whether Sumo uses a random seed or not*/
+	bool getRandom();
+	/*Returns the seed*/
+	int getSeed();
 
 private:
 
 	PROCESS_INFORMATION ProcessInfo; //This is what we get as an [out] parameter
 	STARTUPINFO StartupInfo; //This is an [in] parameter
-	std::string sumoCmd; //Used to construct sumoCfgString
-	std::string sumoCfgString; //Used to construct cmdArgs
+	std::string sumoCmd; //Used to construct cmdArgs
+	std::string sumoCfgString; //Used to construct sumoCmd
 	LPSTR cmdArgs; //Commands passed to the console during CreateProcess
 	Client client; //Sends commands to Sumo
 	bool random;
 	int seed;
-};
-
-class TraciControlToSumoRandom : public TraciControlToSumo
-{
-public:
-	/* Same as TraciControlToSumo, except it intializes a seed and creates an argument for it in cmdArgs*/
-	void initialize();
-	/*Same as TraciControlToSumo, except it also outputs cmdArgs then waits*/
-	void runClient();
-
-private:
-	int seed;
-	
 };

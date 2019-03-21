@@ -18,9 +18,6 @@
     <ClCompile Include="cpp\AV.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\Environment.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\main.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -37,6 +34,9 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="cpp\TraCIAPI.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\Environment.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="cpp\TraciControlToSumo.cpp">
@@ -60,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="h\VView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="h\Obstacle.h">
@@ -90,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="h\TraCIAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="h\TraciControlToSumo.h">
