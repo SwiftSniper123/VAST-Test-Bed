@@ -44,6 +44,7 @@
     </ClCompile>
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_SumoTraciClass.cpp" />
+    <ClCompile Include="test_VType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VAST\VAST.vcxproj">
