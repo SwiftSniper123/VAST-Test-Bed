@@ -104,15 +104,18 @@ public:
 	//default constructor
 	AverageAcceleration() {};
 
-	VType calculate(float Speed1, float Speed2, int timeStep)
+	VType calculate(float Speed, int timeStep)
 	{
 		float temp;
 
-		temp = ((Speed2 - Speed1) / timeStep);
+		temp = ((previousSpeed - Speed) / timeStep);
 		totalAverages++;
 
 		min.calculate(temp);
 		max.calculate(temp);
+		
+		avgSpeed.calculate(Speed);
+		previousSpeed = Speed;
 
 		return currentAverage.value / timeStep;
 	}
@@ -120,8 +123,10 @@ public:
 private:
 	MinimumAcceleration min;
 	MaximumAcceleration max;
+	AverageSpeed avgSpeed;
 	Double currentAverage = 0;
 	int totalAverages = 0;
+	float previousSpeed = 0;
 };
 
 /*
