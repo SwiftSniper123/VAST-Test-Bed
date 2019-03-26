@@ -16,7 +16,7 @@ public:
 		_numUpdate = numUpdate;
 	};
 
-	void update()
+	void update(timestamp t, dataMap* dataMap)
 	{
 		*_numUpdate = *_numUpdate + 1;
 	};
@@ -36,7 +36,7 @@ public:
 		_numUpdate = numUpdate;
 	};
 
-	void update()
+	void update(timestamp t, dataMap* dataMap)
 	{
 		*_numUpdate = *_numUpdate - 1;
 	};
@@ -85,7 +85,7 @@ public:
 		// registered VComponents can be told to update()
 		for (VComponent* vcomp : extended)
 		{
-			vcomp->update();
+			vcomp->update(0.0, nullptr);
 		}
 	};
 
@@ -156,7 +156,7 @@ TEST(VCTest, TestImplUpdate)
 	// update just one
 	int i = 0;
 	Ext_A* a = new Ext_A(&i);
-	a->update();
+	a->update(0.0, nullptr);
 	EXPECT_EQ(i, 1);
 
 	// using the factory, generate 100 of each

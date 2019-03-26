@@ -129,7 +129,6 @@
     <ClCompile Include="cpp\TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EventTree.h" />
     <ClInclude Include="h\AV.h" />
     <ClInclude Include="h\config.h" />
     <ClInclude Include="h\Environment.h" />
