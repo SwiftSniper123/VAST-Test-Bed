@@ -68,6 +68,8 @@ public:
 		VType::type = STRING_TYPE;
 	};
 
+	/*Downcasting constructor.  Creates a String object using the stringvalue of the 
+	VType input.*/
 	String(VType* obj) : VType()
 	{
 		VType::type = STRING_TYPE;
@@ -398,6 +400,8 @@ public:
 		VType::type = DOUBLE_TYPE;
 	}
 
+	/* Downcasting constructor. Creates a Double object using the stringvalue of the
+	VType input.. Can also accept Integers and Strings.*/
 	Double(VType* obj) : VType()
 	{
 		try
@@ -460,25 +464,34 @@ public:
 		return "DOUBLE";
 	};
 
-	/* companion to the operator overload for + below*/
+	/* The cumulative addition and assignment operator overloadm, 
+	companion to the operator overload for + below.  Can add a double
+	to a Double or vice versa.*/
 	double operator+=(const double rhs)
 	{
 		val += rhs;
 		return val;
 	};
 	
+	/* The cumulative addition and assignment operator overloadm,
+	companion to the operator overload for + below.  Can add a double
+	to a Double or vice versa.*/
 	double operator+=(Double& rhs)
 	{
 		val += rhs.value();
 		return val;
 	};
 
+	/* The cumulative subtraction and assignment operator overloadm,
+	companion to the operator overload for - below.*/
 	double Double::operator -=(Double& otherDouble)
 	{
 		val -= otherDouble.value();
 		return val;
 	};
 
+	/* The cumulative subtraction and assignment operator overloadm,
+	companion to the operator overload for - below.*/
 	double operator -=(const double other)
 	{
 		val -= other;
@@ -499,39 +512,39 @@ public:
 		}
 		return this;     // return the object  
 	}
-	/*string format(const Double formatted, int precision)
-	{
-		return 0;
-	}*/
 };
 
-/* Special Double arithmetic addition*/
+/* Special Double+double addition arithmetic. */
 inline double operator+(Double& lhs, const double rhs)
 {
 	return lhs.value() + rhs;
 }
 
+/* Special Double+double addition arithmetic. */
 inline double operator+(Double& lhs, Double& rhs)
 {
 	return lhs.value() + rhs.value();
 }
 
+/* Special Double+double addition arithmetic. */
 inline double operator+(const double lhs, Double& rhs)
 {
 	return lhs + rhs.value();
 }
 
-/* Special Double arithmetic subtraction*/
+/* Special Double subtraction arithmetic */
 inline double operator-(Double& lhs, const double rhs)
 {
 	return lhs.value() - rhs;
 }
 
+/* Special Double subtraction arithmetic */
 inline double operator-(Double& lhs, Double& rhs)
 {
 	return lhs.value() - rhs.value();
 }
 
+/* Special Double subtraction arithmetic */
 inline double operator-(const double lhs, Double& rhs)
 {
 	return lhs - rhs.value();
@@ -556,6 +569,8 @@ public:
 
 	};
 
+	/* Downcasting constructor. Creates an Integer object using the stringvalue of the
+	VType input.  Can also take String inputs.*/
 	Integer(VType* obj) : VType()//VType(Integer::stringValue)
 	{
 		try
@@ -646,18 +661,21 @@ public:
 		return val;
 	};
 
+	/* companions to the operator overload for + below*/
 	int operator+=(Integer& rhs)
 	{
 		val += rhs.value();
 		return val;
 	};
 
+	/* companions to the operator overload for - below*/
 	int Integer::operator -=(Integer& otherInteger)
 	{
 		val -= otherInteger.value();
 		return val;
 	};
 
+	/* companions to the operator overload for - below*/
 	int operator -=(const int other)
 	{
 		val -= other;
@@ -678,33 +696,37 @@ public:
 	}
 };
 
-/* Special Integer arithmetic addition*/
+/* Special Integer addition arithmetic */
 inline int operator+(Integer& lhs, const int rhs)
 {
 	return lhs.value() + rhs;
 }
 
+/* Special Integer addition arithmetic */
 inline int operator+(Integer& lhs, Integer& rhs)
 {
 	return lhs.value() + rhs.value();
 }
 
+/* Special Integer addition arithmetic */
 inline int operator+(const int lhs, Integer& rhs)
 {
 	return lhs + rhs.value();
 }
 
-/* Special Integer arithmetic subtraction*/
+/* Special Integer subtraction arithmetic*/
 inline int operator-(Integer& lhs, const int rhs)
 {
 	return lhs.value() - rhs;
 }
 
+/* Special Integer subtraction arithmetic*/
 inline int operator-(Integer& lhs, Integer& rhs)
 {
 	return lhs.value() - rhs.value();
 }
 
+/* Special Integer subtraction arithmetic*/
 inline int operator-(const int lhs, Integer& rhs)
 {
 	return lhs - rhs.value();
@@ -740,6 +762,8 @@ public:
 		VType::stringValue = "false";
 	};
 
+	/* Downcasting constructor. Creates a Boolean object using the stringvalue of the
+	VType input.*/
 	Boolean(VType* obj) : VType()
 	{
 		try
@@ -812,21 +836,33 @@ public:
 		return "BOOLEAN";
 	};
 
+	/* Compares this Boolean object to the bool
+	on the right hand side.  Returns true if one
+	value is true.*/
 	bool operator||(const bool other)
 	{
 		return (val || other);
 	};
 
+	/* Compares this Boolean object to the Boolean
+	on the right hand side.  Returns true if one
+	value is true.*/
 	bool operator||(Boolean& otherBoolean)
 	{
 		return (val || otherBoolean.value());
 	}
 
+	/* Compares this Boolean object to the bool
+	on the right hand side.  Returns true if both
+	values are true.*/
 	bool operator&&(const bool other)
 	{
 		return (val && other);
 	}
 
+	/* Compares this Boolean object to the Boolean
+	on the right hand side.  Returns true if both 
+	values are true.*/
 	bool operator&&(Boolean& otherBoolean)
 	{
 		return (val && otherBoolean.value());
@@ -862,11 +898,13 @@ public:
 	}
 };
 
+/* Compares a bool and Boolean value.  Returns true if both are true.*/
 inline bool operator&&(const bool lhs, Boolean& rhs)
 {
 	return (lhs && rhs.value());
 }
 
+/* Compares a bool and Boolean value.  Returns true if one is true.*/
 inline bool operator||(const bool lhs, Boolean& rhs)
 {
 	return (lhs || rhs.value());
@@ -965,6 +1003,8 @@ public:
 		VType::stringValue = ss.str();
 	}
 
+	/*  Downcasting constructor. Creates a Vector3 object using the stringvalue of the
+	VType input.*/
 	Vector3(VType* obj) : VType()
 	{
 		parseVector(obj->s_value());
@@ -1068,11 +1108,11 @@ variable public to users of VType.h.
 class Array : public VType
 {
 private:
-	string stowType;
-	int size; 
-	VType** stowArray;
+	string stowType; /* the type that describes all of the stowed objects*/
+	int size; /* the size of the internal array*/
+	VType** stowArray; /* the internal array of VTypes "stowed" inside this object*/
 
-	/* Breaks up a string of comma delimited items into an array of 
+	/* Breaks up a string of comma delimited items into an array of
 	VTypes.  Handles size determination*/
 	void parseAndStow(string parsable)
 	{
@@ -1117,20 +1157,20 @@ private:
 	}
 public:
 	/*Default constructor
-	initializes the Array to the default value of 1, default type String Type, 
+	initializes the Array to the default value of 1, default type String Type,
 	an empty array.*/
-	Array() : VType() 
-	{ 
+	Array() : VType()
+	{
 		VType::type = ARRAY_TYPE;
-		VType::stringValue = "";		
+		VType::stringValue = "";
 		size = 1;
 		stowArray = new VType*[1];
 		stowArray[0] = new String();
 		stowType = STRING_TYPE;
 	}
 
-	/* Downcasting constructor.  Assumes stow type is V_TYPE.If there 
-	are no commas in the string value of the VType, then this arraySize 
+	/* Downcasting constructor.  Assumes stow type is V_TYPE.If there
+	are no commas in the string value of the VType, then this arraySize
 	is equal to 1.*/
 	Array(VType* obj) : VType()
 	{
@@ -1143,7 +1183,7 @@ public:
 		}
 	}
 
-	/*Creates a new Array object based on the parsable string, comma 
+	/*Creates a new Array object based on the parsable string, comma
 	delimited.  Default stowed type is String Type.*/
 	Array(string _parsable) : VType()
 	{
@@ -1153,8 +1193,8 @@ public:
 		stowType = STRING_TYPE;
 	}
 
-	/*Creates a new Array type based on the number to stow, default String 
-	Type, initializing the array of nullptrs.  Objects must be inserted 
+	/*Creates a new Array type based on the number to stow, default String
+	Type, initializing the array of nullptrs.  Objects must be inserted
 	with add function call.  */
 	Array(int _size) : VType()
 	{
@@ -1179,7 +1219,7 @@ public:
 	{
 		VType::type = ARRAY_TYPE;
 		stringstream newStringValue;
-		size = _size;		
+		size = _size;
 		stowArray = new VType*[size]; // VType slots with no VType objects in them
 		for (int i = 0; i < size; i++)
 		{
@@ -1219,10 +1259,10 @@ public:
 		VType::stringValue = newStringValue.str();
 	};
 
-	/*Creates a new Array of VTypes based on making a deep copy of an 
-	existing array 	of VTypes, but can be moved around like a single VType 
-	object; if 	there is more than one VType extension, the stow type 
-	remains VType.  The _objArray parameter must be an array of a child of 
+	/*Creates a new Array of VTypes based on making a deep copy of an
+	existing array 	of VTypes, but can be moved around like a single VType
+	object; if 	there is more than one VType extension, the stow type
+	remains VType.  The _objArray parameter must be an array of a child of
 	VType.*/
 	Array(int _size, VType** _objArray) : VType()
 	{
@@ -1246,7 +1286,7 @@ public:
 						{
 							stowArray[i] = new String(_objArray[i]);
 						}
-						else if(_objArray[i]->isA(DOUBLE_TYPE))
+						else if (_objArray[i]->isA(DOUBLE_TYPE))
 						{
 							stowArray[i] = new Double(_objArray[i]);
 						}
@@ -1304,7 +1344,7 @@ public:
 		VType::stringValue = newStringValue.str();
 	};
 
-	/*Creates an Array from copying a std::vector of VType objects; if 
+	/*Creates an Array from copying a std::vector of VType objects; if
 	there is more than one VType extension, the stow type remains VType.*/
 	Array(vector<VType*> objs) : VType()
 	{
@@ -1330,7 +1370,7 @@ public:
 							(objs[i]->isA(_stowtype)) ?	 // or the types are the same
 							objs[i]->getType() :		 // set the new type
 							V_TYPE; // or, set to V_TYPE
-						
+
 						// if there are 5 objects, only place comma in stringValue up 
 						// to the 4th object
 						if (i < objs.size() - 1)
@@ -1376,13 +1416,13 @@ public:
 			size = 0;
 			stowType = "";
 		}
-		
+
 	}
 
-	/*Sets the value of the Array from a comma delimited string, based 
+	/*Sets the value of the Array from a comma delimited string, based
 	upon the declared type; default type is string.
 	If the array is not large enough to fit all elements stowed from this new
-	value, the values will be stored in a new sized array, and the old array 
+	value, the values will be stored in a new sized array, and the old array
 	destroyed.  */
 	void value(string newVal)
 	{
@@ -1395,9 +1435,9 @@ public:
 		return VType::stringValue;
 	};
 
-	/* Adds any VType to the Array.  Replaces the old internal array with a 
-	new array that will be dynamically allocated to contain the 
-	new amount and the old internal array will be deleted. If calls to add(VType) 
+	/* Adds any VType to the Array.  Replaces the old internal array with a
+	new array that will be dynamically allocated to contain the
+	new amount and the old internal array will be deleted. If calls to add(VType)
 	add a VType object with a different type than the Array stowed type, the
 	add operation will convert the Array stowed type to VType.  */
 	void add(VType* obj)
@@ -1411,12 +1451,12 @@ public:
 			newArray[i] = stowArray[i];
 			newArrayStringValue << stowArray[i]->s_value() << ",";
 		}
-		
+
 		// add the object to the newArray at this index
 		newArray[newSize - 1] = obj;
-		
+
 		size = newSize;
-		delete [] stowArray;
+		delete[] stowArray;
 		stowArray = new VType*[newSize];
 		// redirect the old array to the new array; objects are the same, so 
 		// no deletion is needed
@@ -1439,9 +1479,11 @@ public:
 	/* Returns the type of VType stowed inside*/
 	string getStowType()
 	{
-		return stowType; 
+		return stowType;
 	};
 
+	// setStowType NOT CURRENTLY IMPLEMENTED due to constrained use cases, but kept for 
+	// the purpose of thoroughness.
 	///* Sets the type of the stowed VTypes in the Array and returns true 
 	//if this was able to be accomplished; is good for converting numbers 
 	//and strings back and forth.  SetStowType conversions will not delete 
@@ -1458,7 +1500,7 @@ public:
 	//	return result;
 	//}
 
-	/* Returns the pointer to the object at this index in the array.  If the 
+	/* Returns the pointer to the object at this index in the array.  If the
 	index is out of bounds, or there is no object there, returns nullptr.*/
 	VType* at_VType(int index)
 	{
@@ -1478,14 +1520,14 @@ public:
 	index is out of bounds, or there is no object there, returns nullptr.*/
 	String* at_String(int index)
 	{
-		String* obj;		
+		String* obj;
 		if (index < 0)
 		{
 			stringstream ss;
 			ss << "Array cannot search index " << index << "; this does not exist";
 			throw std::invalid_argument(ss.str());
 		}
-		else if( index >= size || stowArray[index] == nullptr)
+		else if (index >= size || stowArray[index] == nullptr)
 		{
 			obj = nullptr;
 		}
@@ -1647,4 +1689,3 @@ public:
 		return this;     // return the object  
 	}
 };
-
