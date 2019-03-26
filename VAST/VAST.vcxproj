@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{EA385C50-5C66-4DB4-B094-B541E6BB03CF}</ProjectGuid>
     <RootNamespace>VAST</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -127,6 +127,7 @@
     <ClCompile Include="cpp\socket.cpp" />
     <ClCompile Include="cpp\storage.cpp" />
     <ClCompile Include="cpp\TraCIAPI.cpp" />
+    <ClCompile Include="cpp\TraciControlToSumo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventTree.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="h\storage.h" />
     <ClInclude Include="h\TraCIAPI.h" />
     <ClInclude Include="h\TraCIConstants.h" />
+    <ClInclude Include="h\TraciControlToSumo.h" />
     <ClInclude Include="h\TraCIDefs.h" />
     <ClInclude Include="h\VComponent.h" />
     <ClInclude Include="h\vector3.h" />
