@@ -23,9 +23,3 @@ private:
 	Obstacle **obstacles;
 	
 };
-
-class Client : public TraCIAPI {
-public:
-	Client() {};
-	~Client() {};
-};
