@@ -130,7 +130,6 @@
     <ClCompile Include="cpp\TraciControlToSumo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EventTree.h" />
     <ClInclude Include="h\AV.h" />
     <ClInclude Include="h\config.h" />
     <ClInclude Include="h\Environment.h" />
