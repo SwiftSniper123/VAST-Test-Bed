@@ -3,6 +3,10 @@
 #include "vector3.h"
 #include "VComponent.h"
 #include "..\h\TraCIAPI.h"
+#include <map>
+
+using std::map;
+using std::string;
 
 class Environment : public VComponent
 {
@@ -11,6 +15,7 @@ public:
 	~Environment();
 	void addObstacle();
 	//void updateAV(Command update);
+	void update(timestamp t, dataMap* dataMap) {};
 	void update();
 private:
 	vector3 dimensions;
@@ -19,8 +24,3 @@ private:
 	
 };
 
-class Client : public TraCIAPI {
-public:
-	Client() {};
-	~Client() {};
-};

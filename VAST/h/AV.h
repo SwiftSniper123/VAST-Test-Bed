@@ -3,6 +3,9 @@
 #include "VComponent.h"
 #include <map>
 
+using std::map;
+using std::string;
+
 /*class to represent the action of the AV*/
 class AVAction
 {
@@ -104,8 +107,8 @@ public:
 	void AddSensor(dataType _dataT, sensorType _sensorT, vector3 _dimensions, vector3 _position);
 
 	/*update the sensor readings*/
+	void update(timestamp t, dataMap* dataMap) {};
 	void update();
-
 	/*return the AV action using the AVAction class*/
 	AVAction ReturnAction();
 	//void PrintVehicleInfo();
