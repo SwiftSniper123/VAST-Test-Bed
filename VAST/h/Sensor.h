@@ -1,10 +1,6 @@
 #pragma once
-#include <map>
 #include "vector3.h"
 #include "VComponent.h"
-
-using std::map;
-using std::string;
 
 enum sensorType { lidar, radar, camera };
 enum dataType { Infrared, Image };
@@ -23,8 +19,7 @@ public:
 
 	/*pure virtual function that is defined by classes that inherit from sensor
 	used to process the data input to the sensor*/
-	void update(timestamp t, dataMap* dataMap) {};
-	void update() {};
+	virtual void update() {};
 
 	/*returns sensorT value*/
 	sensorType GetSensorType();

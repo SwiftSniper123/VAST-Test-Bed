@@ -65,6 +65,9 @@
     <ClInclude Include="h\Obstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EventTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="h\vector3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
