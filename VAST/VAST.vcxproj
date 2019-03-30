@@ -120,7 +120,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cpp\AV.cpp" />
-    <ClCompile Include="cpp\Environment.cpp" />
     <ClCompile Include="cpp\main.cpp" />
     <ClCompile Include="cpp\Obstacle.cpp" />
     <ClCompile Include="cpp\Sensor.cpp" />
@@ -131,7 +130,6 @@
   <ItemGroup>
     <ClInclude Include="h\AV.h" />
     <ClInclude Include="h\config.h" />
-    <ClInclude Include="h\Environment.h" />
     <ClInclude Include="h\Obstacle.h" />
     <ClInclude Include="h\ScenarioMetric.h" />
     <ClInclude Include="h\Sensor.h" />
@@ -141,9 +139,7 @@
     <ClInclude Include="h\TraCIConstants.h" />
     <ClInclude Include="h\TraCIDefs.h" />
     <ClInclude Include="h\VComponent.h" />
-    <ClInclude Include="h\vector3.h" />
     <ClInclude Include="h\VType.h" />
-    <ClInclude Include="h\VView.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

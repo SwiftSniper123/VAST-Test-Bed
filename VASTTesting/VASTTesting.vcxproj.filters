@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="test.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="test_VType.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="test_VASTLibrary.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Environment.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UnitTests">
+      <UniqueIdentifier>{7fe756f5-335d-4885-b0ba-a3a34df414ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectLibrary">
+      <UniqueIdentifier>{4abfa362-afce-4f6e-a43a-10d620d01062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectLibrary\h">
+      <UniqueIdentifier>{78cb2be2-f84b-4403-b944-95a394aae5d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectLibrary\cpp">
+      <UniqueIdentifier>{23d31caa-d49e-4b5e-a4de-edc544c03cf8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
