@@ -123,21 +123,12 @@
     <ClCompile Include="cpp\main.cpp" />
     <ClCompile Include="cpp\Obstacle.cpp" />
     <ClCompile Include="cpp\Sensor.cpp" />
-    <ClCompile Include="cpp\socket.cpp" />
-    <ClCompile Include="cpp\storage.cpp" />
-    <ClCompile Include="cpp\TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h\AV.h" />
-    <ClInclude Include="h\config.h" />
     <ClInclude Include="h\Obstacle.h" />
     <ClInclude Include="h\ScenarioMetric.h" />
     <ClInclude Include="h\Sensor.h" />
-    <ClInclude Include="h\socket.h" />
-    <ClInclude Include="h\storage.h" />
-    <ClInclude Include="h\TraCIAPI.h" />
-    <ClInclude Include="h\TraCIConstants.h" />
-    <ClInclude Include="h\TraCIDefs.h" />
     <ClInclude Include="h\VComponent.h" />
     <ClInclude Include="h\VType.h" />
   </ItemGroup>

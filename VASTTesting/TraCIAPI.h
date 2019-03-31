@@ -23,16 +23,15 @@
 // ===========================================================================
 // included modules
 // ===========================================================================
-#include "..\h\config.h"
-
+#include "config.h"
 #include <vector>
 #include <limits>
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include "..\h\socket.h"
-#include "..\h\TraCIConstants.h"
-#include "..\h\TraCIDefs.h"
+#include "socket.h"
+#include "TraCIConstants.h"
+#include "TraCIDefs.h"
 
 // ===========================================================================
 // global definitions

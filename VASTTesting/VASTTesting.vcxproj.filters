@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="test.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
@@ -14,10 +13,42 @@
     <ClCompile Include="Environment.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="socket.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="storage.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="TraCIAPI.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="test_Broker.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
     <ClInclude Include="Environment.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="socket.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="storage.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="TraCIAPI.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="TraCIConstants.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="TraCIDefs.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Broker.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>
@@ -36,6 +67,15 @@
     </Filter>
     <Filter Include="VASTScenarioObjectLibrary\cpp">
       <UniqueIdentifier>{23d31caa-d49e-4b5e-a4de-edc544c03cf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode">
+      <UniqueIdentifier>{3f3e6dbe-1918-49e0-9133-6a548a8f9ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode\h">
+      <UniqueIdentifier>{dbe9d1ba-bb26-4daf-acd3-18265a56eccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode\cpp">
+      <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@
 // included modules
 // ===========================================================================
 // we do not include config.h here, since we should be independent of a special sumo build
-#include "..\h\TraCIConstants.h"
+#include "TraCIConstants.h"
 #include <vector>
 #include <limits>
 #include <map>

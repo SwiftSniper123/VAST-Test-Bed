@@ -1,6 +1,6 @@
 #include <vector>
 #include <map>
-#include "pch.h"
+#include "gtest/gtest.h"
 #include "..\VAST\h\VType.h"
 #include <exception>
 #include "..\VAST\h\VComponent.h"

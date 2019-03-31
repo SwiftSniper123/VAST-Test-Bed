@@ -1,7 +1,7 @@
 #include "..\VAST\h\AV.h"
 #include <iostream>
 #include <vector>
-#include "pch.h"
+#include "gtest/gtest.h"
 #include "..\VAST\h\VComponent.h"
 
 using namespace std;
