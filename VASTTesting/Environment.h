@@ -1,6 +1,6 @@
 #pragma once
-#include "..\VAST\h\Obstacle.h"
-#include "..\VAST\h\VComponent.h"
+#include "Obstacle.h"
+#include "VComponent.h"
 
 class Environment : public VComponent
 {
@@ -11,7 +11,7 @@ public:
 	//void updateAV(Command update);
 	void update(timestamp t, dataMap* dataMap);
 private:
-	vector3 dimensions;
+	Vector3 dimensions;
 	int numObstacles;
 	Obstacle **obstacles;
 	

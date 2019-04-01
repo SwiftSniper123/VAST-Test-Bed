@@ -25,6 +25,15 @@
     <ClCompile Include="test_Broker.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
+    <ClCompile Include="AV.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Sensor.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h">
@@ -49,6 +58,27 @@
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
     <ClInclude Include="Broker.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="AV.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTree.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioMetric.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Sensor.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VComponent.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VType.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>

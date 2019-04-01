@@ -1,8 +1,8 @@
-#include "..\VAST\h\AV.h"
+#include "AV.h"
 #include <iostream>
 #include <vector>
 #include "gtest/gtest.h"
-#include "..\VAST\h\VComponent.h"
+#include "VComponent.h"
 
 using namespace std;
 

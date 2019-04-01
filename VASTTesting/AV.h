@@ -1,21 +1,17 @@
 #pragma once
 #include "Sensor.h"
 #include "VComponent.h"
-#include <map>
-
-using std::map;
-using std::string;
 
 /*class to represent the action of the AV*/
 class AVAction
 {
 public:
-	vector3 position;
-	vector3 orientation;
+	Vector3 position;
+	Vector3 orientation;
 };
 
 /*create template class to abstract data type
-handles integer, string, float, vector3, bool*/
+handles integer, string, float, Vector3, bool*/
 class AVDataTypes
 {
 public:
@@ -47,8 +43,8 @@ public:
 		f = _f;
 	}
 	
-	/*set value if vector3*/
-	void set(vector3 _v3)
+	/*set value if Vector3*/
+	void set(Vector3 _v3)
 	{
 		v3 = _v3;
 	}
@@ -68,8 +64,8 @@ public:
 	/*variable to store the value if it is a float*/
 	float f;
 
-	/*variable to store the value if it is a vector3*/
-	vector3 v3;
+	/*variable to store the value if it is a Vector3*/
+	Vector3 v3;
 
 	/*variable to store the value if it is a boolean*/
 	bool b;
@@ -92,10 +88,10 @@ public:
 	AV(std::map<std::string, AVDataTypes> AVmap, int maxSensors);
 
 	/*constructor for AV that accounts for AVs that can travel in the y-direction*/
-	//AV(std::string _vehicleType, float _maxVelocity, float _maxAltitude, vector3 _initialPosition, int numSensors);
+	//AV(std::string _vehicleType, float _maxVelocity, float _maxAltitude, Vector3 _initialPosition, int numSensors);
 
 	/*constructor for default AV*/
-	//AV(std::string _vehicleType, float _maxVelocity, vector3 _initialPosition, int numSensors);
+	//AV(std::string _vehicleType, float _maxVelocity, Vector3 _initialPosition, int numSensors);
 
 	/*destructor*/
 	~AV();
@@ -104,7 +100,7 @@ public:
 	void OverrideMap(std::map<std::string, AVDataTypes> AVmap);
 
 	/*add a sensor to the sensor array*/
-	void AddSensor(dataType _dataT, sensorType _sensorT, vector3 _dimensions, vector3 _position);
+	void AddSensor(dataType _dataT, sensorType _sensorT, Vector3 _dimensions, Vector3 _position);
 
 	/*update the sensor readings*/
 	void update(timestamp t, dataMap* dataMap) {};
@@ -126,8 +122,8 @@ private:
 	//float initialVelocity(maybe previousVelocity);
 	float maxAltitude;
 	float currentAltitude;
-	vector3 currentPosition;
-	vector3 initialPosition;*/
+	Vector3 currentPosition;
+	Vector3 initialPosition;*/
 
 	/*maximum sensors that can be associated with the AV*/
 	int _maxSensors;

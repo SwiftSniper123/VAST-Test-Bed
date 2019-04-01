@@ -14,38 +14,4 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="cpp\AV.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\main.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\Obstacle.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\Sensor.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="h\AV.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\ScenarioMetric.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\Sensor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\VComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\VType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h\Obstacle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>

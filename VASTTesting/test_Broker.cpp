@@ -82,9 +82,29 @@ public:
 /*BrokerCreation*/
 TEST(Test_Broker, BrokerCreation)
 {
+	// Create a Broker without a connection, check name is set.
 	TestSendBroker* tsb;
 	ASSERT_NO_THROW(tsb = new TestSendBroker());
-	ASSERT_TRUE(tsb->getBrokerName().compare("TestSend") == 0);
+	ASSERT_EQ(tsb->getBrokerName(),"TestSend");
+
+	// Create a server to connect to, and finish setting the Port ID on Broker
+	Socket* testSocketServer;
+	try
+	{
+		//int testPortID = Socket::getFreeSocketPort();
+		testSocketServer = new Socket(1337);
+		thread t1(testCallback, testSocketServer);
+		ASSERT_NO_THROW(tsb->setPortID(1337));
+		//tsb->connect());
+		t1.join();
+	}
+	catch (...)
+	{
+		ASSERT_TRUE(false);  // we didn't want this exception, so fail
+	}
+	
+	// cleanup
+	delete tsb, testSocketServer;
 }
 
 /*SocketSendandReceive - Tests that the Broker can send and receive

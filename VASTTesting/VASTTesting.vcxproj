@@ -33,17 +33,27 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClInclude Include="AV.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="EventTree.h" />
+    <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="ScenarioMetric.h" />
+    <ClInclude Include="Sensor.h" />
     <ClInclude Include="socket.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />
     <ClInclude Include="TraCIDefs.h" />
+    <ClInclude Include="VComponent.h" />
+    <ClInclude Include="VType.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AV.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="storage.cpp" />
     <ClCompile Include="test_Broker.cpp" />

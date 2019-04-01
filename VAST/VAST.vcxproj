@@ -118,20 +118,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="cpp\AV.cpp" />
-    <ClCompile Include="cpp\main.cpp" />
-    <ClCompile Include="cpp\Obstacle.cpp" />
-    <ClCompile Include="cpp\Sensor.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="h\AV.h" />
-    <ClInclude Include="h\Obstacle.h" />
-    <ClInclude Include="h\ScenarioMetric.h" />
-    <ClInclude Include="h\Sensor.h" />
-    <ClInclude Include="h\VComponent.h" />
-    <ClInclude Include="h\VType.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
