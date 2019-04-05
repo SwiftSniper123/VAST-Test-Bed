@@ -11,7 +11,7 @@
 	#include <sys/simulation/simulation_controller.h>
 #else
 
-	#include "..\h\socket.h"
+	#include "socket.h"
 
 #endif
 

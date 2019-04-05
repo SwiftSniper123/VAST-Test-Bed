@@ -1,14 +1,12 @@
 #include <vector>
-#include <map>
-#include "pch.h"
-#include "..\VAST\h\VType.h"
+#include "gtest/gtest.h"
+#include "VType.h"
 #include <exception>
-#include "..\VAST\h\VComponent.h"
+#include "VComponent.h"
 
 using std::cout;
 using std::vector;
 using std::exception;
-using std::map;
 
 TEST(Test_VType, DefaultTrueIsTrue)
 {

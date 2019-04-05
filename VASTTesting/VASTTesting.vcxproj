@@ -33,17 +33,34 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="AV.h" />
+    <ClInclude Include="Broker.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="EventTree.h" />
+    <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="ScenarioMetric.h" />
+    <ClInclude Include="Sensor.h" />
+    <ClInclude Include="socket.h" />
+    <ClInclude Include="storage.h" />
+    <ClInclude Include="TraCIAPI.h" />
+    <ClInclude Include="TraCIConstants.h" />
+    <ClInclude Include="TraCIDefs.h" />
+    <ClInclude Include="VComponent.h" />
+    <ClInclude Include="VType.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="AV.cpp" />
+    <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="Sensor.cpp" />
+    <ClCompile Include="socket.cpp" />
+    <ClCompile Include="storage.cpp" />
+    <ClCompile Include="test_Broker.cpp" />
+    <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
+    <ClCompile Include="TraCIAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VAST\VAST.vcxproj">
@@ -76,7 +93,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -89,6 +106,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -109,7 +127,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -122,6 +140,7 @@
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
