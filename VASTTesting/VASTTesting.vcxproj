@@ -61,6 +61,7 @@
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
     <ClCompile Include="TraCIAPI.cpp" />
+    <ClCompile Include="VASTmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VAST\VAST.vcxproj">
@@ -108,6 +109,10 @@
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -142,6 +147,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

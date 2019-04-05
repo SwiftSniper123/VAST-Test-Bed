@@ -34,6 +34,7 @@
     <ClCompile Include="Sensor.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="VASTmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h">
