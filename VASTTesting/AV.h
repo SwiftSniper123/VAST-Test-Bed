@@ -85,7 +85,7 @@ public:
 	AV();
 
 	/*constructor for the AV with a map containing variables and their data types*/
-	AV(std::map<std::string, AVDataTypes> AVmap, int maxSensors);
+	AV(std::map<std::string, VType> AVmap);
 
 	/*constructor for AV that accounts for AVs that can travel in the y-direction*/
 	//AV(std::string _vehicleType, float _maxVelocity, float _maxAltitude, Vector3 _initialPosition, int numSensors);
@@ -97,7 +97,7 @@ public:
 	~AV();
 
 	/*override current map*/
-	void OverrideMap(std::map<std::string, AVDataTypes> AVmap);
+	void OverrideMap(std::map<std::string, VType> AVmap);
 
 	/*add a sensor to the sensor array*/
 	void AddSensor(dataType _dataT, sensorType _sensorT, Vector3 _dimensions, Vector3 _position);
@@ -113,7 +113,7 @@ public:
 	virtual void DetermineAction() = 0;
 private:
 	/*AV map that stores all variable information*/
-	std::map<std::string, AVDataTypes> _AVmap;
+	std::map<std::string, VType> _AVmap;
 
 	/*
 	std::string vehicleType;
@@ -147,5 +147,5 @@ class GroundVehicle : public AV
 {
 public:
 	/*constructor for ground vehicle that utilizes the constructor for AV*/
-	GroundVehicle(std::map<std::string, AVDataTypes> AVmap, int maxSensors);
+	GroundVehicle(std::map<std::string, VType> AVmap);
 };

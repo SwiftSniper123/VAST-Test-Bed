@@ -1,18 +1,21 @@
 //Virtual Autonomous System Testbed
 //ODU Capstone 2018-2019
 
-#include "..\h\VComponent.h"
+#include "VComponent.h"
 #include <iostream>
 #include <map>
 #include<variant>
-#include "..\h\VType.h"
-#include "..\h\AV.h"
+#include "VType.h"
+#include "AV.h"
 #include <Windows.h>
+#include "ParseXML.h"
 
 
-int main(int argc, char **argv1)
+int main(int argc, WCHAR *argv[])
 {
-	
+	XMLParser *parser = new XMLParser(L"C:\\Users\\jaron\\Downloads\\test.xml");
+	parser->Parse();
+
 	return 0;
 }
 
@@ -26,3 +29,4 @@ void sumoConnection() {
 	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
 	client.close();
 } */
+

@@ -29,10 +29,9 @@ AV::AV()
 }
 
 /*constructor for the AV with a map containing variables and their data types*/
-AV::AV(std::map<std::string, AVDataTypes> AVmap, int maxSensors)
+AV::AV(std::map<std::string, VType> AVmap)
 {
 	_AVmap = AVmap;
-	_maxSensors = maxSensors;
 	numSensors = 0;
 }
 
@@ -42,7 +41,7 @@ AV::~AV()
 }
 
 /*override current map*/
-void AV::OverrideMap(std::map<std::string, AVDataTypes> AVmap)
+void AV::OverrideMap(std::map<std::string, VType> AVmap)
 {
 	_AVmap = AVmap;
 }
@@ -96,7 +95,7 @@ AVAction AV::ReturnAction()
 }*/
 
 /*constructor for ground vehicle that utilizes the constructor for AV*/
-GroundVehicle::GroundVehicle(std::map<std::string, AVDataTypes> AVmap, int maxSensors)
-	:AV(AVmap, maxSensors)
+GroundVehicle::GroundVehicle(std::map<std::string, VType> AVmap)
+	: AV(AVmap)
 {
 }
