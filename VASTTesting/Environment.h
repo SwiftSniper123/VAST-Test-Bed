@@ -4,16 +4,18 @@
 
 class Environment : public VComponent
 {
+	friend class EventTree;
 public:
 	Environment();
 	~Environment();
-	void addObstacle();
-	//void updateAV(Command update);
-	void update(timestamp t, dataMap* dataMap);
+	
+	void update(timestamp t, dataMap dataMap);
+
+	/*return the type of VComponent as AV*/
+	virtual VComponent::VCType getVCType();
 private:
 	Vector3 dimensions;
 	int numObstacles;
-	Obstacle **obstacles;
-	
+	dataMap _dataMap;
 };
 

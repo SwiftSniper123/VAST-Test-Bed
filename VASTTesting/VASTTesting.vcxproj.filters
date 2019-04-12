@@ -34,11 +34,14 @@
     <ClCompile Include="Sensor.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="test_EventTree.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTree.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Environment.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="socket.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
@@ -63,9 +66,6 @@
     <ClInclude Include="AV.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
-    <ClInclude Include="EventTree.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="Obstacle.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
@@ -79,6 +79,12 @@
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="VType.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>

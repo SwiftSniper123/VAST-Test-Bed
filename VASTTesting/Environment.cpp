@@ -13,15 +13,13 @@ Environment::~Environment()
 
 }
 
-void Environment::addObstacle()
+void Environment::update(timestamp t, dataMap dataMap)
 {
 
 }
 
-void Environment::update(timestamp t, dataMap* dataMap)
+VComponent::VCType Environment::getVCType()
 {
-
+	return Environment_Avatar;
 }
-
-
 
