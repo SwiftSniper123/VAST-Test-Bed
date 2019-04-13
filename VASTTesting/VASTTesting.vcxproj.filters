@@ -90,6 +90,9 @@
     <ClInclude Include="ParseXML.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+    <ClInclude Include="VAST.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

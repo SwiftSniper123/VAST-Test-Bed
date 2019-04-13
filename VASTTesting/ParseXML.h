@@ -13,6 +13,7 @@ public:
 	XMLParser(LPCWSTR configFile);
 	HRESULT WriteAttributes(IXmlReader* pReader);
 	int __cdecl Parse();
+	void ParseDoc();
 
 private:
 	LPCWSTR _file;
@@ -20,7 +21,16 @@ private:
 					IStream *pFileStream,
 					IXmlReader *pReader,
 					XmlNodeType nodeType,
-					const WCHAR* pwszLocalName);
+					const WCHAR* pwszPrefix,
+					const WCHAR* pwszLocalName,
+					const WCHAR* pwszValue,
+					UINT cwchPrefix);
+
+	struct xmlObj {
+		string element;
+		string attr;
+		xmlObj *subObj;
+	};
 };
 
 class Configuration
