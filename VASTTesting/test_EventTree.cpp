@@ -145,8 +145,8 @@ TEST(Test_EventTree, EventTreeStartAndStopClock)
 	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001);
 	EXPECT_FALSE(et->running());
 	EXPECT_EQ(et->getCurrentSimTime(), -1);
-	time_t startTime = time(0);
-	time_t timer;
+	/*time_t startTime = time(0);
+	time_t timer;*/
 
 	et->start();
 	EXPECT_TRUE(et->running());
@@ -155,15 +155,15 @@ TEST(Test_EventTree, EventTreeStartAndStopClock)
 	// now push the clock forward indirectly, it should stop
 	sleep_for(microseconds(1002)); // wait for just after relative time 0.001
 	//EXPECT_DOUBLE_EQ(0.001, et->getCurrentSimTime());
-	time(&timer);
-	double transpired = difftime(timer, startTime);
-	ASSERT_NEAR(0.001002, transpired, 0.000000001);
+	//time(&timer);
+	//double transpired = difftime(timer, startTime);
+	//ASSERT_NEAR(0.001002, transpired, 0.000000001);
 	EXPECT_FALSE(et->running());
 	// try again debugging
 	sleep_for(microseconds(1002)); // wait for just after relative time 0.001
-	time(&timer);
-	transpired = difftime(timer, startTime);
-	ASSERT_NEAR(0.002004, transpired, 0.000000001);
+	/*time(&timer);
+	transpired = difftime(timer, startTime);*/
+	//ASSERT_NEAR(0.002004, transpired, 0.000000001);
 	EXPECT_FALSE(et->running());
 
 	// no other events are recorded, they just drop
@@ -221,11 +221,14 @@ TEST(Test_EventTree, EventTreeAddEvent)
 		// clock has not started yet, so the current sim time is -1.0
 		EXPECT_EQ(et->getCurrentSimTime(), -1.0);
 
-		// once the components are registered, the EventTree can running, will return true if it can running
+		// once the components are registered, the EventTree will not start running, will return false
 		et->registerComponent(env);
+		EXPECT_FALSE(et->running());
+
+		et->start();
 		EXPECT_TRUE(et->running());
 
-		// tell the system to wait a bit, then check to see if the EventTree started
+		// tell the system to wait a bit, then check to see if the time clock updated
 		sleep_for(milliseconds(300)); // 300ms -> 0.3 s * 100 sims / 99 s = 0.3030303...sims
 		EXPECT_TRUE(et->running());
 		EXPECT_TRUE(et->getCurrentSimTime() > 0.30); // expected passage of time

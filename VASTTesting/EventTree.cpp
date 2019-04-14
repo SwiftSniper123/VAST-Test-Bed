@@ -22,6 +22,7 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
 	_endTime = endTime;
 	_simClock = -1;
 	_clockThread = nullptr;
+	_future = nullptr;
 }
 
 // -- unused at this time, but if extended would allow the user to send different units of time to the database
@@ -64,6 +65,7 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
 
 EventTree::~EventTree()
 {
+	unique_lock<mutex> lock(_clockLock);
 	if(_clockThread != nullptr)
 		_clockThread->join();
 	// destroy linked list of Events
@@ -72,18 +74,21 @@ EventTree::~EventTree()
 
 void EventTree::registerComponent(VComponent* vc)
 {
-	map<VComponent*, dataMap>::iterator it;
-
-	it = _componentInitialStateMap.find(vc);
-	if (it == _componentInitialStateMap.end())
+	if (!running())
 	{
-		_componentInitialStateMap.emplace(vc, vc->getDataMap());
-		_componentPresentStateMap.emplace(vc, vc->getDataMap());
+		map<VComponent*, dataMap>::iterator it;
+
+		it = _componentInitialStateMap.find(vc);
+		if (it == _componentInitialStateMap.end())
+		{
+			_componentInitialStateMap.emplace(vc, vc->getDataMap());
+			_componentPresentStateMap.emplace(vc, vc->getDataMap());
+		}
+
+		// TODO: add intialization of database tables here
+		//  get vc type "AV_Avatar" etc, insert entry to that table
+		//  create a table for this "AV" and insert initial values
 	}
-	
-	// TODO: add intialization of database tables here
-	//  get vc type "AV_Avatar" etc, insert entry to that table
-	//  create a table for this "AV" and insert initial values
 }
 
 int EventTree::getNumberOfVComp() const
@@ -94,56 +99,70 @@ int EventTree::getNumberOfVComp() const
 /* Starts the clock by advancing to relative time 0.  Records the wall clock start time.*/
 void EventTree::start()
 {
+	unique_lock<mutex> lock(_clockLock);
 	if (_simClock == -1)
 	{
 		// TODO: add run ID generator here		
 		_runID = setRunID();
 		_simClock = 0; // does not matter if data maps are all initialized before clock is advanced
-		
+		lock.unlock();
+
 		 _clockThread = new thread ([&](EventTree* et)
-		{
+		 {
 			et->advanceClock(		
 				std::ref(_timeSlice),
 				std::ref(_timeRatio),
-				std::ref(_endTime),
-				std::ref(_simClock),
-				std::ref(_future));
-		}, this);	
-		//_clockThread.detach();
+				std::ref(_endTime));
+		 }, this);	
+		
+		 // create a thread whose sole job is to wait for the time to stop
+		 thread stopThread([&](EventTree* et)
+		 {
+			 et->stop();
+		 }, this);
+
 	}
-	while (1)
+	else
 	{
-		if (!running())
-		{
-			stop();
-		}
+		lock.unlock();
 	}
+	
 }
 
 void EventTree::earlyStop()
 {
 	unique_lock<mutex> lock(_clockLock);
 	_endTime = _simClock;
+	stop();
 }
 
 void EventTree::stop()
 {
-	_clockThread->join();
-	_clockThread = nullptr;
-	// _runID will persist until another start is called
-	// _timeSlice, _timeRatio, _endTime, and _timeUnit persist from run to run
+	while (1)
+	{
+		if (!running())
+		{
 
-	// TODO: store the actual _simClock's last time somewhere
-	unique_lock<mutex> lock(_clockLock);
-	_simClock = -1;
-	lock.unlock();
+			_clockThread->join();
+			_clockThread = nullptr;
+			// _runID will persist until another start is called
+			// _timeSlice, _timeRatio, _endTime, and _timeUnit persist from run to run
 
-	// clear out Events and start with empty present Future
-	resetFutureListOfEvents();
+			// TODO: store the actual _simClock's last time somewhere
+			unique_lock<mutex> lock(_clockLock);
+			_simClock = -1;
+			lock.unlock();
 
-	// reset _componentPresentStateMap to _componentInitialStateMap
-	_componentPresentStateMap.clear();
-	_componentPresentStateMap = _componentInitialStateMap;
+			// clear out Events and start with empty present Future
+			resetFutureListOfEvents();
+
+			// reset _componentPresentStateMap to _componentInitialStateMap
+			lock.lock();
+			_componentPresentStateMap.clear();
+			_componentPresentStateMap = _componentInitialStateMap;
+			lock.unlock();
+		}
+	}
 }
 
 /* addEvent - Adds a data update to the EventTree; sorts where the event is relevant and checks to
@@ -159,6 +178,9 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 	// clock is 0 or greater, and less than endTime, i.e. within runtime; other events are ignored
 	if (running()) 
 	{
+		// lockdown the whole event, because we assume: we have not reached endTime, and the _simClock is not changing
+		unique_lock<mutex> lock(_clockLock);
+
 		// slow times should throw exception because we've already sent that data, 
 		// the event took place more than one timeslice ago, that component is running 
 		// too slow
@@ -167,7 +189,7 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 			throw OutOfTimeException(getCurrentSimTime(), _eventSource->getName(), _eventTime);
 		}
 		// otherwise if this event happens in the distant future
-		else if (_eventTime >= _endTime)  // too far right
+		else if (_eventTime >= getEndSimTime())  // too far right
 		{
 			throw OutOfTimeException(getCurrentSimTime(), _eventSource->getName(), _eventTime);
 		}
@@ -288,6 +310,7 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 				} // event has been stored
 			} // end of while loop "while (_eventTime >= targetTimeSlice)"
 		} // done with futures
+		lock.unlock();
 	} // end of condition check for running()	
 }
 
@@ -304,19 +327,21 @@ timestamp EventTree::getCurrentSimTime()
 }
 
 timestamp EventTree::getEndSimTime()
-{ return _endTime; }
+{ 
+	unique_lock<mutex> lock(_clockLock);
+	return _endTime; 
+}
 
 bool EventTree::running() 
 { 
 	bool result = false;
 	unique_lock<mutex> lock(_clockLock);
-	if (_simClock >= 0 && _simClock < _endTime) // _endTime = no longer running
+	if (_simClock >= 0 && /* Current time >= 0*/
+		_simClock < _endTime && /* Less than end time */
+		_endTime - _simClock > _timeSlice*_timeRatio/1000) /* Excluding small floating point differences and clock overshoot.*/
 	{
+		lock.unlock();
 		result = true;
-	}
-	if (_endTime - _simClock < 0.000000001) // very close or way over
-	{
-		result = false;
 	}
 	return result; 
 }
@@ -334,14 +359,18 @@ void EventTree::publishUpdates()
 	// send updates to database
 }
 
-void EventTree::advanceClock(double& __timeSlice, double& __timeRatio, double& __endTime, timestamp& __simClock, Future* _future)
+void EventTree::advanceClock(double& __timeSlice, double& __timeRatio, double& __endTime)
 {
-	double thisEndTime = __endTime; // the original endTime may change elsewhere
-	double thisSimClockTime = __simClock;
+	//unique_lock<mutex> lock(_clockLock);
+	//double thisEndTime = __endTime; // the original endTime may change elsewhere
+	//double thisSimClockTime = __simClock;
+	//lock.unlock();
 
 	// begin the march of the clock timeslice by timeslice
-	while (thisSimClockTime < thisEndTime)
+	unique_lock<mutex> lock(_clockLock);
+	while (_simClock < _endTime)
 	{
+		lock.unlock();
 		// wait for a time slice
 		sleep_for(microseconds(int(getTimeSlice()*getTimeRatio() * 1000000)));
 		
@@ -352,13 +381,13 @@ void EventTree::advanceClock(double& __timeSlice, double& __timeRatio, double& _
 
 /////////////// lock ///////////////////
 		// check to make sure the run isn't over early because of what we just published
-		unique_lock<mutex> lock(_clockLock);
-		if (__endTime != thisEndTime) // time to stop
+		lock.lock();
+		if (_endTime == _simClock) // time to stop
 			break;
 		
 		// advance the simClock time by a time slice
-		__simClock += getTimeSlice();  //***THIS IS THE ONLY PLACE THIS IS MODIFIED***
-		thisSimClockTime = __simClock;
+		_simClock += getTimeSlice();  //***THIS IS THE ONLY PLACE THIS IS MODIFIED***
+		//thisSimClockTime = _simClock;
 		
 		// advance the future list
 		if (_future != nullptr)
@@ -389,9 +418,14 @@ void EventTree::advanceClock(double& __timeSlice, double& __timeRatio, double& _
 				storedEvents = storedEvents->_next_;
 				delete deletable;
 			}
-		}	
+		}
+		else
+		{
+			lock.unlock();
+		}
+		lock.lock();
 	}
-	stop();
+	lock.unlock();
 }
 
 void EventTree::resetFutureListOfEvents()

@@ -56,8 +56,8 @@ private:
 	/* The current time in the simulated world.*/
 	double _simClock = -1;
 
-	/* Database time unit output.*/
-	char _timeUnit = 's';
+	///* Database time unit output.*/
+	//char _timeUnit = 's';
 
 	/* The map of "past" values*/
 	map<VComponent*, dataMap> _componentInitialStateMap;
@@ -110,7 +110,7 @@ private:
 	void publishUpdates();
 
 	/* Once the simClock moves into the next timeSlice, the old timeSlice's events will be discarded.*/
-	void advanceClock(double& __timeSlice, double& __timeRatio, double& __endTime, timestamp& __simClock, Future* _future);
+	void advanceClock(double& __timeSlice, double& __timeRatio, double& __endTime);
 
 public:
 	/* Creates an EventTree, sets the simClock to -1.
