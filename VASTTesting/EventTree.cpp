@@ -162,6 +162,7 @@ void EventTree::stop()
 			_componentPresentStateMap = _componentInitialStateMap;
 			lock.unlock();
 		}
+		
 	}
 }
 
@@ -334,13 +335,13 @@ timestamp EventTree::getEndSimTime()
 
 bool EventTree::running() 
 { 
-	bool result = false;
 	unique_lock<mutex> lock(_clockLock);
+	bool result = false;
 	if (_simClock >= 0 && /* Current time >= 0*/
 		_simClock < _endTime && /* Less than end time */
 		_endTime - _simClock > _timeSlice*_timeRatio/1000) /* Excluding small floating point differences and clock overshoot.*/
 	{
-		lock.unlock();
+		//lock.unlock();
 		result = true;
 	}
 	return result; 

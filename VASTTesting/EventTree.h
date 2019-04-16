@@ -9,6 +9,7 @@
 using namespace std::this_thread;     // sleep_for, sleep_until
 using std::chrono::milliseconds;
 using std::chrono::microseconds;
+using std::chrono::nanoseconds;
 using std::thread;
 using std::mutex;
 using std::unique_lock;
