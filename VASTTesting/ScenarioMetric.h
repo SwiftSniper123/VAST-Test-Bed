@@ -1,6 +1,6 @@
 #pragma once
-#include "..\h\VComponent.h"
-#include "..\h\VType.h"
+#include "VComponent.h"
+#include "VType.h"
 
 /*base class for all metrics in VAST*/
 class ScenarioMetric : public VComponent
