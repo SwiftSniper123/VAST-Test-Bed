@@ -12,7 +12,7 @@
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 // PARTICULAR PURPOSE.
 //-----------------------------------------------------------------------
-
+#include "boost/property_tree/"
 #include "ParseXML.h"
 
 #pragma warning(disable : 4127)  // conditional expression is constant
@@ -20,6 +20,37 @@
 #define HR(stmt)                do { hr = (stmt); goto CleanUp; } while(0)
 #define SAFE_RELEASE(I)         do { if (I){ I->Release(); } I = NULL; } while(0)
 
+typedef long long long64;
+
+/**Don´t forget to use delete[]*/
+std::wstring s2ws(const std::string& s)
+{
+	int len;
+	int slength = (int)s.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
+}
+
+
+
+string convLPCWSTRtoString(LPCWSTR wString)
+{
+		std::wstring tempWstring(wString);
+		string tempString(tempWstring.begin(), tempWstring.end());
+		return tempString;
+}
+
+
+Configuration::Configuration() {};
+
+/*Configuration Configuration::LoadConfig(string filelocation)
+{
+
+};*/
 
 XMLParser::XMLParser(LPCWSTR configFile)
 {
@@ -62,6 +93,21 @@ HRESULT XMLParser::WriteAttributes(IXmlReader* pReader)
                     wprintf(L"Error getting value, error is %08.8lx", hr);
                     return hr;
                 }
+				if(wcscmp(pwszLocalName,L"module")==0)
+				{ 
+					if (wcscmp(pwszValue, L"VAST"))
+					{
+						ParseModule();
+					}
+					else if (wcscmp(pwszValue, L"Environment"))
+					{
+
+					}
+					else if (wcscmp(pwszValue, L"AV"))
+					{
+
+					}
+				}
                 if (cwchPrefix > 0)
                     wprintf(L"Attr: %s:%s=\"%s\" \n", pwszPrefix, pwszLocalName, pwszValue);
                 else
@@ -122,14 +168,17 @@ int __cdecl XMLParser::Parse()
     {
         switch (nodeType)
         {
+		// NodeType = Attribute declaration
         case XmlNodeType_XmlDeclaration:
             wprintf(L"XmlDeclaration\n");
+			// Call function to enumerate the attribute
             if (FAILED(hr = WriteAttributes(pReader)))
             {
                 wprintf(L"Error writing attributes, error is %08.8lx", hr);
                 HR(hr);
             }
             break;
+		// Nodetype = Element beginning
         case XmlNodeType_Element:
             if (FAILED(hr = pReader->GetPrefix(&pwszPrefix, &cwchPrefix)))
             {
@@ -141,8 +190,10 @@ int __cdecl XMLParser::Parse()
                 wprintf(L"Error getting local name, error is %08.8lx", hr);
                 HR(hr);
             }
-			if (pwszLocalName == L"module")
+			// Check if the element is the beginning of a module
+			if (wcscmp(pwszLocalName, L"module") == 0)
 			{
+				printf("test\n");
 				//ParseModule(hr, pFileStream, pReader, nodeType, pwszPrefix, pwszLocalName, pwszValue, cwchPrefix);
 			}
             if (cwchPrefix > 0)

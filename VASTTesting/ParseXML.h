@@ -26,20 +26,71 @@ private:
 					const WCHAR* pwszValue,
 					UINT cwchPrefix);
 
-	struct xmlObj {
-		string element;
-		string attr;
-		xmlObj *subObj;
+	struct AV_Config {
+		string _av_name;
+		int _av_movement_port;
+		string _exe_location;
+		Vector3 _AV_location;
+		Vector3 _AV_orientation;
+		Vector3 _AV_bounds;
+		string _metrics;
 	};
+
+	struct Environment_Config {
+		int _env_obstacle_port;
+		string _exe_location;
+		Vector3 _env_bounds;
+	};
+
+	struct VAST_Config {
+		string _output_file_location;
+		bool _viz_option;
+		int _time_ratio;
+		float _time_step;
+		int _num_replications;
+		string seeds;
+		float _max_run_time;
+		string _metrics;
+		AV_Config **_AVs;
+		Environment_Config *_env_config;
+	};
+
 };
 
 class Configuration
 {
 public:
 	Configuration();
+	//Configuration LoadConfig(string fileLocation);
 
 private:
-	AV **_AV;
-	Environment *_Env;
+	struct AV_Config {
+		string _av_name;
+		int _av_movement_port;
+		string _exe_location;
+		Vector3 _AV_location;
+		Vector3 _AV_orientation;
+		Vector3 _AV_bounds;
+		string _metrics;
+	};
+
+	struct Environment_Config {
+		int _env_obstacle_port;
+		string _exe_location;
+		Vector3 _env_bounds;
+	};
+
+	struct VAST_Config {
+		string _output_file_location;
+		bool _viz_option;
+		int _time_ratio;
+		float _time_step;
+		int _num_replications;
+		string seeds;
+		float _max_run_time;
+		string _metrics;
+		AV_Config **_AVs;
+		Environment_Config *_env_config;
+	};
 	
 };

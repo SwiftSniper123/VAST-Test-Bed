@@ -13,7 +13,7 @@
 
 int main(int argc, WCHAR *argv[])
 {
-	XMLParser *parser = new XMLParser(L"C:\\Users\\jaron\\Downloads\\test.xml");
+	XMLParser *parser = new XMLParser(L"C:/Users/jaron/Downloads/test.xml");
 	parser->Parse();
 
 	return 0;
