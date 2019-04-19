@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="test.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="test_VType.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="test_VASTLibrary.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="socket.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="storage.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="TraCIAPI.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="test_Broker.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="AV.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Sensor.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="test_ScenarioMetrics.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Environment.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="socket.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="storage.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="TraCIAPI.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="TraCIConstants.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="TraCIDefs.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Broker.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="AV.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTree.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioMetric.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Sensor.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VComponent.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VType.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UnitTests">
+      <UniqueIdentifier>{7fe756f5-335d-4885-b0ba-a3a34df414ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectLibrary">
+      <UniqueIdentifier>{4abfa362-afce-4f6e-a43a-10d620d01062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectLibrary\h">
+      <UniqueIdentifier>{78cb2be2-f84b-4403-b944-95a394aae5d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectLibrary\cpp">
+      <UniqueIdentifier>{23d31caa-d49e-4b5e-a4de-edc544c03cf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode">
+      <UniqueIdentifier>{3f3e6dbe-1918-49e0-9133-6a548a8f9ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode\h">
+      <UniqueIdentifier>{dbe9d1ba-bb26-4daf-acd3-18265a56eccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode\cpp">
+      <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
