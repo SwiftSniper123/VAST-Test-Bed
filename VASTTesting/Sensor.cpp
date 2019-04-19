@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Sensor.h"
 
 /*default constructor*/
@@ -6,61 +5,35 @@ Sensor::Sensor()
 {
 }
 
-/*constructor that sets the values of dataT, sensorT, dimensions, and position*/
-Sensor::Sensor(dataType _dataType, sensorType _sensorType, Vector3 _dimensions, Vector3 _position)
+Sensor::Sensor(string name, dataMap sensorData)
 {
-	dataT = _dataType;
-	sensorT = _sensorType;
-	dimensions = _dimensions;
-	position = _position;
+	_name = name;
+	_dataMap = sensorData;
 }
 
 /*destructor*/
 Sensor::~Sensor()
 {
-}
-
-/*returns sensorT value*/
-sensorType Sensor::GetSensorType()
-{
-	return sensorT;
-}
-
-/*returns dataT value*/
-dataType Sensor::GetDataType()
-{
-	return dataT;
-}
-
-/*constructor for LiDAR Sensor that utilizes sensor's constructor to store values*/
-LiDAR::LiDAR(dataType _dataType, sensorType _sensorType, Vector3 _dimensions, Vector3 _position) 
-	: Sensor(_dataType, _sensorType, _dimensions, _position)
-{
+	_dataMap.clear();
 }
 
 /*function to process the input to the LiDAR sensor*/
-void LiDAR::update()
+void Sensor::update(timestamp t, dataMap dataMap)
 {
-	//need to define
-	std::cout << "updated sensor reading of " << GetSensorType() << std::endl;
+	
 }
 
-/*RADAR::RADAR(dataType _dataType, sensorType _sensorType, Vector3 _dimensions, Vector3 _position) : Sensor(_dataType, _sensorType, _dimensions, _position)
+VComponent::VCType Sensor::getVCType()
 {
+	return Sensor_Avatar;
 }
 
-void RADAR::ProcessInput(dataType pInput)
+string Sensor::getName()
 {
-	//need to define
-	std::cout << "updated sensor reading of " << GetSensorType() << std::endl;
+	return _name + "Sensor";
 }
 
-Camera::Camera(dataType _dataType, sensorType _sensorType, Vector3 _dimensions, Vector3 _position) : Sensor(_dataType, _sensorType, _dimensions, _position)
+dataMap Sensor::getDataMap()
 {
+	return _dataMap;
 }
-
-void Camera::ProcessInput(dataType pInput)
-{
-	//need to define
-	std::cout << "updated sensor reading of " << GetSensorType() << std::endl;
-}*/
