@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{77e823ff-2b48-45c7-802e-38bea8ff22a4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -45,6 +45,7 @@
     <ClInclude Include="storage.h" />
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />
+    <ClInclude Include="TraciControlToSumo.h" />
     <ClInclude Include="TraCIDefs.h" />
     <ClInclude Include="VComponent.h" />
     <ClInclude Include="VType.h" />
@@ -57,10 +58,12 @@
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="storage.cpp" />
     <ClCompile Include="test_Broker.cpp" />
+    <ClCompile Include="test_TraciControlToSumo.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
     <ClCompile Include="TraCIAPI.cpp" />
+    <ClCompile Include="TraciControlToSumo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VAST\VAST.vcxproj">

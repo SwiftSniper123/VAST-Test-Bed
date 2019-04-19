@@ -2,6 +2,9 @@
 #include "socket.h"
 #include "Broker.h"
 #include <thread>
+#include <vector>
+#include <Windows.h>
+
 
 using std::string;
 using tcpip::Socket;
@@ -21,9 +24,8 @@ TEST(DefaultTest, testBrokerTrue)
 }
 
 /*SocketConnection - Tests that the socket listener cannot connect if no port is established, but connects to an existing port.
-Procedure:
-Pass:
-Fail:
+Pass: A socket exception is thrown when testSocketListener trys to connect
+Fail: Any other exception occurs, such as when the socket is created
 */
 TEST(Test_Broker, SocketConnection)
 {
@@ -45,6 +47,8 @@ TEST(Test_Broker, SocketConnection)
 		ASSERT_TRUE(false); // we didn't want this exception, so fail
 		delete testSocketListener;
 	}
+
+	testSocketListener->close();
 	delete testSocketListener;
 	//----build a server------------------//
 	// now time to create a server for the listener to connect to 
@@ -63,6 +67,8 @@ TEST(Test_Broker, SocketConnection)
 		ASSERT_TRUE(false);  // we didn't want this exception, so fail
 	}
 
+	testSocketListener->close();
+	testSocketServer->close();
 	delete testSocketListener;
 	delete testSocketServer;
 }
@@ -79,7 +85,10 @@ public:
 	};
 };
 
-/*BrokerCreation*/
+/*BrokerCreation - Tests 
+Pass: A socket exception is thrown when testSocketListener trys to connect
+Fail: Any other exception occurs, such as when the socket is created
+*/
 TEST(Test_Broker, BrokerCreation)
 {
 	// Create a Broker without a connection, check name is set.
@@ -104,12 +113,62 @@ TEST(Test_Broker, BrokerCreation)
 	}
 	
 	// cleanup
+	testSocketServer->close();
 	delete tsb, testSocketServer;
 }
 
-/*SocketSendandReceive - Tests that the Broker can send and receive
+/*SocketSendandReceive - Creates a client and server socket, connects them, sends a message from the client to the server, and checks if the sent and received messages are the same.
+Pass: The sent and received messages are the same
+Fail: The sent and received messages aren't the same
 */
 TEST(Test_Broker, SocketSendandReceive)
 {
+	tcpip::Socket* client = new Socket("localhost", 1338);
+	tcpip::Socket* server = new Socket(1338);
 
+	std::thread t1(testCallback, server);
+	client->connect();
+	t1.join();
+
+	std::vector<unsigned char> testMessage = { 1, 2 };
+	client->send(testMessage);
+	std::vector<unsigned char> testMessageReceived = server->receive();
+
+	ASSERT_TRUE(testMessageReceived == testMessage);
+
+	client->close();
+	server->close();
+
+	delete client;
+	delete server;
+}
+
+/* SocketSendandReceiveString - Creates a client and server socket, connects them, sends a string message from the client to the server, and checks if the sent and received messages are the same.
+Pass: The received message is equal to "Test", the sent message.
+Fail: The received message does not equal "Test"
+*/
+TEST(Test_Broker, SocketSendandReceiveString)
+{
+	tcpip::Socket* client = new Socket("localhost", 1338);
+	tcpip::Socket* server = new Socket(1338);
+
+	std::thread t1(testCallback, server);
+	client->connect();
+	t1.join();
+
+	tcpip::Storage* testMessage = new tcpip::Storage();
+	testMessage->writeString("Test");
+	client->sendExact(*testMessage);
+
+	tcpip::Storage* receiveMessage = new tcpip::Storage();
+	server->receiveExact(*receiveMessage);
+
+
+	ASSERT_TRUE(receiveMessage->readString() == "Test");
+
+	client->close();
+	server->close();
+
+	delete client;
+	delete server;
 }

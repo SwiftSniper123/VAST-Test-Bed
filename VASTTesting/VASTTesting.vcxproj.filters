@@ -34,6 +34,12 @@
     <ClCompile Include="Sensor.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="test_TraciControlToSumo.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="TraciControlToSumo.cpp">
+      <Filter>VASTScenarioObjectImpl\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h">
@@ -81,6 +87,9 @@
     <ClInclude Include="VType.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+    <ClInclude Include="TraciControlToSumo.h">
+      <Filter>VASTScenarioObjectImpl\h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -106,6 +115,15 @@
     </Filter>
     <Filter Include="OpenSourceCode\cpp">
       <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectImpl">
+      <UniqueIdentifier>{9ca48ebb-6ac9-43f3-abe3-02675d34018b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectImpl\h">
+      <UniqueIdentifier>{db26b53f-687a-4ea4-b9b8-de382519418c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VASTScenarioObjectImpl\cpp">
+      <UniqueIdentifier>{991fe523-f5b5-447c-93ea-38b8dfa0780d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

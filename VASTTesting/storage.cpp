@@ -428,6 +428,14 @@ namespace tcpip
 		return dump.str();
 	}
 
+	void Storage::printStore()
+	{
+		for (int i = 0; i = store.size() - 1; i++)
+		{
+			std::cout << store[i] << std::endl;
+		}
+	}
+
 }
 
 #endif // BUILD_TCPIP

@@ -117,6 +117,8 @@ public:
 	StorageType::const_iterator begin() const { return store.begin(); }
 	StorageType::const_iterator end() const { return store.end(); }
 
+	void printStore();
+
 };
 
 } // namespace tcpip
