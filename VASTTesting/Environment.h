@@ -15,7 +15,7 @@ public:
 	/* Base Environment Destructor, clears data map*/
 	~Environment();
 	
-	/* Pure Virtual Function from VComponent.  Called by a component
+	/* Inherited Function from VComponent.  Called by a component
 	external to the Obstacle in order to update data important to the Obstacle.
 	time		timestamp for the update
 	updateMap	data that changed for this update*/

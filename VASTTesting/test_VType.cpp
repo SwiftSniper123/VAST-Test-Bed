@@ -585,12 +585,7 @@ public:
 
 	void update(timestamp t, dataMap _updateMap)
 	{
-		// change only the x,y,z
-		//Double* updateX = _updateMap->at("name")->s_value().compare(_originalDataMap.at("name")->s_value()) == 0) ? /* do nothing */ : new Double(_upateMap.at("name")->s_value());
-		//_originalDataMap.emplace("x", new Double(updateX));
-		//Double* updateY = new Double(_originalDataMap.at("y"));
-		//_originalDataMap.emplace("y", new Double(updateY));
-
+		// iterate through the map and update values based upon type
 		for (auto mapIterator = _updateMap.begin(); mapIterator != _updateMap.end(); ++mapIterator)
 		{
 			if (mapIterator->second->isA(STRING_TYPE))

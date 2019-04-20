@@ -16,7 +16,7 @@ public:
 	class.*/
 	virtual VType calculate() {};
 
-	/* The virtual update function*/
+	/* The inherited update function*/
 	virtual void update(timestamp t, dataMap dataMap) = 0;
 
 	/* Overridden from VComponent.  Returns ID name.*/
