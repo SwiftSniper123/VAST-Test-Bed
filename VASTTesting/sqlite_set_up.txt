@@ -1,0 +1,34 @@
+//Step-1
+//Download SQLITE DLL and def from the link http ://www.sqlite.org/2013/sqlite-shell-win32-x86-3080200.zip
+//
+//Step - 2
+//
+//Create SQLITE import library from the downloaded sqlite3.def file.Visual Studio has a tool for it.
+//
+//In visual studio 2010, go to Visualstudio 2010->Visual Studio Tools->Visual Studio Command prompt
+//in the command window, enter the folllowing command for eg: lib /def:sqlite3.def /out:sqlite3.lib
+
+//Step - 3
+//To include sqlite.h in the Vs project download source code for sqlite3 from http ://www.sqlite.org/2013/sqlite-amalgamation-3080200.zip.
+//Extract the zip file and copy sqlite3.h to a directory say for eg : c : \sqlite3.
+//also copy generated sqlite3.lib(in step - 2) and sqlite3.dll to the same directory.
+//
+//Step - 4
+//Now In the visul studio create new project.
+//
+//Step - 5
+//Set additional include directory to sqlite.h file directory.
+//for this, in the Vs solution explorer take project properties and go to.
+//Configuration Properties¨C > C++¨C > General¨C > set additional directories
+//set it as the directory in which sqlite3.h copied for eg: c:\sqlite3
+//
+//Step - 6
+//Now set sqlite.lib as linker input. for this, in the Vs solution explorer take project properties and go to.
+//Configuration Properties¨C > Linker¨C > Input and add sqlite3.lib to it.
+//
+//Step - 7
+//Set sqlite3.lib library directory as additional library
+//for this in the Vs solution explorer take project properties and go to.
+//Configuration Properties¨C > Linker¨C > General¨C > Additional Library Directories
+//set it, for eg:c:\sqlit3
+//reference from https://cppcodetips.wordpress.com/tag/including-sqlite-with-visual-studio/

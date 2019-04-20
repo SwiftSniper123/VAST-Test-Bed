@@ -40,6 +40,12 @@
     <ClCompile Include="EventTree.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="test_Database.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
@@ -87,9 +93,15 @@
     <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+    <ClInclude Include="DatabaseEventTree.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="sqlite3.dll">
+      <Filter>OpenSourceCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="UnitTests">
@@ -113,5 +125,10 @@
     <Filter Include="OpenSourceCode\cpp">
       <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="sqlite_set_up.txt">
+      <Filter>OpenSourceCode</Filter>
+    </Text>
   </ItemGroup>
 </Project>
