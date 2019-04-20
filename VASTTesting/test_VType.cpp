@@ -583,7 +583,7 @@ public:
 		_originalDataMap->clear();
 	}
 
-	void update(timestamp t, dataMap* _updateMap)
+	void update(timestamp t, dataMap _updateMap)
 	{
 		// change only the x,y,z
 		//Double* updateX = _updateMap->at("name")->s_value().compare(_originalDataMap.at("name")->s_value()) == 0) ? /* do nothing */ : new Double(_upateMap.at("name")->s_value());
@@ -591,7 +591,7 @@ public:
 		//Double* updateY = new Double(_originalDataMap.at("y"));
 		//_originalDataMap.emplace("y", new Double(updateY));
 
-		for (auto mapIterator = _updateMap->begin(); mapIterator != _updateMap->end(); ++mapIterator)
+		for (auto mapIterator = _updateMap.begin(); mapIterator != _updateMap.end(); ++mapIterator)
 		{
 			if (mapIterator->second->isA(STRING_TYPE))
 				_originalDataMap->at(mapIterator->first) = new String(mapIterator->second);
@@ -601,6 +601,8 @@ public:
 				_originalDataMap->at(mapIterator->first) = new Boolean(mapIterator->second);
 		}
 	};
+
+	VComponent::VCType VComponent::getVCType() { return Test_Avatar; };
 
 	/* Returns the string name of the internal map.*/
 	string getName()
@@ -637,12 +639,12 @@ TEST(Test_VType, Mock_Up_Test)
 
 	// External component listener receives new data, updates Avatar's data map from inside
 	// initial map values
-	dataMap* updateMap = new map<string, VType*>;
-	updateMap->emplace("name", new String("MockChanged"));
-	updateMap->emplace("x", new Double(1.0));
-	updateMap->emplace("y", new Double(1.0));
-	updateMap->emplace("z", new Double(1.0));
-	updateMap->emplace("fact", new Boolean(false));
+	dataMap updateMap;
+	updateMap.emplace("name", new String("MockChanged"));
+	updateMap.emplace("x", new Double(1.0));
+	updateMap.emplace("y", new Double(1.0));
+	updateMap.emplace("z", new Double(1.0));
+	updateMap.emplace("fact", new Boolean(false));
 
 	// Avatar adds an event with this new data to EventTree
 
@@ -653,6 +655,6 @@ TEST(Test_VType, Mock_Up_Test)
 	ASSERT_EQ(mock_Environment->getX(), 1.0);
 	
 	// cleanup
-	updateMap->clear();
+	updateMap.clear();
 	delete mock_AV, mock_Environment, mock_Obstacle, mock_Sensor;
 }

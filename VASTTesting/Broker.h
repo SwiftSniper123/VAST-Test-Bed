@@ -6,12 +6,13 @@ using std::string;
 class Broker 
 {
 private:
-	/* */
+	/* The TCP port object. */
 	tcpip::Socket* _socket;
 	
 	/* Identification name for Exceptions and outputs.*/
 	string _brokerName;
 
+	/* The ID number for the TCP port object.*/
 	int _portID;
 
 public:

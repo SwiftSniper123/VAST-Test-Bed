@@ -1,24 +1,38 @@
 #include "Obstacle.h"
 
 
-Obstacle::Obstacle(Vector3 _position, Vector3 _orientation, Vector3 _dimensions)
+Obstacle::Obstacle()
 {
 
+}
+
+Obstacle::Obstacle(string name, dataMap obstacleData)
+{
+	_name = name;
+	_dataMap = obstacleData;
 }
 
 Obstacle::~Obstacle()
 {
-
+	_dataMap.clear();
 }
 
-void Obstacle::updateObstacle(Vector3 _position, Vector3 _orientation, Vector3 _dimensions)
+void Obstacle::update(timestamp time, dataMap updateMap)
 {
 
 }
 
-void Obstacle::update()
+VComponent::VCType Obstacle::getVCType()
 {
-
+	return Obstacle_Avatar;
 }
 
-//Exten
+string Obstacle::getName()
+{
+	return _name + "Obstacle";
+}
+
+dataMap Obstacle::getDataMap()
+{
+	return _dataMap;
+}
