@@ -3,9 +3,7 @@ Author: emf
 */
 #ifndef EventTree_h
 #define EventTree_h
-#include "h/VComponent.h"
-#include <map>
-#include "h/VType.h"
+#include "VComponent.h"
 
 using std::string;
 using std::map;
@@ -17,15 +15,15 @@ class EventTree
 private:
 	void advanceClock()
 	{};
-	void updateDatabase(time time, data data) {};
+	//void updateDatabase(time time, data data) {};
 
-	eventCleanup();
+	//eventCleanup();
 public:
 	/* Function called by external components to provide Event changes to the EventTree.  
 	source	- the VAST component sending the event
 	time	- the time the event is posted
 	dataMap	- the set of data effected in the event*/
-	void addEvent(VComponent* source, time time, map<string, VType> dataMap)
+	/*void addEvent(VComponent* source, time time, map<string, VType> dataMap)
 	{
 	};
 
@@ -39,7 +37,7 @@ public:
 
 	};
 	
-
+	*/
 };
 
 #endif

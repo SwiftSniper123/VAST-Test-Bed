@@ -1,6 +1,4 @@
-#include "../VAST/EventTree.h"
-#include "../VAST/h/VType.h"
-#include "../VAST/h/sqlite3.h"
+#include "DatabaseEventTree.h"
 #include <typeinfo>
 
 String stri;

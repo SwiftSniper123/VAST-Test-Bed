@@ -3,10 +3,8 @@ Author: emf
 */
 #ifndef EventTree_h
 #define EventTree_h
-#include "h/VComponent.h"
-#include <map>
-#include "h/VType.h"
-#include "../VAST/h/sqlite3.h"
+#include "VComponent.h"
+#include "sqlite3.h"
 
 using std::string;
 using std::map;
@@ -20,8 +18,6 @@ private:
 	{};
 	
 	
-
-	eventCleanup();
 
 	/*database callback function*/
 	static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
@@ -58,7 +54,7 @@ public:
 	/*show the data in the database*/
 	void showdata(dataMap *tablemap);
 
-	void updateDatabase(time time, data data) {};
+	void updateDatabase(time time, dataMap data) {};
 
 	/*database parameter*/
 	sqlite3 *db;

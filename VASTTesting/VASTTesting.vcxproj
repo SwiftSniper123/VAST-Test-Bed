@@ -43,6 +43,7 @@
     <ClInclude Include="ScenarioMetric.h" />
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="socket.h" />
+    <ClInclude Include="sqlite3.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />

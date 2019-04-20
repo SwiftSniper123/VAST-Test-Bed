@@ -96,6 +96,9 @@
     <ClInclude Include="DatabaseEventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+    <ClInclude Include="sqlite3.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
