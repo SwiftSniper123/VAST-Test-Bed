@@ -63,21 +63,106 @@ void XMLParser::Parse()
 
 		if (node.first == "module")
 		{
+			_currentModule = subtree.get<std::string>("<xmlattr>.module");
+			std::cout << "module: " << subtree.get<std::string>("<xmlattr>.module") << "\n";
+
 			BOOST_FOREACH(boost::property_tree::ptree::value_type const& map, subtree.get_child("map"))
 			{
 				boost::property_tree::ptree subMap = map.second;
 
 				BOOST_FOREACH(boost::property_tree::ptree::value_type const& pair, subMap.get_child(""))
 				{
+					//std::cout << "pair: " << pair.first << "\n";
 					boost::property_tree::ptree key = pair.second;
+
+					std::string label = pair.first;
+					if (label != "<xmlattr>")
+					{
+						if (label == "key")
+						{
+							std::cout << "Key: " << key.get<std::string>("") << "\n";
+							_currentKey = key.get<std::string>("");
+						}
+						else if (label == "value")
+						{
+							/*
+							if (_currentModule == "VAST")
+							{
+								if (_currentKey == "output_file_location")
+								{
+									vast->_output_file_location = key.get<std::string>("");
+								}
+								else if (_currentKey == "viz_option")
+								{
+									vast->_viz_option = key.get<bool>("");
+								}
+								else if (_currentKey == "time_ratio")
+								{
+									vast->_time_ratio = key.get<int>("");
+								}
+								else if (_currentKey == "time_step")
+								{
+									vast->_time_step = key.get<double>("");
+								}
+								else if (_currentKey == "num_replications")
+								{
+									vast->_num_replications = key.get<int>("");
+								}
+								else if (_currentKey == "seeds")
+								{
+									vast->_seeds = key.get<std::string>("");
+								}
+								else if (_currentKey == "max_run_time")
+								{
+									vast->_max_run_time = key.get<double>("");
+								}
+								else if (_currentKey == "metrics")
+								{
+									vast->_metrics = key.get<std::string>("");
+								}
+								
+							}
+							*/
+							if (_currentModule == "Environment")
+							{
+								if (_currentKey == "env_obstacle_port")
+								{
+									Integer v = new Integer(key.get<std::string>(""));
+									_EnvMap.insert(std::pair<std::string, VType> (_currentKey, v));
+								}
+								else if (_currentKey == "exe_location")
+								{
+									String v = new VType(key.get<std::string>(""));
+									_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+								}
+								else if (_currentKey == "Env_bounds")
+								{
+									Vector3 v = new VType(key.get<std::string>(""));
+									_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+								}
+								else
+								{
+
+								}
+							}
+							else if (_currentModule == "AV")
+							{
+								//std::cout << "Placeholder";
+							}
+
+							std::cout << "Value: " << key.get<std::string>("") << "\n";
+						}
+						
+					}
 
 					BOOST_FOREACH(boost::property_tree::ptree::value_type const& value, key.get_child(""))
 					{
 						std::string label = value.first;
+						//std::cout << "value" << label <<"\n";
 						boost::property_tree::ptree keyValue = value.second;
 
-						std::string test = keyValue.get<std::string>("<xmlattr>.key");
-						std::cout << test;
+						std::string test = keyValue.get<std::string>("");
+						//std::cout << test;
 						/*
 						if (label != "<xmlattr>")
 						{

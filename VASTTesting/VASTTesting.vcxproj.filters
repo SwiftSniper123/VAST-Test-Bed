@@ -98,9 +98,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="UnitTests">
       <UniqueIdentifier>{7fe756f5-335d-4885-b0ba-a3a34df414ef}</UniqueIdentifier>
     </Filter>
@@ -122,5 +119,8 @@
     <Filter Include="OpenSourceCode\cpp">
       <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

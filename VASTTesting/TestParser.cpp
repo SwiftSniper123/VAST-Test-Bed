@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "ParseXML.h"
+#include "VType.h"
 
 /*Default true test*/
 TEST(Test_Parser, TrueInTestVASTLibrary)
@@ -19,4 +20,7 @@ TEST(Test_Parser, Parse)
 {
 	XMLParser* p = new XMLParser("C:/Users/jaron/Downloads/test.xml");
 	p->Parse();
+	//VType test = p->_EnvMap.find("env_obstacle_port");
+	//std::cout << p->env->_env_obstacle_port.value();
+	//ASSERT_TRUE(p->env->_env_obstacle_port == Integer);
 }

@@ -9,10 +9,13 @@
 #include "AV.h"
 #include <Windows.h>
 #include "ParseXML.h"
+#include <gtest/gtest.h>
 
 
 int main(int argc, WCHAR *argv[])
 {
+	::testing::InitGoogleTest(&argc, argv);
+	RUN_ALL_TESTS();
 	return 0;
 }
 
