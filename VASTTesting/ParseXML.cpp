@@ -1,48 +1,4 @@
-//-----------------------------------------------------------------------
-// This file is part of the Windows SDK Code Samples.
-// 
-// Copyright (C) Microsoft Corporation.  All rights reserved.
-// 
-// This source code is intended only as a supplement to Microsoft
-// Development Tools and/or on-line documentation.  See these other
-// materials for detailed information regarding Microsoft code samples.
-// 
-// THIS CODE AND INFORMATION ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY
-// KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//-----------------------------------------------------------------------
-#include "boost/property_tree/"
 #include "ParseXML.h"
-
-#pragma warning(disable : 4127)  // conditional expression is constant
-#define CHKHR(stmt)             do { hr = (stmt); if (FAILED(hr)) goto CleanUp; } while(0)
-#define HR(stmt)                do { hr = (stmt); goto CleanUp; } while(0)
-#define SAFE_RELEASE(I)         do { if (I){ I->Release(); } I = NULL; } while(0)
-
-typedef long long long64;
-
-/**Don´t forget to use delete[]*/
-std::wstring s2ws(const std::string& s)
-{
-	int len;
-	int slength = (int)s.length() + 1;
-	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-	wchar_t* buf = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-	std::wstring r(buf);
-	delete[] buf;
-	return r;
-}
-
-
-
-string convLPCWSTRtoString(LPCWSTR wString)
-{
-		std::wstring tempWstring(wString);
-		string tempString(tempWstring.begin(), tempWstring.end());
-		return tempString;
-}
 
 
 Configuration::Configuration() {};
@@ -52,11 +8,228 @@ Configuration::Configuration() {};
 
 };*/
 
-XMLParser::XMLParser(LPCWSTR configFile)
+XMLParser::XMLParser(string file)
 {
-	_file = configFile;
+	_file = file;
 }
 
+string indent(int level) {
+	string s;
+	for (int i = 0; i < level; i++) s += "  ";
+	return s;
+}
+
+void printTree(ptree &pt, int level) {
+	if (pt.empty()) {
+		cerr << "\"" << pt.data() << "\"";
+	}
+
+	else {
+		if (level) cerr << endl;
+
+		cerr << indent(level) << "{" << endl;
+		//std::cout << "Test";
+		for (ptree::iterator pos = pt.begin(); pos != pt.end();) {
+			cerr << indent(level + 1) << "\"" << pos->first << "\": ";
+
+			printTree(pos->second, level + 1);
+			++pos;
+			if (pos != pt.end()) {
+				cerr << ",";
+			}
+			cerr << endl;
+		}
+
+		cerr << indent(level) << " }";
+	}
+
+	return;
+}
+
+void XMLParser::Parse()
+{
+	read_xml(_file, pt1);
+	//printTree(pt1, 0);
+
+	//std::cout << "\n\n" << pt1.get<std::string>("VAST.module.map.pair.key");
+	
+	//std::cout << pt1.size;
+	//std::cout << pt1.get_child("VAST.module");
+
+	BOOST_FOREACH(ptree::value_type const& node, pt1.get_child("VAST"))
+	{
+		//cerr << node.first.data. << "\n";
+		boost::property_tree::ptree subtree = node.second;
+
+		if (node.first == "module")
+		{
+			BOOST_FOREACH(boost::property_tree::ptree::value_type const& map, subtree.get_child("map"))
+			{
+				boost::property_tree::ptree subMap = map.second;
+
+				BOOST_FOREACH(boost::property_tree::ptree::value_type const& pair, subMap.get_child(""))
+				{
+					boost::property_tree::ptree key = pair.second;
+
+					BOOST_FOREACH(boost::property_tree::ptree::value_type const& value, key.get_child(""))
+					{
+						std::string label = value.first;
+						boost::property_tree::ptree keyValue = value.second;
+
+						std::string test = keyValue.get<std::string>("<xmlattr>.key");
+						std::cout << test;
+						/*
+						if (label != "<xmlattr>")
+						{
+							//std::cout << pair.first << "\n";
+							std::cout << value.first;
+							//std::string key = keyValue.get<std::string>("type.key");
+						}*/
+					}
+				}
+				//std::string value = test.get<std::string>("pair.value");
+
+				//std::cout << "key: " << key << "value: " << value;
+
+				//std::string label = v.second;
+				//std::cout << label;
+				
+				/*if (label != "<xmlattr>")
+				{
+					std::string value = subtree.get<std::string>(label);
+					std::cout << label << ":  " << value << std::endl;
+				}*/
+			}
+			//std::cout << std::endl;
+		}
+	}//
+	
+}
+
+
+
+//// Definitions for the Public methods
+//bool CSV_Parser::parse_line(const STR& input_line, CSV_FIELDS& output_fields)
+//{
+//	/*
+//		A public method which accepts the following arguments
+//		a. A string
+//		b. A vector of strings
+//		Parse the CSV line and populate the vector with the output
+//	*/
+//	bool status;
+//	status = parse(input_line, output_fields);
+//	return status;
+//}
+//
+//bool CSV_Parser::parse_line(const STR& input_line, CSV_FIELDS& header_fields, KEY_VAL_FIELDS& key_val)
+//{
+//	/*
+//		A public method which accepts the following arguments
+//		a. A string
+//		b. A vector of strings
+//		c. A map with key and value both being strings
+//		Parse the CSV line, use the header provided in the vector to populate the map
+//	*/
+//	bool status;
+//	CSV_FIELDS output_fields;
+//	status = parse(input_line, output_fields);
+//
+//	if (status == true && output_fields.size() == header_fields.size())
+//	{
+//		VECTOR_ITR it1 = output_fields.begin();
+//		VECTOR_ITR it2 = header_fields.begin();
+//		for (; it1 != output_fields.end(); ++it1, ++it2)
+//		{
+//			key_val.insert(MAP_ENTRY(*it2, *it1));
+//		}
+//	}
+//	return status;
+//}
+//
+//bool CSV_Parser::parse(const STR& input_line, CSV_FIELDS& output_fields)
+//{
+//	/*
+//		A private method which handles the parsing logic used by both the overloaded public methods
+//	*/
+//	STR field;
+//	int i, j;
+//
+//	if (input_line.length() == 0)
+//	{
+//		return false;
+//	}
+//
+//	i = 0;
+//	do
+//	{
+//		if (i < input_line.length() && input_line[i] == CSV_QUOTE)
+//		{
+//			j = parse_quoted_fields(input_line, field, ++i);
+//		}
+//		else
+//		{
+//			j = parse_normal_fields(input_line, field, i);
+//		}
+//		output_fields.push_back(field);
+//		i = j + 1;
+//	} while (j < input_line.length());
+//
+//	return true;
+//}
+//
+//int CSV_Parser::parse_normal_fields(const STR& input_line, STR& field, int& i)
+//{
+//	/*
+//		Normal fields are the ones which contain no escaped or quoted characters
+//		For instance - Consider that input_line is - 1997,Ford,E350,"Super, luxurious truck"
+//		An example for a normal field would be - Ford
+//	*/
+//	int j;
+//	j = input_line.find_first_of(CSV_DELIMITER, i);
+//	if (j > input_line.length())
+//	{
+//		j = input_line.length();
+//	}
+//	field = std::string(input_line, i, j - i);
+//	return j;
+//}
+//
+//int CSV_Parser::parse_quoted_fields(const STR& input_line, STR& field, int& i)
+//{
+//	/*
+//		Quoted fields are the ones which are enclosed within quotes
+//		For instance - Consider that input_line is - 1997,Ford,E350,"Super, luxurious truck"
+//		An example for a quoted field would be - Super luxurious truck
+//		Another instance being - 1997,Ford,E350,"Super, ""luxurious"" truck"
+//	*/
+//	int j;
+//	field = "";
+//
+//	for (j = i; j < input_line.length(); j++)
+//	{
+//		if (input_line[j] == '"' && input_line[++j] != '"')
+//		{
+//			int k = input_line.find_first_of(CSV_DELIMITER, j);
+//			if (k > input_line.length())
+//			{
+//				k = input_line.length();
+//			}
+//			for (k -= j; k-- > 0; )
+//			{
+//				field += input_line[j++];
+//			}
+//			break;
+//		}
+//		else
+//		{
+//			field += input_line[j];
+//		}
+//	}
+//	return j;
+//}
+
+/*
 HRESULT XMLParser::WriteAttributes(IXmlReader* pReader)	
 {
     const WCHAR* pwszPrefix;
@@ -390,4 +563,4 @@ CleanUp:
 	SAFE_RELEASE(pFileStream);
 	SAFE_RELEASE(pReader);
 	//return hr;
-}
+}//*/

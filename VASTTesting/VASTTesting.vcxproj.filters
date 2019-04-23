@@ -40,6 +40,9 @@
     <ClCompile Include="ParseXML.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="TestParser.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h">

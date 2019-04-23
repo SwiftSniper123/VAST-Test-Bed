@@ -36,7 +36,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)VASTTesting;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -67,6 +67,7 @@
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="storage.cpp" />
+    <ClCompile Include="TestParser.cpp" />
     <ClCompile Include="test_Broker.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />

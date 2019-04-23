@@ -1,30 +1,25 @@
 #pragma once
 
-#include <ole2.h>
-#include <xmllite.h>
-#include <stdio.h>
-#include <shlwapi.h>
+#include <string>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/foreach.hpp>
+
 #include "AV.h"
 #include "Environment.h"
+
+
+using namespace boost::property_tree;
 
 class XMLParser
 {
 public:
-	XMLParser(LPCWSTR configFile);
-	HRESULT WriteAttributes(IXmlReader* pReader);
-	int __cdecl Parse();
-	void ParseDoc();
+	XMLParser(string file);
+	void Parse();
 
 private:
-	LPCWSTR _file;
-	void ParseModule(HRESULT hr,
-					IStream *pFileStream,
-					IXmlReader *pReader,
-					XmlNodeType nodeType,
-					const WCHAR* pwszPrefix,
-					const WCHAR* pwszLocalName,
-					const WCHAR* pwszValue,
-					UINT cwchPrefix);
+	string _file;
+	ptree pt1;
 
 	struct AV_Config {
 		string _av_name;
@@ -54,6 +49,8 @@ private:
 		AV_Config **_AVs;
 		Environment_Config *_env_config;
 	};
+
+	AV_Config **_AVs;
 
 };
 
