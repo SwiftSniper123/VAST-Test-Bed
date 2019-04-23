@@ -53,7 +53,7 @@ protected:
 This object's type is STRING_TYPE, a static const string 
 variable public to users of VType.h.
 */
-class String : public VType
+class String : public VType 
 {
 private:
 	/*variable to store the value of the string*/

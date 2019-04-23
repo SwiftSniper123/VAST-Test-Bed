@@ -9,7 +9,7 @@ Author: emf
 using std::string;
 using std::map;
 
-typedef double time;
+typedef double Time;
 
 class EventTree
 {
@@ -33,13 +33,13 @@ public:
 	source	- the VAST component sending the event
 	time	- the time the event is posted
 	dataMap	- the set of data effected in the event*/
-	void addEvent(VComponent* source, time time, map<string, VType> dataMap)
+	void addEvent(VComponent* source, Time time, map<string, VType> dataMap)
 	{
 	};
 
-	time getScenarioTime()
+	Time getScenarioTime()
 	{
-		return time(0.0);
+		return Time(0.0);
 	};
 
 	void registerComponent(VComponent* component)
@@ -49,12 +49,12 @@ public:
 	
 	void opendatabase();
 	void EventTree::createtable(dataMap *tablemap, dataMap *avmap);
-	void publishEvent(VComponent* source, time time, dataMap *tablemap, dataMap *avmap);
+	void publishEvent(VComponent* source, Time time, dataMap *tablemap, dataMap *avmap);
 
 	/*show the data in the database*/
 	void showdata(dataMap *tablemap);
 
-	void updateDatabase(time time, dataMap data) {};
+	void updateDatabase(Time time, dataMap data) {};
 
 	/*database parameter*/
 	sqlite3 *db;
@@ -62,8 +62,6 @@ public:
 	int rc;
 	const char *sql;
 	const char* datas = "Callback function called";
-
-	
 
 
 };
