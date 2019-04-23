@@ -225,14 +225,16 @@ public:
 	/* Manadatory override of this base class; implement this to receive updates to the _myMap*/
 	void update(timestamp time, dataMap updateMap)
 	{
-
 		_list = _genEvents.begin();
 		dataMap::iterator it;
 		for (auto mapIterator = updateMap.begin(); mapIterator != updateMap.end(); ++mapIterator)
 		{
 			it = _myMap.find(mapIterator->first);
 			if (it != _myMap.end())
+			{
 				it->second = mapIterator->second;
+				_lastUpdateTime = time;
+			}
 		}
 		_numUpdates++;
 
@@ -248,7 +250,7 @@ public:
 		if (_leadComp)
 		{
 			double replyTime = getEventTree()->getTimeSlice();
-			generateEvent(messageTime);
+			generateEvent(messageTime + replyTime);
 		}
 		else
 			generateEvent(messageTime);
@@ -306,6 +308,11 @@ public:
 		}
 	}
 
+	timestamp getLastUpdateTime()
+	{
+		return _lastUpdateTime;
+	}
+
 	VComponent::VCType getVCType() 
 	{
 		if (_leadComp && _name.compare("av") != 0)
@@ -335,6 +342,7 @@ private:
 	string _name;
 	bool _leadComp;
 	int _numUpdates = 0;
+	timestamp _lastUpdateTime;
 }; // end of MockComponent declaration/definition
 
 TEST(Test_EventTree, EventTreeAddEvent)
@@ -401,7 +409,7 @@ TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
 	// two different event creators
 	MockComponent* environment = new MockComponent("environment", dataMap0, true);
 	// first event set for 0.1 will update av
-	environment->storeEvent(0.01, updateMap1);
+	environment->storeEvent(0.11, updateMap1);
 
 	MockComponent* av = new MockComponent("av", dataMap0, false);
 
@@ -409,7 +417,7 @@ TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
 	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5);
 	et->registerComponent(environment);
 	et->registerComponent(av);
-	//et->setFirstComponent(av);
+	et->setFirstComponent(av);
 	try
 	{
 		// should start with three events in system
@@ -418,6 +426,8 @@ TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
 		// verify that values are still 3
 		EXPECT_EQ(av->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
 		EXPECT_EQ(av->getUpdatedValue(valueB), Integer(updateMap1.at(valueB)).value());
+		EXPECT_EQ(av->getNumUpdates(), 5);
+		EXPECT_EQ(av->getLastUpdateTime(), 0.11);
 	}
 	catch (...)
 	{
@@ -464,8 +474,8 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 	et->registerComponent(av);
 
 	et->setFirstComponent(av);
-	environment->storeEvent(0.01, updateMap1); // valueA = 1
-	av->storeEvent(0.192, updateMap2); //  valueB = 2
+	environment->storeEvent(0.1, updateMap1); // valueA = 1
+	av->storeEvent(0.2, updateMap2); //  valueB = 2
 	environment->storeEvent(0.4, updateMap3); // value A and B = 3
 
 	try
@@ -475,13 +485,13 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 		EXPECT_NO_THROW(et->start());
 
 		// verify that values are still 3
-		EXPECT_EQ(environment->getUpdatedValue(valueA), Integer(updateMap2.at(valueA)).value());
-		EXPECT_EQ(environment->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
+		EXPECT_EQ(environment->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
+		EXPECT_EQ(environment->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
 		EXPECT_EQ(av->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
 		EXPECT_EQ(av->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
 		
-		EXPECT_EQ(environment->getNumUpdates(), 2);
-		EXPECT_EQ(av->getNumUpdates(), 2);
+		EXPECT_EQ(environment->getNumUpdates(), 4);
+		EXPECT_EQ(av->getNumUpdates(),5);
 	}
 	catch (...)
 	{

@@ -77,6 +77,9 @@ void EventTree::registerComponent(VComponent* vc)
 			_componentInitialStateMap.emplace(vc, vc->getDataMap());
 			// and initialize present state (modified)
 			_componentPresentStateMap.emplace(vc, vc->getDataMap());
+
+			// if lead component hasn't been set, give it a first-come first-serve vc
+			_leadComponent = _leadComponent == nullptr ? vc : _leadComponent;
 		}
 
 		// TODO: add intialization of database tables here
@@ -116,7 +119,8 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 	// otherwise if this event happens in the distant future
 	else if (_eventTime >= getEndSimTime())  // too far right
 	{
-		throw OutOfTimeException(currentSchedulableTime, _eventSource->getName(), _eventTime);
+		// throw OutOfTimeException(currentSchedulableTime, _eventSource->getName(), _eventTime);
+		return; // leave the addEvent to finish the replication
 	}
 	// if the time clock has not yet started, everything is a Future
 	else if (_simClock < 0)
@@ -143,15 +147,15 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 					// get the present map's old component data, and the new update data, and overwrite
 					VType* oldData = presentMapIterator->second[updateIterator->first];
 					VType* newData = updateIterator->second;
-					if (oldData->isA(newData->getType()))
-					{
-						presentMapIterator->second[updateIterator->first] = newData;
-					}
-					else
+					/*if (oldData->isA(newData->getType()))
+					{*/
+						*presentMapIterator->second[updateIterator->first] = *newData;
+					//}
+					/*else
 					{
 						throw InvalidArgumentException("Data swap on \"" + updateIterator->first +
 							"\" takes a " + oldData->getType() + " not a " + newData->getType());
-					}
+					}*/
 				}
 			}
 			else
@@ -169,14 +173,11 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 				presentMapIterator != _componentPresentStateMap.end();
 				++presentMapIterator)
 			{
-				/*if (sourceVCType != targetVCType)
-				{*/
 				targetComponent = presentMapIterator->first;
 				if (targetComponent != _eventSource)
 				{
 					targetComponent->update(_eventTime, _eventDataMap);
 				}
-				//}
 			}
 		}
 	}
@@ -248,6 +249,11 @@ void EventTree::replication()
 		*/
 		while (_simClock < _endTime)
 		{
+			//if (_leadComponent != nullptr)
+			//{
+			//	// add an event in the future to initialize eventlist
+			//	_leadComponent->update(_simClock, dataMap());
+			//}
 			// check for future events, advance the future list
 			if (_future != nullptr)
 			{
@@ -301,11 +307,6 @@ void EventTree::replication()
 					addEvent(source, time, data);
 				}
 			}
-			else // prompt the lead component again with empty data and new timestamp
-			{
-				_leadComponent->update(_simClock, dataMap());
-			}
-			
 
 			// perhaps an exchange with the ScenarioMetrics here?
 
@@ -329,11 +330,14 @@ void EventTree::replication()
 
 bool EventTree::stillAddingEvents(string componentName)
 {
-	bool accepting = false;
+	bool accepting = true;
 	int alreadyReported = reportedComponents.size(); // how many have reported
-	reportedComponents.insert(componentName); // try adding this one
-	accepting = alreadyReported != reportedComponents.size(); // did the size change
-	// if the size increased, we will accept this event
+	if (_leadComponent->getName().compare(componentName)!= 0) // ignore lead
+	{
+		reportedComponents.insert(componentName); // try adding this one
+		accepting = alreadyReported != reportedComponents.size(); // did the size change?
+	}	
+	// we will not accept this event if the size is the same
 	return accepting;
 }
 
@@ -467,8 +471,13 @@ void EventTree::stop()
 		resetFutureListOfEvents();
 
 		// reset _componentPresentStateMap to _componentInitialStateMap
-		_componentPresentStateMap.clear();
-		_componentPresentStateMap = _componentInitialStateMap;
+		for (auto presentMapIterator = _componentPresentStateMap.begin();
+			presentMapIterator != _componentPresentStateMap.end();
+			++presentMapIterator)
+		{
+			presentMapIterator->second = _componentInitialStateMap[presentMapIterator->first];
+
+		}		
 	}
 } // end of stop()
 
