@@ -1,38 +1,29 @@
 #include "DatabaseEventTree.h"
 #include <typeinfo>
-#include <map>
-#include "VType.h"
 
 String stri;
 Double dou;
 Integer inte;
 Boolean boo;
 
+
 /*determine the type of value and return to getsqlite3text*/
-//template <typename T> class S {
-// public:    // Uncomment this line to fix
-//	typedef typename T type;
-//};
-//
-//template<typename T>
-//std::string TypeOf(T) {
-//	std::string Type = "unknown";
-//	/*if type is int*/
-//	if (std::is_same<T, int>::value)Type = getSQLite3Text(inte);
-//	/*if type is string*/
-//	if (std::is_same<T, std::string>::value) Type = getSQLite3Text(stri);
-//	/*if type is double*/
-//	if (std::is_same<T, double>::value) Type = getSQLite3Text(dou);
-//	/*if type is bool*/
-//	if (std::is_same<T, bool>::value) Type = getSQLite3Text(boo);
-//	return Type;
-//	
-//}
+template<typename T>
+std::string TypeOf(T) {
+	std::string Type = "unknown";
+	/*if type is int*/
+	if (std::is_same<T, int>::value)Type = inte.getSQLite3Text();
+	/*if type is string*/
+	if (std::is_same<T, std::string>::value) Type = stri.getSQLite3Text();
+	/*if type is double*/
+	if (std::is_same<T, double>::value) Type = dou.getSQLite3Text();
+	/*if type is bool*/
+	if (std::is_same<T, bool>::value) Type = boo.getSQLite3Text();
+	return Type;
+}
 
 void EventTree::opendatabase()
 {
-
-	
 	/*open database or create database*/
 	rc = sqlite3_open("VASTdatabase.db", &db);
 
@@ -70,20 +61,19 @@ void EventTree::createtable(dataMap *tablemap, dataMap *avmap)
 	{
 		    /*this part is to print the first line of column name and value type
 			for example : AV_ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT*/
-			auto mapIterator2 = avmap->begin();
-			statement1 << mapIterator2->first<<" "<<(mapIterator2->second)->getSQLite3Text()<< " NOT NULL PRIMARY KEY AUTOINCREMENT,";
-		
+		auto mapIterator2 = avmap->begin();
+			statement1 << mapIterator2->second->getSQLite3Text() << " NOT NULL PRIMARY KEY AUTOINCREMENT, ";
+			mapIterator2->second;
 			
 			for (mapIterator2; mapIterator2 != avmap->end(); ++mapIterator2)
 			{
 				/*this part is to print the rest column name and value type*/
-				statement2 << statement2.str() << mapIterator2->first <<" "<< (mapIterator2->second)->getSQLite3Text() << " NOT NULL,";
+				statement2 << mapIterator2->first << " " << mapIterator->second->getSQLite3Text() << " NOT NULL, ";
 			}
 			/*print first and rest column name and value type*/
 			statement3 << statement1.str() << statement2.str();
 	    /*this is print all sql statement*/
-
-		statement4 << "CREATE TABLE "<< mapIterator->first << " (" << statement3.str() << ");";
+		statement4 << " CREATE TABLE "<< mapIterator->first << " ('" << statement3.str() << "');";
 	}
 
 	/*change stringstream to const char*/
@@ -101,7 +91,7 @@ void EventTree::createtable(dataMap *tablemap, dataMap *avmap)
 	}
 
 }
-void EventTree::publishEvent(VComponent* source, Time time, dataMap *tablemap, dataMap *avmap)
+void EventTree::publishEvent(VComponent* source, time time, dataMap *tablemap, dataMap *avmap)
 //void database::insertdata()
 {
 	stringstream statement1;
@@ -113,12 +103,12 @@ void EventTree::publishEvent(VComponent* source, Time time, dataMap *tablemap, d
 		for (auto mapIterator2 = avmap->begin(); mapIterator2 != avmap->end(); ++mapIterator2)
 		{
 			/*print column name , example: SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE */
-			statement1 << statement1.str() << "," << mapIterator2->first;
+			statement1 << statement1.str << "," << avmap->key_comp;
 			/*print valuse, example: 1,1,0.02,1,0,0,0,90,'SUV',10,2*/
-			statement2 << statement2.str() << "," << mapIterator2->second;
+			statement2 << statement2.str << "," << avmap->value_comp;
 		}
 		/*print full sql statement*/
-		statement3 << "INSERT INTO "<< mapIterator->first<<"(" << statement1.str() << ") VALUES (" << statement2.str() << ");";
+		statement3 << "INSERT INTO "<< tablemap->key_comp<<"(" << statement1.str << ") VALUES (" << statement2.str << ");";
 	}
 	
 	sql = statement3.str().c_str();
@@ -153,8 +143,8 @@ void EventTree::showdata(dataMap *tablemap)
 
 	stringstream statement1;
 	/*print show data sql statement example : SELECT * FROM TABLE_NAME */
-	statement1 << "SELECT * from " << (tablemap->key_comp).str();
-	sql = statement1.str().c_str();
+	statement1 << "SELECT * from " << tablemap->key_comp;
+	sql = statement1.str().c_str;
 
 	/* Execute SQL statement */
 	rc = sqlite3_exec(db, sql, callback, (void*)datas, &zErrMsg);

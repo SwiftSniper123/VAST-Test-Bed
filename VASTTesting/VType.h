@@ -44,6 +44,8 @@ public:
 	{
 		return stringValue;
 	};
+
+	virtual string getSQLite3Text() { return ""; };
 protected:
 	string stringValue;
 	string type;
@@ -96,7 +98,7 @@ public:
 		VType::type = STRING_TYPE;
 	};
 
-	String::String(String& old_str)
+	String(String& old_str)
 	{
 		//val = old_str.value();
 	};
