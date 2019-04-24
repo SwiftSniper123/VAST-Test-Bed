@@ -21,6 +21,8 @@ public:
 		*_numUpdate = *_numUpdate + 1;
 	};
 
+	void stopReplication(bool another, string runID) {	};
+
 	VComponent::VCType VComponent::getVCType() {return Test_Avatar;	};
 
 	static const char type = 'A';
@@ -42,6 +44,8 @@ public:
 	{
 		*_numUpdate = *_numUpdate - 1;
 	};
+
+	void stopReplication(bool another, string runID) {	};
 	
 	VComponent::VCType VComponent::getVCType() { return Test_Avatar; };
 

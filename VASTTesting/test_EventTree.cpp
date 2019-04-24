@@ -105,36 +105,6 @@ TEST(Test_EventTree, EventTreeRegisterComponent)
 	delete et, env, av1, av2, sensor;
 }
 
-//class SimClock
-//{
-//public:
-//	/* timeRatio, timeSlice, endTime*/
-//	SimClock(double timeRatio, double timeSlice, double endTime)
-//	{
-//		_timeRatio = timeRatio;
-//		_timeSlice = timeSlice;
-//		_endTime = endTime;
-//		_simClockTime = 0;
-//	};
-//
-//	void advanceToNextTimeSlice()
-//	{
-//		// sleep(seconds + seconds - seconds) 
-//		_sleep(_timeSlice*1000*_timeRatio);
-//		_simClockTime += _timeSlice;
-//	}
-//
-//	double getSimClockTime()
-//	{
-//		return _simClockTime;
-//	};
-//private:
-//	double _timeRatio;
-//	double _timeSlice;
-//	double _endTime;
-//	double _simClockTime;
-//};
-
 TEST(Test_EventTree, EventTreeStartAndStopClock)
 {
 	
@@ -203,7 +173,8 @@ TEST(Test_EventTree, ClockTime)
 //	EXPECT_TRUE(difftime(time(0), startTime) - 0.01 < 0.000000001);
 //
 //}
-/* Mock up class for use in the EventTreeSortEvents test case below.  Makes use of dataMap,
+
+/* Mock-up class for use in test cases below.  Makes use of dataMap,
 update, EventTree registration, and a getter to verify that update happened.*/
 class MockComponent : public VComponent
 {
@@ -211,7 +182,8 @@ public:
 	MockComponent(string name, dataMap dataMap, bool leadComp)
 	{
 		_name = name;
-		_myMap = dataMap; // copy
+		_myMap = dataMap; 
+		_initialMap = _myMap; // copy
 		_leadComp = leadComp;
 	}
 
@@ -239,6 +211,17 @@ public:
 		_numUpdates++;
 
 		feaxConnection(time);
+	}
+
+	void stopReplication(bool another, string runID)
+	{
+		if (another)
+		{
+			_numUpdates = 0;
+			_genEvents = _initialEvents;
+			_myMap = _initialMap;
+			sleep_for(milliseconds(10)); // some time for restarting outside process
+		}
 	}
 
 	/* Fake correspondence with the outside process, that queries and waits for a response and then
@@ -271,6 +254,7 @@ public:
 	void storeEvent(timestamp time, dataMap updateMap)
 	{
 		_genEvents.emplace(time, updateMap);
+		_initialEvents.emplace(time, updateMap);
 	};
 
 	void generateEvent(timestamp now)
@@ -281,6 +265,7 @@ public:
 			if (record < now)
 			{
 				_genEvents.erase(record);
+				//_list++;
 			}
 			else if (record < now + getEventTree()->getTimeSlice())
 			{
@@ -337,7 +322,9 @@ public:
 
 private:
 	dataMap _myMap;
+	dataMap _initialMap; // for resetting
 	map<timestamp, dataMap> _genEvents;
+	map<timestamp, dataMap> _initialEvents;
 	map<timestamp, dataMap>::iterator _list;
 	string _name;
 	bool _leadComp;
@@ -367,7 +354,7 @@ TEST(Test_EventTree, EventTreeAddEvent)
 		
 		// test that bad times throw exceptions 
 		EXPECT_THROW(et->addEvent(env, -0.5, futureData), OutOfTimeException);
-		EXPECT_THROW(et->addEvent(env, 1.5, futureData), OutOfTimeException);
+		//EXPECT_THROW(et->addEvent(env, 1.5, futureData), OutOfTimeException);
 
 		// test that good event time does not throw an exception
 		EXPECT_NO_THROW(et->addEvent(env, 0.5, futureData));
@@ -505,7 +492,53 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 
 TEST(Test_EventTree, EventTreeMultipleRuns)
 {
-	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 2);
+	// simple replications
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 10);
 	EXPECT_NO_THROW(et->start());
+	delete et;
+
+	string valueA = "A";
+
+	// define update maps for later
+	dataMap updateMap1; // first updater will update valueA to 1, value B will stay 0
+	updateMap1.emplace(valueA, new Integer(1));
+	EXPECT_EQ(Integer(updateMap1.at(valueA)).value(), 1);
+
+	// define the original value 0 map
+	dataMap dataMap0;
+	dataMap0.emplace(valueA, new Integer()); // initialize arbitrary map data to 0
+	EXPECT_EQ(Integer(dataMap0.at(valueA)).value(), 0);
+	
+	// three different event creators
+	MockComponent* environment = new MockComponent("environment", dataMap0, false);
+	MockComponent* av = new MockComponent("av", dataMap0, true);
+
+	et = new EventTree(0.1, ratio(1.0), 0.5, 10);
+	et->registerComponent(environment);
+	et->registerComponent(av);
+
+	et->setFirstComponent(av);
+	environment->storeEvent(0.1, updateMap1);
+
+	try
+	{
+		// should start with three events in system
+		EXPECT_NO_THROW(et->start());
+
+		EXPECT_EQ(environment->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
+		EXPECT_EQ(av->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
+		
+		EXPECT_EQ(environment->getNumUpdates(), 4);
+		EXPECT_EQ(av->getNumUpdates(), 5);
+
+		EXPECT_EQ(et->getCurrentSimTime(), -1);
+	}
+	catch (...)
+	{
+		FAIL(); // failed for another reason
+		delete et;
+	}
+
+	//cleanup
 	delete et;
 }

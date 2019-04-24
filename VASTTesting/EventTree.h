@@ -39,6 +39,9 @@ class EventTree
 {
 private:
 
+	/* ID for this replication.*/
+	string _runID;
+
 	/* The length of each timeslice that the clock progresses.*/
 	double _timeSlice;
 

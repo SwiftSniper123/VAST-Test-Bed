@@ -45,4 +45,6 @@ public:
 	
 	/* The virtual update function*/
 	virtual void update(timestamp t, dataMap dataMap) = 0;
+
+	virtual void stopReplication(bool another, string runID) = 0;
 };

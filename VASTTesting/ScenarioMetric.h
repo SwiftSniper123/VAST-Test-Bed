@@ -19,6 +19,12 @@ public:
 	/* The inherited update function*/
 	virtual void update(timestamp t, dataMap dataMap) = 0;
 
+	/* Informs the component that the replication is coming to an end.
+	bool	another		A signal that there will be another replication
+						after this replication stops.
+	string	runID		The id number used for this replication.*/
+	virtual void stopReplication(bool another, string runID);
+
 	/* Overridden from VComponent.  Returns ID name.*/
 	virtual string getName()
 	{

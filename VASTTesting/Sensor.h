@@ -20,6 +20,12 @@ public:
 	updateMap	data that changed for this update*/
 	void update(timestamp t, dataMap dataMap);	
 
+	/* Informs the component that the replication is coming to an end.
+	bool	another		A signal that there will be another replication
+						after this replication stops.
+	string	runID		The id number used for this replication.*/
+	virtual void stopReplication(bool another, string runID);
+
 	/*return the type of VComponent as AV*/
 	virtual VComponent::VCType getVCType();
 

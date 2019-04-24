@@ -49,6 +49,7 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 	_endTime = endTime;
 	_simClock = -1;
 	_numRuns = numRuns;
+	_future = nullptr;
 }
 
 EventTree::~EventTree()
@@ -477,7 +478,9 @@ void EventTree::stop()
 		{
 			presentMapIterator->second = _componentInitialStateMap[presentMapIterator->first];
 
-		}		
+			// tell components to restart themselves
+			presentMapIterator->first->stopReplication((_numRuns > 0), _runID);
+		}	
 	}
 } // end of stop()
 
