@@ -3,6 +3,7 @@ Author: emf
 */
 #ifndef EventTree_h
 #define EventTree_h
+#include "pch.h"
 #include "VComponent.h"
 #include "sqlite3.h"
 

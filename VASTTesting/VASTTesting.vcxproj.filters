@@ -105,6 +105,9 @@
     <None Include="sqlite3.dll">
       <Filter>OpenSourceCode</Filter>
     </None>
+    <None Include="sqlite3.exp">
+      <Filter>OpenSourceCode\h</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="UnitTests">
@@ -133,5 +136,10 @@
     <Text Include="sqlite_set_up.txt">
       <Filter>OpenSourceCode</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="sqlite3.lib">
+      <Filter>OpenSourceCode\h</Filter>
+    </Library>
   </ItemGroup>
 </Project>
