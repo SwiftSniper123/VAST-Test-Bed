@@ -1,6 +1,8 @@
 #pragma once
 #include "Obstacle.h"
 #include "VComponent.h"
+#include "TraCIAPI.h"
+#include "EventTree.h"
 
 class Environment : public VComponent
 {
@@ -33,5 +35,26 @@ private:
 	string _name;
 
 	dataMap _dataMap;
+};
+
+class SumoEnvironment : public Environment
+{
+public:
+	SumoEnvironment(string fileLocation, int AVid)
+	{
+		_fileLocation = fileLocation;
+		_AVid = AVid;
+	}
+	
+	//Opens the Sumo Environment with the file location
+	void openEnvironment();
+
+	//Gets the information from Sumo via traci commands
+	void getMapInformation();
+	
+private:
+	string _fileLocation;
+	int _AVid;
+	TraCIAPI traci;
 };
 
