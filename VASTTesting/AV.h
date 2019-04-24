@@ -32,6 +32,5 @@ private:
 
 	/*AV map that stores all variable information*/
 	dataMap _dataMap;
-
 };
 
