@@ -1169,7 +1169,7 @@ public:
 		stowType = STRING_TYPE;
 	}
 
-	/* Downcasting constructor.  Assumes stow type is V_TYPE.If there
+	/* Downcasting constructor.  Assumes stow type is V_TYPE. If there
 	are no commas in the string value of the VType, then this arraySize
 	is equal to 1.*/
 	Array(VType* obj) : VType()

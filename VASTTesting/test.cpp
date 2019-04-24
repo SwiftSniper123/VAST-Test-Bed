@@ -16,10 +16,12 @@ public:
 		_numUpdate = numUpdate;
 	};
 
-	void update(timestamp t, dataMap* dataMap)
+	void update(timestamp t, dataMap dataMap)
 	{
 		*_numUpdate = *_numUpdate + 1;
 	};
+
+	VComponent::VCType VComponent::getVCType() {return Test_Avatar;	};
 
 	static const char type = 'A';
 
@@ -36,10 +38,12 @@ public:
 		_numUpdate = numUpdate;
 	};
 
-	void update(timestamp t, dataMap* dataMap)
+	void update(timestamp t, dataMap dataMap)
 	{
 		*_numUpdate = *_numUpdate - 1;
 	};
+	
+	VComponent::VCType VComponent::getVCType() { return Test_Avatar; };
 
 	static const char type = 'B';
 
@@ -85,7 +89,7 @@ public:
 		// registered VComponents can be told to update()
 		for (VComponent* vcomp : extended)
 		{
-			vcomp->update(0.0, nullptr);
+			vcomp->update(0.0, dataMap());
 		}
 	};
 
@@ -156,7 +160,7 @@ TEST(VCTest, TestImplUpdate)
 	// update just one
 	int i = 0;
 	Ext_A* a = new Ext_A(&i);
-	a->update(0.0, nullptr);
+	a->update(0.0, dataMap());
 	EXPECT_EQ(i, 1);
 
 	// using the factory, generate 100 of each
