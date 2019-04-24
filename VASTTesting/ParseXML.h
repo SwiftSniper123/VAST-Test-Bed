@@ -47,23 +47,29 @@ class XMLParser
 public:
 	XMLParser(string file);
 	void Parse();
-
+	map<std::string, VType> _VASTMap;
 	map<std::string, VType> _EnvMap;
 	map<std::string, VType> _AVMap;
 
-	VAST_Config *vast;
-	Environment_Config *env;
-	AV_Config *av;
+	vector <map<std::string, VType>> AvVector;
+
+	//Environment_Config *env;
+	//AV_Config *av;
 
 	Integer *vInteger;
 
 
 private:
+	void InstantiateObjects();
+	void fillMap(string currentModule, string type, string key, string value);
+
 	string _file;
 	ptree pt1;
 	string _currentKey;
 	string _currentModule;
-	string _tempValue;
+	string _currentValue;
+	string _type;
+	string _delim = ", ";
 
 	
 

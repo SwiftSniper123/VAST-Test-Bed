@@ -18,8 +18,9 @@ TEST(Test_Parser, Constructor)
 
 TEST(Test_Parser, Parse)
 {
-	XMLParser* p = new XMLParser("C:/Users/jaron/Downloads/test.xml");
+	XMLParser* p = new XMLParser("C:/Users/jaron/Documents/test.xml");
 	p->Parse();
+
 	//VType test = p->_EnvMap.find("env_obstacle_port");
 	//std::cout << p->env->_env_obstacle_port.value();
 	//ASSERT_TRUE(p->env->_env_obstacle_port == Integer);

@@ -80,97 +80,160 @@ void XMLParser::Parse()
 					{
 						if (label == "key")
 						{
-							std::cout << "Key: " << key.get<std::string>("") << "\n";
-							_currentKey = key.get<std::string>("");
+							std::cout << "Key: " << key.get<std::string>("name") << "\n";
+							_currentKey = key.get<std::string>("name");
 						}
+						
 						else if (label == "value")
 						{
-							/*
-							if (_currentModule == "VAST")
+							_currentValue = key.get<std::string>("name");
+							std::cout << "Value: " << _currentValue << "\n";
+
+							if (_currentValue != "")
 							{
-								if (_currentKey == "output_file_location")
+								if (_currentModule == "VAST")
 								{
-									vast->_output_file_location = key.get<std::string>("");
-								}
-								else if (_currentKey == "viz_option")
-								{
-									vast->_viz_option = key.get<bool>("");
-								}
-								else if (_currentKey == "time_ratio")
-								{
-									vast->_time_ratio = key.get<int>("");
-								}
-								else if (_currentKey == "time_step")
-								{
-									vast->_time_step = key.get<double>("");
-								}
-								else if (_currentKey == "num_replications")
-								{
-									vast->_num_replications = key.get<int>("");
-								}
-								else if (_currentKey == "seeds")
-								{
-									vast->_seeds = key.get<std::string>("");
-								}
-								else if (_currentKey == "max_run_time")
-								{
-									vast->_max_run_time = key.get<double>("");
-								}
-								else if (_currentKey == "metrics")
-								{
-									vast->_metrics = key.get<std::string>("");
+									if (_currentKey == "output_file_location")
+									{
+										String v = new VType(key.get<string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "viz_option")
+									{
+										Boolean v = new VType(key.get<string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "time_ratio")
+									{
+										Integer v = new VType(key.get<string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "time_step")
+									{
+										Double v = new VType(key.get<std::string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "num_replications")
+									{
+										Integer v = new VType(key.get<std::string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "seeds")
+									{
+										Array v = new VType(key.get<std::string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "max_run_time")
+									{
+										Double v = new VType(key.get<std::string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "metrics")
+									{
+										Array v = new VType(key.get<std::string>("name"));
+										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+
 								}
 								
-							}
-							*/
-							if (_currentModule == "Environment")
-							{
-								if (_currentKey == "env_obstacle_port")
+								if (_currentModule == "Environment")
 								{
-									Integer v = new Integer(key.get<std::string>(""));
-									_EnvMap.insert(std::pair<std::string, VType> (_currentKey, v));
-								}
-								else if (_currentKey == "exe_location")
-								{
-									String v = new VType(key.get<std::string>(""));
-									_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
-								}
-								else if (_currentKey == "Env_bounds")
-								{
-									Vector3 v = new VType(key.get<std::string>(""));
-									_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
-								}
-								else
-								{
+									if (_currentKey == "env_obstacle_port")
+									{
+										Integer v = new VType(key.get<std::string>("name"));
+										_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "exe_location")
+									{
+										String v = new VType(key.get<std::string>("name"));
+										_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "Env_bounds")
+									{
+										Vector3 v = new VType(key.get<std::string>("name"));
+										_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else
+									{
+										size_t pos = _currentValue.find(_delim);
+										string _valCopy = _currentValue;
+										_type = _valCopy.substr(0, pos);
+										_currentValue = _currentValue.substr(pos);
 
+										fillMap(_currentModule, _type, _currentKey, _currentValue);
+									}
 								}
-							}
-							else if (_currentModule == "AV")
-							{
-								//std::cout << "Placeholder";
-							}
+								else if (_currentModule == "AV")
+								{
+									if (_currentKey == "av_name")
+									{
+										String v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "av_movement_port")
+									{
+										Integer v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "exe_location")
+									{
+										String v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "AV_location")
+									{
+										String v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "AV_orientation")
+									{
+										Vector3 v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "AV_bounds")
+									{
+										Vector3 v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else if (_currentKey == "sensors")
+									{
+										Array v = new VType(key.get<std::string>("name"));
+										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+									}
+									else
+									{
+										size_t pos = _currentValue.find(_delim);
+										string _valCopy = _currentValue;
+										_type = _valCopy.substr(0, pos);
+										_currentValue = _currentValue.substr(pos);
 
-							std::cout << "Value: " << key.get<std::string>("") << "\n";
+										fillMap(_currentModule, _type, _currentKey, _currentValue);
+									}
+									//std::cout << "Placeholder";
+								}
+
+								
+							}
 						}
 						
 					}
 
-					BOOST_FOREACH(boost::property_tree::ptree::value_type const& value, key.get_child(""))
-					{
-						std::string label = value.first;
-						//std::cout << "value" << label <<"\n";
-						boost::property_tree::ptree keyValue = value.second;
+					//BOOST_FOREACH(boost::property_tree::ptree::value_type const& value, key.get_child(""))
+					//{
+					//	std::string label = value.first;
+					//	//std::cout << "value" << label <<"\n";
+					//	boost::property_tree::ptree keyValue = value.second;
 
-						std::string test = keyValue.get<std::string>("");
-						//std::cout << test;
-						/*
-						if (label != "<xmlattr>")
-						{
-							//std::cout << pair.first << "\n";
-							std::cout << value.first;
-							//std::string key = keyValue.get<std::string>("type.key");
-						}*/
-					}
+					//	std::string test = keyValue.get<std::string>("");
+					//	//std::cout << test;
+					//	/*
+					//	if (label != "<xmlattr>")
+					//	{
+					//		//std::cout << pair.first << "\n";
+					//		std::cout << value.first;
+					//		//std::string key = keyValue.get<std::string>("type.key");
+					//	}*/
+					//}
 				}
 				//std::string value = test.get<std::string>("pair.value");
 
@@ -186,466 +249,70 @@ void XMLParser::Parse()
 				}*/
 			}
 			//std::cout << std::endl;
+
+			if (_currentModule == "AV")
+			{
+				AvVector.push_back(_AVMap);
+			}
 		}
 	}//
 	
 }
 
-
-
-//// Definitions for the Public methods
-//bool CSV_Parser::parse_line(const STR& input_line, CSV_FIELDS& output_fields)
-//{
-//	/*
-//		A public method which accepts the following arguments
-//		a. A string
-//		b. A vector of strings
-//		Parse the CSV line and populate the vector with the output
-//	*/
-//	bool status;
-//	status = parse(input_line, output_fields);
-//	return status;
-//}
-//
-//bool CSV_Parser::parse_line(const STR& input_line, CSV_FIELDS& header_fields, KEY_VAL_FIELDS& key_val)
-//{
-//	/*
-//		A public method which accepts the following arguments
-//		a. A string
-//		b. A vector of strings
-//		c. A map with key and value both being strings
-//		Parse the CSV line, use the header provided in the vector to populate the map
-//	*/
-//	bool status;
-//	CSV_FIELDS output_fields;
-//	status = parse(input_line, output_fields);
-//
-//	if (status == true && output_fields.size() == header_fields.size())
-//	{
-//		VECTOR_ITR it1 = output_fields.begin();
-//		VECTOR_ITR it2 = header_fields.begin();
-//		for (; it1 != output_fields.end(); ++it1, ++it2)
-//		{
-//			key_val.insert(MAP_ENTRY(*it2, *it1));
-//		}
-//	}
-//	return status;
-//}
-//
-//bool CSV_Parser::parse(const STR& input_line, CSV_FIELDS& output_fields)
-//{
-//	/*
-//		A private method which handles the parsing logic used by both the overloaded public methods
-//	*/
-//	STR field;
-//	int i, j;
-//
-//	if (input_line.length() == 0)
-//	{
-//		return false;
-//	}
-//
-//	i = 0;
-//	do
-//	{
-//		if (i < input_line.length() && input_line[i] == CSV_QUOTE)
-//		{
-//			j = parse_quoted_fields(input_line, field, ++i);
-//		}
-//		else
-//		{
-//			j = parse_normal_fields(input_line, field, i);
-//		}
-//		output_fields.push_back(field);
-//		i = j + 1;
-//	} while (j < input_line.length());
-//
-//	return true;
-//}
-//
-//int CSV_Parser::parse_normal_fields(const STR& input_line, STR& field, int& i)
-//{
-//	/*
-//		Normal fields are the ones which contain no escaped or quoted characters
-//		For instance - Consider that input_line is - 1997,Ford,E350,"Super, luxurious truck"
-//		An example for a normal field would be - Ford
-//	*/
-//	int j;
-//	j = input_line.find_first_of(CSV_DELIMITER, i);
-//	if (j > input_line.length())
-//	{
-//		j = input_line.length();
-//	}
-//	field = std::string(input_line, i, j - i);
-//	return j;
-//}
-//
-//int CSV_Parser::parse_quoted_fields(const STR& input_line, STR& field, int& i)
-//{
-//	/*
-//		Quoted fields are the ones which are enclosed within quotes
-//		For instance - Consider that input_line is - 1997,Ford,E350,"Super, luxurious truck"
-//		An example for a quoted field would be - Super luxurious truck
-//		Another instance being - 1997,Ford,E350,"Super, ""luxurious"" truck"
-//	*/
-//	int j;
-//	field = "";
-//
-//	for (j = i; j < input_line.length(); j++)
-//	{
-//		if (input_line[j] == '"' && input_line[++j] != '"')
-//		{
-//			int k = input_line.find_first_of(CSV_DELIMITER, j);
-//			if (k > input_line.length())
-//			{
-//				k = input_line.length();
-//			}
-//			for (k -= j; k-- > 0; )
-//			{
-//				field += input_line[j++];
-//			}
-//			break;
-//		}
-//		else
-//		{
-//			field += input_line[j];
-//		}
-//	}
-//	return j;
-//}
-
-/*
-HRESULT XMLParser::WriteAttributes(IXmlReader* pReader)	
+void XMLParser::fillMap(string currentModule, string type, string key, string value)
 {
-    const WCHAR* pwszPrefix;
-    const WCHAR* pwszLocalName;
-    const WCHAR* pwszValue;
-    HRESULT hr = pReader->MoveToFirstAttribute();
+	char first = type.at(0);
+	VType v;
 
-    if (S_FALSE == hr)
-        return hr;
-    if (S_OK != hr)
-    {
-        wprintf(L"Error moving to first attribute, error is %08.8lx", hr);
-        return hr;
-    }
-    else
-    {
-        while (TRUE)
-        {
-            if (!pReader->IsDefault())
-            {
-                UINT cwchPrefix;
-                if (FAILED(hr = pReader->GetPrefix(&pwszPrefix, &cwchPrefix)))
-                {
-                    wprintf(L"Error getting prefix, error is %08.8lx", hr);
-                    return hr;
-                }
-                if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-                {
-                    wprintf(L"Error getting local name, error is %08.8lx", hr);
-                    return hr;
-                }
-                if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-                {
-                    wprintf(L"Error getting value, error is %08.8lx", hr);
-                    return hr;
-                }
-				if(wcscmp(pwszLocalName,L"module")==0)
-				{ 
-					if (wcscmp(pwszValue, L"VAST"))
-					{
-						ParseModule();
-					}
-					else if (wcscmp(pwszValue, L"Environment"))
-					{
+	String s;
+	Double d;
+	Integer i;
+	Boolean b;
+	Vector3 vec;
+	Array a;
 
-					}
-					else if (wcscmp(pwszValue, L"AV"))
-					{
-
-					}
-				}
-                if (cwchPrefix > 0)
-                    wprintf(L"Attr: %s:%s=\"%s\" \n", pwszPrefix, pwszLocalName, pwszValue);
-                else
-                    wprintf(L"Attr: %s=\"%s\" \n", pwszLocalName, pwszValue);
-            }
-
-            if (S_OK != pReader->MoveToNextAttribute())
-                break;
-        }
-    }
-    return hr;
-}
-
-int __cdecl XMLParser::Parse()
-{
-    HRESULT hr = S_OK;
-    IStream *pFileStream = NULL;
-    IXmlReader *pReader = NULL;
-    XmlNodeType nodeType;
-    const WCHAR* pwszPrefix;
-    const WCHAR* pwszLocalName;
-    const WCHAR* pwszValue;
-    UINT cwchPrefix;
+	//std::cout << first;
 	
-    if (_file == NULL || _file[0] == 0)
-    {
-        wprintf(L"Usage: XmlLiteReader.exe name-of-input-file\n");
-        return 0;
-    }
-
-    //Open read-only input stream
-    if (FAILED(hr = SHCreateStreamOnFile(_file, STGM_READ, &pFileStream)))
-    {
-        wprintf(L"Error creating file reader, error is %08.8lx", hr);
-        HR(hr);
-    }
-
-    if (FAILED(hr = CreateXmlReader(__uuidof(IXmlReader), (void**) &pReader, NULL)))
-    {
-        wprintf(L"Error creating xml reader, error is %08.8lx", hr);
-        HR(hr);
-    }
-
-    if (FAILED(hr = pReader->SetProperty(XmlReaderProperty_DtdProcessing, DtdProcessing_Prohibit)))
-    {
-        wprintf(L"Error setting XmlReaderProperty_DtdProcessing, error is %08.8lx", hr);
-        HR(hr);
-    }
-
-    if (FAILED(hr = pReader->SetInput(pFileStream)))
-    {
-        wprintf(L"Error setting input for reader, error is %08.8lx", hr);
-        HR(hr);
-    }
-
-    //read until there are no more nodes
-    while (S_OK == (hr = pReader->Read(&nodeType)))
-    {
-        switch (nodeType)
-        {
-		// NodeType = Attribute declaration
-        case XmlNodeType_XmlDeclaration:
-            wprintf(L"XmlDeclaration\n");
-			// Call function to enumerate the attribute
-            if (FAILED(hr = WriteAttributes(pReader)))
-            {
-                wprintf(L"Error writing attributes, error is %08.8lx", hr);
-                HR(hr);
-            }
-            break;
-		// Nodetype = Element beginning
-        case XmlNodeType_Element:
-            if (FAILED(hr = pReader->GetPrefix(&pwszPrefix, &cwchPrefix)))
-            {
-                wprintf(L"Error getting prefix, error is %08.8lx", hr);
-                HR(hr);
-            }
-            if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-            {
-                wprintf(L"Error getting local name, error is %08.8lx", hr);
-                HR(hr);
-            }
-			// Check if the element is the beginning of a module
-			if (wcscmp(pwszLocalName, L"module") == 0)
-			{
-				printf("test\n");
-				//ParseModule(hr, pFileStream, pReader, nodeType, pwszPrefix, pwszLocalName, pwszValue, cwchPrefix);
-			}
-            if (cwchPrefix > 0)
-                wprintf(L"Element: %s:%s\n", pwszPrefix, pwszLocalName);
-            else
-                wprintf(L"Element: %s\n", pwszLocalName);
-
-            if (FAILED(hr = WriteAttributes(pReader)))
-            {
-                wprintf(L"Error writing attributes, error is %08.8lx", hr);
-                HR(hr);
-            }
-
-            if (pReader->IsEmptyElement() )
-                wprintf(L" (empty)");
-            break;
-        case XmlNodeType_EndElement:
-            if (FAILED(hr = pReader->GetPrefix(&pwszPrefix, &cwchPrefix)))
-            {
-                wprintf(L"Error getting prefix, error is %08.8lx", hr);
-                HR(hr);
-            }
-            if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-            {
-                wprintf(L"Error getting local name, error is %08.8lx", hr);
-                HR(hr);
-            }
-            if (cwchPrefix > 0)
-                wprintf(L"End Element: %s:%s\n", pwszPrefix, pwszLocalName);
-            else
-                wprintf(L"End Element: %s\n", pwszLocalName);
-            break;
-        case XmlNodeType_Text:
-        case XmlNodeType_Whitespace:
-            if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-            {
-                wprintf(L"Error getting value, error is %08.8lx", hr);
-                HR(hr);
-            }
-            wprintf(L"Text: >%s<\n", pwszValue);
-            break;
-        case XmlNodeType_CDATA:
-            if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-            {
-                wprintf(L"Error getting value, error is %08.8lx", hr);
-                HR(hr);
-            }
-            wprintf(L"CDATA: %s\n", pwszValue);
-            break;
-        case XmlNodeType_ProcessingInstruction:
-            if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-            {
-                wprintf(L"Error getting name, error is %08.8lx", hr);
-                HR(hr);
-            }
-            if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-            {
-                wprintf(L"Error getting value, error is %08.8lx", hr);
-                HR(hr);
-            }
-            wprintf(L"Processing Instruction name:%s value:%s\n", pwszLocalName, pwszValue);
-            break;
-        case XmlNodeType_Comment:
-            if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-            {
-                wprintf(L"Error getting value, error is %08.8lx", hr);
-                HR(hr);
-            }
-            wprintf(L"Comment: %s\n", pwszValue);
-            break;
-        case XmlNodeType_DocumentType:
-            wprintf(L"DOCTYPE is not printed\n");
-            break;
-        }
-    }
-
-CleanUp:
-    SAFE_RELEASE(pFileStream);
-    SAFE_RELEASE(pReader);
-    return hr;
-}
-
-void XMLParser::ParseModule(HRESULT hr,
-							IStream *pFileStream,
-							IXmlReader *pReader,
-							XmlNodeType nodeType,
-							const WCHAR* pwszPrefix,
-							const WCHAR* pwszLocalName,
-							const WCHAR* pwszValue,
-							UINT cwchPrefix)
-{
-	while (S_OK == (hr = pReader->Read(&nodeType)) || (nodeType != XmlNodeType_EndElement && pwszLocalName != L"module"))
+	switch (first)
 	{
-		switch (nodeType)
-		{
-		case XmlNodeType_XmlDeclaration:
-			wprintf(L"XmlDeclaration\n");
-			if (FAILED(hr = WriteAttributes(pReader)))
-			{
-				wprintf(L"Error writing attributes, error is %08.8lx", hr);
-				HR(hr);
-			}
-			break;
-		case XmlNodeType_Element:
-			if (FAILED(hr = pReader->GetPrefix(&pwszPrefix, &cwchPrefix)))
-			{
-				wprintf(L"Error getting prefix, error is %08.8lx", hr);
-				HR(hr);
-			}
-			if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-			{
-				wprintf(L"Error getting local name, error is %08.8lx", hr);
-				HR(hr);
-			}
-			if (pwszLocalName == L"module")
-			{
-				//ParseModule(hr, pFileStream, pReader, nodeType, pwszLocalName);
-			}
-			if (cwchPrefix > 0)
-				wprintf(L"Element: %s:%s\n", pwszPrefix, pwszLocalName);
-			else
-				wprintf(L"Element: %s\n", pwszLocalName);
-
-			if (FAILED(hr = WriteAttributes(pReader)))
-			{
-				wprintf(L"Error writing attributes, error is %08.8lx", hr);
-				HR(hr);
-			}
-
-			if (pReader->IsEmptyElement())
-				wprintf(L" (empty)");
-			break;
-		case XmlNodeType_EndElement:
-			if (FAILED(hr = pReader->GetPrefix(&pwszPrefix, &cwchPrefix)))
-			{
-				wprintf(L"Error getting prefix, error is %08.8lx", hr);
-				HR(hr);
-			}
-			if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-			{
-				wprintf(L"Error getting local name, error is %08.8lx", hr);
-				HR(hr);
-			}
-			if (cwchPrefix > 0)
-				wprintf(L"End Element: %s:%s\n", pwszPrefix, pwszLocalName);
-			else
-				wprintf(L"End Element: %s\n", pwszLocalName);
-			break;
-		case XmlNodeType_Text:
-		case XmlNodeType_Whitespace:
-			if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-			{
-				wprintf(L"Error getting value, error is %08.8lx", hr);
-				HR(hr);
-			}
-			wprintf(L"Text: >%s<\n", pwszValue);
-			break;
-		case XmlNodeType_CDATA:
-			if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-			{
-				wprintf(L"Error getting value, error is %08.8lx", hr);
-				HR(hr);
-			}
-			wprintf(L"CDATA: %s\n", pwszValue);
-			break;
-		case XmlNodeType_ProcessingInstruction:
-			if (FAILED(hr = pReader->GetLocalName(&pwszLocalName, NULL)))
-			{
-				wprintf(L"Error getting name, error is %08.8lx", hr);
-				HR(hr);
-			}
-			if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-			{
-				wprintf(L"Error getting value, error is %08.8lx", hr);
-				HR(hr);
-			}
-			wprintf(L"Processing Instruction name:%s value:%s\n", pwszLocalName, pwszValue);
-			break;
-		case XmlNodeType_Comment:
-			if (FAILED(hr = pReader->GetValue(&pwszValue, NULL)))
-			{
-				wprintf(L"Error getting value, error is %08.8lx", hr);
-				HR(hr);
-			}
-			wprintf(L"Comment: %s\n", pwszValue);
-			break;
-		case XmlNodeType_DocumentType:
-			wprintf(L"DOCTYPE is not printed\n");
-			break;
-		}
+	case 's':
+	case 'S':
+		s = new VType(value);
+		v = s;
+		break;
+	case 'd':
+	case 'D':
+		d = new VType(value);
+		v = d;
+		break;
+	case 'i':
+	case 'I':
+		i = new VType(value);
+		v = i;
+		break;
+	case 'b':
+	case 'B':
+		b = new VType(value);
+		v = b;
+		break;
+	case 'v':
+	case 'V':
+		vec = new VType(value);
+		v = vec;
+		break;
+	case 'a':
+	case 'A':
+		a = new VType(value);
+		v = a;
+		break;
 	}
 
-CleanUp:
-	SAFE_RELEASE(pFileStream);
-	SAFE_RELEASE(pReader);
-	//return hr;
-}//*/
+	if (currentModule == "Environment")
+	{
+		XMLParser::_EnvMap.insert(std::pair<std::string, VType>(key, v));
+	}
+	else if (currentModule == "AV")
+	{
+		XMLParser::_AVMap.insert(std::pair<std::string, VType>(key, v));
+	}
+}
