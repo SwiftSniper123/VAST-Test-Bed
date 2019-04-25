@@ -459,6 +459,7 @@ namespace tcpip
 #endif
 		if (bytesReceived == 0)
 			throw SocketException("tcpip::Socket::recvAndCheck @ recv: peer shutdown");
+		
 		if (bytesReceived < 0)
 			BailOnSocketError("tcpip::Socket::recvAndCheck @ recv");
 

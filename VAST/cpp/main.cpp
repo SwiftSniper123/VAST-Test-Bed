@@ -33,41 +33,22 @@ private:
 
 int main(int argc, char **argv1)
 {
-	/*create the map
-	need to extract information from configuration file
-	user will input variable name, type, and intial value*/
-	std::map<std::string, AVDataTypes> AVmap; //string is the name
-	//declare variables
-	AVDataTypes vehicleType("vehicleType", "std::string"); //std::string vehicleType;
-	AVDataTypes maxVelocity("maxVelocity", "float"); // float maxVelocity;
-	AVDataTypes currentVelocity("currentVelocity", "float"); // float currentVelocity;
-	AVDataTypes maxAltitude("maxAltitude", "float"); // float maxAltitude;
-	AVDataTypes currentAltitude("currentAltitude", "float"); // float currentAltitude;
-	AVDataTypes currentPosition("currentPosition", "vector3"); // vector3 currentPosition;
-	AVDataTypes initialPosition("initialPosition", "vector3"); // vector3 initialPosition;
+	std::vector<unsigned char> charMessage;
+	tcpip::Storage* testMessage = new tcpip::Storage();
+	tcpip::Socket* s = new tcpip::Socket(1339);
+	s->accept();
 
-	//initialize variables
-	//NEED TO CREATE A NUMBER TYPE
-	vehicleType.set("car");
-	maxVelocity.set(10);
-	currentVelocity.set(0);
-	maxAltitude.set(100);
-	currentAltitude.set(0);
-	currentPosition.set(new vector3(0, 0, 0));
-	initialPosition.set(new vector3(0, 0, 0));
+	try
+	{
+		s->receiveExact(*testMessage);
+	}
+	
+	catch (tcpip::SocketException e)
+	{
+		e.what();
+		delete testMessage;
+		delete s;
+	}
 
-	//add variables to AV map
-	AVmap["vehicleType"] = vehicleType;
-	AVmap["maxVelocity"] = maxVelocity;
-	AVmap["currentVelocity"] = currentVelocity;
-	AVmap["maxAltitude"] = maxAltitude;
-	AVmap["currentAltitude"] = currentAltitude;
-	AVmap["currentPosition"] = currentPosition;
-	AVmap["initialPosition"] = initialPosition;
-
-	TraciControlToSumo* traciControl = new TraciControlToSumo();
-	traciControl->initialize();
-	traciControl->runSumo(); //There will be a 2.5 second pause while SUMO boots up
-	traciControl->runClient();
-	delete traciControl;
+	//std::cout << testMessage->readUnsignedByte();
 }

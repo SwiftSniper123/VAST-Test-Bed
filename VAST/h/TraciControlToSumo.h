@@ -43,6 +43,7 @@ private:
 	STARTUPINFO StartupInfo; //This is an [in] parameter
 	std::string sumoCmd; //Used to construct cmdArgs
 	std::string sumoCfgString; //Used to construct sumoCmd
+	tcpip::Socket* s = nullptr;
 	LPSTR cmdArgs; //Commands passed to the console during CreateProcess
 	Client client; //Sends commands to Sumo
 	bool random;

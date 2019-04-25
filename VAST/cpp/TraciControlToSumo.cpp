@@ -26,9 +26,10 @@ void TraciControlToSumo::initialize()
 	}
 
 	else
-		sumoCmd = "sumo -c " + sumoCfgString + " --remote-port 1337";
+		sumoCmd = "sumo -c " + sumoCfgString + " --remote-port 1337 --full-output localhost:1338";
 
 	cmdArgs = const_cast<char *>(sumoCmd.c_str());
+
 }
 
 void TraciControlToSumo::runSumo()
@@ -38,7 +39,7 @@ void TraciControlToSumo::runSumo()
 		NULL, NULL, FALSE, 0, NULL,
 		NULL, &StartupInfo, &ProcessInfo);
 
-	Sleep(2500); //SUMO needs to start entirely before runClient() is called. This assures there's enough time for SUMO to boot up.
+	Sleep(5000); //SUMO needs to start entirely before runClient() is called. This assures there's enough time for SUMO to boot up.
 }
 
 void TraciControlToSumo::runClient()
