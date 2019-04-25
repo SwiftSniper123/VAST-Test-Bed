@@ -69,9 +69,6 @@
     <ClInclude Include="Obstacle.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
-    <ClInclude Include="ScenarioMetric.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="Sensor.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
@@ -85,6 +82,9 @@
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="EventTree.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioMetric.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>
