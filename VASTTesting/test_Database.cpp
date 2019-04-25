@@ -23,6 +23,7 @@ TEST(DatabaseTest, opendatabase_createtable_insertdata_showdata)
 	int rc;
 	int rc1;
 	int rc2;
+	int rc3;
 	const char *sql;
 	const char **databasename;
 	databasename = new const char *("test1.db");
@@ -48,9 +49,14 @@ TEST(DatabaseTest, opendatabase_createtable_insertdata_showdata)
 	rc1 = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
 	EXPECT_EQ(rc1, SQLITE_OK);
 	//test showdata
-	sql = "SELECT * from AV_Info";
+	sql = "SELECT * from AV_Info;";
 	rc2 = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
 	EXPECT_EQ(rc2, SQLITE_OK);
+	
+	//delete table
+	sql = "DROP TABLE AV_Info;";
+	rc3 = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+	
 }
 
 
