@@ -67,37 +67,37 @@ void SumoEnvironment::getMapInformation()
 		Vector3 position;
 		
 		//checks if the ID is that of the Autonomous vehicle and if so get the information about that
-		if (IDlist.data == _AVid)
+		if (IDlist[it] == _AVid)
 		{
-			vehicleID = IDlist.data;
-			Double acceleration(traci.vehicle.getAcceleration(IDlist.data));
-			Double velocity(traci.vehicle.getSpeed(IDlist.data));
-			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(IDlist.data));
+			vehicleID = it;
+			Double acceleration(traci.vehicle.getAcceleration(it));
+			Double velocity(traci.vehicle.getSpeed(it));
+			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(it));
 
 			position.x = XYZ.x;
 			position.y = XYZ.y;
 			position.z = XYZ.z;
 
-			currentData[IDlist.data] = ("Vehicle ID", vehicleID );
-			currentData[IDlist.data] = ("Acceleration", acceleration);
-			currentData[IDlist.data] = ("Velocity", velocity);
-			currentData[IDlist.data] = ("XYZ position", position);
+			currentData[it] = ("Vehicle ID", vehicleID );
+			currentData[it] = ("Acceleration", acceleration);
+			currentData[it] = ("Velocity", velocity);
+			currentData[it] = ("XYZ position", position);
 		}
 
 		//will get the information needed for other vehicles in the system
 		else
 		{
-			vehicleID = IDlist.data;
-			Double velocity(traci.vehicle.getSpeed(IDlist.data));
-			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(IDlist.data));
+			vehicleID = it;
+			Double velocity(traci.vehicle.getSpeed(it));
+			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(it));
 
 			position.x = XYZ.x;
 			position.y = XYZ.y;
 			position.z = XYZ.z;
 
-			currentData[IDlist.data] = ("Vehicle ID", vehicleID);
-			currentData[IDlist.data] = ("Velocity", velocity);
-			currentData[IDlist.data] = ("XYZ position", position);
+			currentData[it] = ("Vehicle ID", vehicleID);
+			currentData[it] = ("Velocity", velocity);
+			currentData[it] = ("XYZ position", position);
 		}
 
 		update(location->getCurrentSimTime(), currentData);
