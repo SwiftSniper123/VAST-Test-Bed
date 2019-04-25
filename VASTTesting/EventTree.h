@@ -1,19 +1,15 @@
 #pragma once
 #include <chrono> //C++ 14 required; sleep_for()
 #include <thread>
-#include <mutex>
-#include <condition_variable> // std::condition_variable
+#include <set>
 #include "VComponent.h" // timestamp, dataMap
+#include "ScenarioMetric.h"
 #include <exception>
 
 
 using namespace std::this_thread;     // sleep_for, sleep_until
 using std::chrono::milliseconds;
 using std::chrono::microseconds;
-using std::thread;
-using std::mutex;
-using std::unique_lock;
-using std::condition_variable;
 typedef std::invalid_argument InvalidArgumentException;
 typedef double ratio;
 
@@ -42,7 +38,8 @@ struct OutOfTimeException : public std::exception
 class EventTree
 {
 private:
-	
+
+	/* ID for this replication.*/
 	string _runID;
 
 	/* The length of each timeslice that the clock progresses.*/
@@ -52,14 +49,27 @@ private:
 	simulation speeds faster than real time or slower than real time.*/
 	ratio _timeRatio;
 
-	/* End time when the run will end.*/
+	/* End time when the replication will end.*/
 	double _endTime;
+
+	/* Number of runs to perform.*/
+	int _numRuns;
+
+	/* Number of replications that stopped early.*/
+	int _numEarlyStops = 0;
 
 	/* The current time in the simulated world.*/
 	double _simClock = -1;
 
-	///* Database time unit output.*/
-	//char _timeUnit = 's';
+	/* First component to be updated in the system, and therefore first 
+	component to add an event.  "Drives" the other components to respond 
+	by adding their own events.*/
+	VComponent* _leadComponent = nullptr;
+
+	std::set<string> reportedComponents;
+
+	/* Registered metrics.*/
+	vector<ScenarioMetric*> metrics;
 
 	/* The map of "past" values*/
 	map<VComponent*, dataMap> _componentInitialStateMap;
@@ -80,6 +90,7 @@ private:
 		double _time_;
 		dataMap _data_;
 		ComponentEventUpdate* _next_ = nullptr;
+		ComponentEventUpdate* _prev_ = nullptr;
 	};
 
 	/* Structure for storing present andd future updates.*/
@@ -97,24 +108,33 @@ private:
 		Future* nextFuture = nullptr;
 	};
 
-	/* The state of run data as collected for the next timeslice.*/
+	/* The state of replication data as collected for the next timeslice.*/
 	Future* _future;
 
-	thread* _clockThread;
+	/* Begins the clock at 0, updates the current map for every event added.*/
+	void replication();
 
-	mutex _clockLock;
-
-	condition_variable cv;
-
-	/* Empties the Future linked list completely.*/
-	void resetFutureListOfEvents();
+	/* Tracks which components have replied to the lead component.*/
+	bool stillAddingEvents(string componentName);
 
 	/* Publishes the update event to the database to all tables relevant to
 	that component.  */
-	void publishUpdates(double thisTimeSlice);
+	void publishUpdates();
 
 	/* Once the simClock moves into the next timeSlice, the old timeSlice's events will be discarded.*/
-	void advanceClock(double& __timeSlice, double& __timeRatio, double& __endTime);
+	void advanceClock();
+
+	/* Generates a future timeslice record for the Event that cannot yet be executed.*/
+	void findFuture(VComponent* _eventSource, timestamp _eventTime, dataMap _eventDataMap, timestamp targetTimeSlice);
+
+	/* Stops the system ahead of the endTime*/
+	void earlyStop();
+
+	/* Immediately stops the simClock and refreshes the */
+	void stop();
+
+	/* Empties the Future linked list completely.*/
+	void resetFutureListOfEvents();
 
 public:
 	/* Creates an EventTree, sets the simClock to -1.
@@ -123,9 +143,9 @@ public:
 				or equal to 0.
 	timeRatio	The number of simulated seconds per real seconds.  Throws
 				an exception for values less than or equal to 0.
-	endTime		The end time for the run.  Throws an exception for values less 
+	endTime		The end time for the replication.  Throws an exception for values less 
 				than or equal to 0.
-	Default time unit output to database is second.*/
+	Default number of runs is 1.*/
 	EventTree(double timeSlice, ratio timeRatio, double endTime) ;
 
 	/* Creates an EventTree, sets the simClock to -1.
@@ -134,30 +154,28 @@ public:
 						or equal to 0.
 	timeRatio			The number of simulated seconds per real seconds.  Throws
 						an exception for values less than or equal to 0.
-	endTime				The end time for the run.  Throws an exception for values less 
+	endTime				The end time for the replication.  Throws an exception for values less 
 						than or equal to 0.
-	databaseTimeUnit	Unit of time represented in the database: s, m, h, d, w
-						for second, minute, hour, day, week.  Other entries will 
-						throw an exception.*/
-	EventTree(double timeSlice, ratio timeRatio, double endTime, char databaseTimeUnit);
+	numberOfRuns		Number of runs to be performed under these scenario parameters.*/
+	EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns);
 
 	/* Destructor - destroys internal components*/
 	~EventTree();
 
-	/* A VComponent should register themselves with the EventTree and initialize the /.*/
+	/* A VComponent should register themselves with the EventTree and initialize the dataMap.*/
 	void registerComponent(VComponent* vc);
+
+	/* A Scenario Metric should register themselves with the EventTree.*/
+	void registerMetric(ScenarioMetric* sm);
 
 	/* Reports back the number of components that have been registered in the EventTree.*/
 	int getNumberOfVComp()const;
 
-	/* Starts the clock by advancing to relative time 0.  Records the wall clock start time.*/
+	/* Sets which component is the first to receive updates.*/
+	void setFirstComponent(VComponent* vc);
+
+	/* Starts the clock by advancing to relative time 0.*/
 	void start();
-
-	/* Stops the system ahead of the endTime*/
-	void earlyStop();
-
-	/* Immediately stops the simClock and refreshes the */
-	void stop();
 
 	/* Adds a data update to the EventTree; sorts where the event is relevant and checks to 
 	see if it is time to advance the clock.
@@ -169,25 +187,25 @@ public:
 	void addEvent(VComponent* source, timestamp time, dataMap dataMap);
 
 	/* Provides the clock speed ratio of simulated seconds per real 
-	seconds at which this scenario run progresses. */
-	double getTimeRatio();
+	seconds at which this scenario replication progresses. */
+	const double getTimeRatio();
 		
-	/* Provides the timeSlice for this scenario run.*/
-	double getTimeSlice();
+	/* Provides the timeSlice for this scenario replication.*/
+	const double getTimeSlice();
 
 	/* Returns the current simClock time.  Returns -1 if the clock has not started.*/
-	timestamp getCurrentSimTime();
+	const timestamp getCurrentSimTime();
 
-	///* Returns the running time of the simulation.*/
-	//timestamp getStartSimTime() { return 0.0; };
+	/* Returns the number of early stopped replications.*/
+	const int getNumberOfEarlyStops();
 
 	/* Returns the future end timestamp of the simulation.*/
-	timestamp getEndSimTime() ;
+	const timestamp getEndSimTime();
 
 	/* Starts the sim clock.  If the sim clock is starting or already started, it returns true.  If the end
 	time has been reached, it returns false.*/
 	bool running();
 
-	/* Sets the run ID for this run.*/
+	/* Sets the replication ID for this replication.*/
 	string setRunID();
 };

@@ -22,6 +22,11 @@ void Obstacle::update(timestamp time, dataMap updateMap)
 
 }
 
+void Obstacle::stopReplication(bool another, string runID)
+{
+
+}
+
 VComponent::VCType Obstacle::getVCType()
 {
 	return Obstacle_Avatar;

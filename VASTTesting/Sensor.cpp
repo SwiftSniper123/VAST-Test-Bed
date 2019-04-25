@@ -23,6 +23,11 @@ void Sensor::update(timestamp t, dataMap dataMap)
 	
 }
 
+void Sensor::stopReplication(bool another, string runID)
+{
+
+}
+
 VComponent::VCType Sensor::getVCType()
 {
 	return Sensor_Avatar;

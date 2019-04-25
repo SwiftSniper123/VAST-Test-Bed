@@ -21,68 +21,66 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
 	_timeRatio = timeRatio;
 	_endTime = endTime;
 	_simClock = -1;
-	_clockThread = nullptr;
+	_numRuns = 1;
 	_future = nullptr;
 }
 
-// -- unused at this time, but if extended would allow the user to send different units of time to the database
-//EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, char databaseTimeUnit)
-//{
-//	if (timeSlice <= 0.0)
-//	{
-//		throw InvalidArgumentException("Time slices must be greater than 0 seconds.");
-//	}
-//	else if (timeRatio <= 0.0 || timeRatio > 1.0)
-//	{
-//		throw InvalidArgumentException("Time ratio must be greater than 0.");
-//	}
-//	else if (endTime <= 0.0)
-//	{
-//		throw InvalidArgumentException("Run end time must be greater than 0 seconds.");
-//	}
-//	switch (databaseTimeUnit)
-//	{
-//	case 's': _timeUnit = 's';
-//		break;
-//	case 'm': _timeUnit = 'm';
-//		break;
-//	case 'h': _timeUnit = 'h';
-//		break;
-//	case 'd': _timeUnit = 'd';
-//		break;
-//	case 'w': _timeUnit = 'w';
-//		break;
-//	default: throw InvalidArgumentException("The data base time unit must be s for seconds," \
-//		" m for minutes, h for hours, d for days, or w for weeks.");
-//	}
-//
-//	_timeSlice = timeSlice;
-//	_timeRatio = timeRatio;
-//	_endTime = endTime;
-//	_simClock = -1;
-//	_clockThread = nullptr;
-//}
+EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns)
+{
+	if (timeSlice <= 0.0)
+	{
+		throw InvalidArgumentException("Time slices must be greater than 0 seconds.");
+	}
+	else if (timeRatio <= 0.0 || timeRatio > 1.0)
+	{
+		throw InvalidArgumentException("Time ratio must be greater than 0.");
+	}
+	else if (endTime <= 0.0)
+	{
+		throw InvalidArgumentException("Run end time must be greater than 0 seconds.");
+	}
+	else if (numRuns < 1)
+	{
+		throw InvalidArgumentException("Must have at least one run to test the scenario.");
+	}
+
+	_timeSlice = timeSlice;
+	_timeRatio = timeRatio;
+	_endTime = endTime;
+	_simClock = -1;
+	_numRuns = numRuns;
+	_future = nullptr;
+}
 
 EventTree::~EventTree()
 {
-	unique_lock<mutex> lock(_clockLock);
-	if(_clockThread != nullptr)
-		_clockThread->join();
-	// destroy linked list of Events
+	metrics.clear();
+	_componentInitialStateMap.clear();
+	_componentPresentStateMap.clear();
+
+	// clear out the linked list of Futures and the attached ComponentEventUpdates.
 	resetFutureListOfEvents();
 }
 
 void EventTree::registerComponent(VComponent* vc)
 {
-	if (!running())
+	// only register components before a set of replications
+	if (!running() && vc->getVCType() != VComponent::VCType::ScenarioMetric)
 	{
 		map<VComponent*, dataMap>::iterator it;
-
 		it = _componentInitialStateMap.find(vc);
 		if (it == _componentInitialStateMap.end())
 		{
+			// register this EventTree with the component so EventTree::addEvent 
+			// can be called from within the component
+			vc->registerEventTree(this);
+			// store initial state (not modified after this)
 			_componentInitialStateMap.emplace(vc, vc->getDataMap());
+			// and initialize present state (modified)
 			_componentPresentStateMap.emplace(vc, vc->getDataMap());
+
+			// if lead component hasn't been set, give it a first-come first-serve vc
+			_leadComponent = _leadComponent == nullptr ? vc : _leadComponent;
 		}
 
 		// TODO: add intialization of database tables here
@@ -91,118 +89,52 @@ void EventTree::registerComponent(VComponent* vc)
 	}
 }
 
-int EventTree::getNumberOfVComp() const
-{ 
-	return _componentInitialStateMap.size();
+void EventTree::registerMetric(ScenarioMetric* sm)
+{
+	metrics.push_back(sm);
 }
 
-/* Starts the clock by advancing to relative time 0.  Records the wall clock start time.*/
+int EventTree::getNumberOfVComp() const
+{ return _componentInitialStateMap.size(); }
+
+void EventTree::setFirstComponent(VComponent* vc)
+{ _leadComponent = vc; }
+
 void EventTree::start()
 {
-	unique_lock<mutex> lock(_clockLock);
-	if (_simClock == -1)
+	while (_numRuns > 0)
 	{
-		// TODO: add run ID generator here		
-		_runID = setRunID();
-		_simClock = 0; // does not matter if data maps are all initialized before clock is advanced
-		lock.unlock();
-
-		 _clockThread = new thread ([&](EventTree* et)
-		 {
-			et->advanceClock(		
-				std::ref(_timeSlice),
-				std::ref(_timeRatio),
-				std::ref(_endTime));
-		 }, this);	
-		
-		 // create a thread whose sole job is to wait for the time to stop
-		 thread stopThread([&](EventTree* et)
-		 {
-			 et->stop();
-		 }, this);
-
+		replication();
 	}
-	else
-	{
-		lock.unlock();
-	}
-	
 }
 
-void EventTree::earlyStop()
-{
-	unique_lock<mutex> lock(_clockLock);
-	_endTime = _simClock;
-	stop();
-}
-
-void EventTree::stop()
-{
-	while (1)
-	{
-		if (running())
-		{
-			unique_lock<mutex> lock(_clockLock);
-			cv.wait(lock);
-		}
-		else
-		{
-
-			_clockThread->join();
-			_clockThread = nullptr;
-			// _runID will persist until another start is called
-			// _timeSlice, _timeRatio, _endTime, and _timeUnit persist from run to run
-
-			// TODO: store the actual _simClock's last time somewhere
-			unique_lock<mutex> lock(_clockLock);
-			_simClock = -1;
-			lock.unlock();
-
-			// clear out Events and start with empty present Future
-			resetFutureListOfEvents();
-
-			// reset _componentPresentStateMap to _componentInitialStateMap
-			lock.lock();
-			_componentPresentStateMap.clear();
-			_componentPresentStateMap = _componentInitialStateMap;
-			lock.unlock();
-		}
-	}
-} // end of stop()
-
-/* addEvent - Adds a data update to the EventTree; sorts where the event is relevant and checks to
-	see if it is time to advance the clock.  AddEvent throttles the incoming events so that they are 
-	only published if it is their timeslice to do so.  
-	_eventSource		The component that originates the update event
-	_eventTime			The simulation timestamp in which the event occurred
-	_eventDataMap		The map containing the new information.  If the data in the map
-						is not different from its previous recorded value, this will
-						throw an exception.*/
 void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap _eventDataMap)
 {
-	// clock is 0 or greater, and less than endTime, i.e. within runtime; other events are ignored
-	if (running()) 
+	double currentSchedulableTime = _simClock < 0? 0: _simClock;
+	
+	// if an event is set outside of the run time:
+	if(_eventTime < 0 || _eventTime < currentSchedulableTime - _timeSlice)  // too far left
 	{
-		// lockdown the whole event, because we assume: we have not reached endTime, and the _simClock is not changing
-		unique_lock<mutex> lock(_clockLock);
-
-		// slow times should throw exception because we've already sent that data, 
-		// the event took place more than one timeslice ago, that component is running 
-		// too slow
-		if(_eventTime < getCurrentSimTime() - getTimeSlice())  // too far left
+		throw OutOfTimeException(currentSchedulableTime, _eventSource->getName(), _eventTime);
+	}
+	// otherwise if this event happens in the distant future
+	else if (_eventTime >= getEndSimTime())  // too far right
+	{
+		// throw OutOfTimeException(currentSchedulableTime, _eventSource->getName(), _eventTime);
+		return; // leave the addEvent to finish the replication
+	}
+	// if the time clock has not yet started, everything is a Future
+	else if (_simClock < 0)
+	{
+		findFuture(_eventSource, _eventTime, _eventDataMap, 0.0);
+	}
+	// otherwise sort this update into timeslices, starting with present 
+	else if (_eventTime >= 0 && _eventTime < currentSchedulableTime + _timeSlice)  // "now"
+	{
+		// update the present map
+		map<VComponent*, dataMap>::iterator presentMapIterator; // used to point to relevant VComponent & datamap
+		if (stillAddingEvents(_eventSource->getName()))
 		{
-			throw OutOfTimeException(getCurrentSimTime(), _eventSource->getName(), _eventTime);
-		}
-		// otherwise if this event happens in the distant future
-		else if (_eventTime >= getEndSimTime())  // too far right
-		{
-			throw OutOfTimeException(getCurrentSimTime(), _eventSource->getName(), _eventTime);
-		}
-		// otherwise sort this update into the Events, starting with present Future
-		else if (_eventTime < getCurrentSimTime() + getTimeSlice())  // "now"
-		{
-			// update the present map
-			map<VComponent*, dataMap>::iterator presentMapIterator; // used to point to relevant VComponent & datamap
 			presentMapIterator = _componentPresentStateMap.find(_eventSource); // try to find this VComponent data map
 			// if we did find it
 			if (presentMapIterator != _componentPresentStateMap.end())
@@ -216,130 +148,65 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 					// get the present map's old component data, and the new update data, and overwrite
 					VType* oldData = presentMapIterator->second[updateIterator->first];
 					VType* newData = updateIterator->second;
-					oldData = newData;
+					/*if (oldData->isA(newData->getType()))
+					{*/
+						*presentMapIterator->second[updateIterator->first] = *newData;
+					//}
+					/*else
+					{
+						throw InvalidArgumentException("Data swap on \"" + updateIterator->first +
+							"\" takes a " + oldData->getType() + " not a " + newData->getType());
+					}*/
 				}
 			}
 			else
 			{
 				// we didn't find the VComponent in the state map, which is a problem
-				throw InvalidArgumentException("Current tracked data does not contain a record of " + _eventSource->getName());
+				throw InvalidArgumentException("Current system does not contain component: " + _eventSource->getName());
 			}
 
-			// update the other components - CHIEF TASK
+			// now update the other components - CHIEF TASK
+			VComponent* targetComponent;
+			/*VComponent::VCType sourceVCType = _eventSource->getVCType();
+			VComponent::VCType targetVCType = targetComponent->getVCType();*/
+
 			for (presentMapIterator = _componentPresentStateMap.begin();
 				presentMapIterator != _componentPresentStateMap.end();
 				++presentMapIterator)
 			{
-				VComponent* targetComponent = presentMapIterator->first;
+				targetComponent = presentMapIterator->first;
 				if (targetComponent != _eventSource)
 				{
 					targetComponent->update(_eventTime, _eventDataMap);
 				}
 			}
 		}
-		// if this update takes place in the near future, check to see if there is a Future for it
-		else if (_eventTime >= getCurrentSimTime() + getTimeSlice()) // future(s)	
-		{
-			//then sort the incoming Event into timeslice Futures and subsequent Component Events
-			//where target time < thisTimeSlice
-			double targetTimeSlice = getCurrentSimTime() + getTimeSlice();
-			Future* peek = _future;
-			while (_eventTime >= targetTimeSlice)
-			{
-				if (peek == nullptr)
-				{
-					//put new Future here
-					peek = new Future(targetTimeSlice);
-				}
-				// if this event is still further in the future, increment the target timeslice and loop again
-				if (_eventTime >= targetTimeSlice + getTimeSlice())
-				{
-					targetTimeSlice += getTimeSlice();
-					peek = peek->nextFuture;
-					continue;
-				}
-				// otherwise we have found the right time frame for this event
-				else
-				{
-					//look for ComponentEventUpdate to store this in
-					bool stored = false;
-					ComponentEventUpdate* storedEvents = peek->headEvent;
-					while (storedEvents != nullptr)
-					{
-						if (storedEvents->_vc_ == _eventSource) // then store it
-						{
-							// update the time
-							storedEvents->_time_ = _eventTime; // maintain the most current "raw", non-timesliced time
-							// store each new data type
-							dataMap::iterator storedEventData; // used to point to relevant data found in this stored event's data map
-							for(auto updateDataIterator = _eventDataMap.begin();
-									updateDataIterator != _eventDataMap.end();
-									++updateDataIterator)
-							{ 
-								storedEventData = storedEvents->_data_.find(updateDataIterator->first); // try to find this key in the map
-								if (storedEventData != storedEvents->_data_.end())
-								{
-									// update the found VType
-									storedEvents->_data_[updateDataIterator->first] = updateDataIterator->second;
-								}
-								else // if the matching data VType is not found by key
-								{
-									storedEvents->_data_.emplace(updateDataIterator->first, updateDataIterator->second);
-								}
-								// loop through remaining updated data
-							}
-							stored = true; // the event has been absorbed into the ComponentEventUpdate and will get executed later as a single addEvent
-							break;
-						}
-					}
-					if (!stored) // then store it
-					{
-						// were there any events inside the Future construct?
-						if (peek->headEvent == nullptr)
-						{
-							peek->headEvent = new ComponentEventUpdate(_eventSource, _eventTime, _eventDataMap);
-							peek->tailEvent = peek->headEvent;
-							break; // no longer need to loop through while (_eventTime >= targetTimeSlice)
-						}
-						else
-						{
-							// new construct
-							ComponentEventUpdate* temp = new ComponentEventUpdate(_eventSource, _eventTime, _eventDataMap);
-							// link old construct to new construct
-							peek->tailEvent->_next_ = temp;
-							// update tail pointer to point to new construct
-							peek->tailEvent = temp;
-							break; // no longer need to loop through while (_eventTime >= targetTimeSlice)
-						}						
-					} // looked through old and created new ComponentEventUpdate if necessary
-				} // event has been stored
-			} // end of while loop "while (_eventTime >= targetTimeSlice)"
-		} // done with futures
-		lock.unlock();
-	} // end of condition check for running()	
+	}
+	// if this update takes place in the near future, check to see if there is a Future for it
+	else if (_eventTime > 0 && _eventTime >= currentSchedulableTime + _timeSlice) // future(s)	
+	{
+		double targetTimeSlice = currentSchedulableTime + _timeSlice;
+		findFuture(_eventSource, _eventTime, _eventDataMap, targetTimeSlice);
+	} // done with futures
 }
 
-double EventTree::getTimeRatio()
+const double EventTree::getTimeRatio()
 { return _timeRatio; }
 
-double EventTree::getTimeSlice()
+const double EventTree::getTimeSlice()
 { return _timeSlice; }
 
-timestamp EventTree::getCurrentSimTime()
-{ 
-	unique_lock<mutex> lock(_clockLock);
-	return _simClock; 
-}
+const timestamp EventTree::getCurrentSimTime()
+{ return _simClock; }
 
-timestamp EventTree::getEndSimTime()
-{ 
-	unique_lock<mutex> lock(_clockLock);
-	return _endTime; 
-}
+const int EventTree::getNumberOfEarlyStops()
+{ return _numEarlyStops; }
+
+const timestamp EventTree::getEndSimTime()
+{ return _endTime; }
 
 bool EventTree::running() 
 { 
-	unique_lock<mutex> lock(_clockLock);
 	bool result = false;
 	if (_simClock >= 0 && /* Current time >= 0*/
 		_simClock < _endTime && /* Less than end time */
@@ -352,84 +219,270 @@ bool EventTree::running()
 
 string EventTree::setRunID() 
 {
-	// TODO: generate run ID
+	// TODO: generate replication ID
 	return "runID generator function needs to be implemented";
 }
 
-// Private functions ------------------------------------//
+//-----------------------------------------------------------------------------//
+// ----------------------Private functions ------------------------------------//
+void EventTree::replication()
+{
+	if (_simClock == -1)
+	{
+		// TODO: add replication ID generator here		
 
-void EventTree::publishUpdates(double thisTimeSlice)
+		if (_leadComponent != nullptr)
+		{
+			// add an event in the future to initialize eventlist
+			_leadComponent->update(0, dataMap());
+		}
+
+		_simClock = 0; 
+
+		/* continue looping through the entire replication:
+		1) check for events,
+		2) update future list,
+		3) publish to ScenarioMetrics,
+		4) publish to database,
+		5) check database for collision, 
+		6) check to see if it's time to stop
+		7) if not, increment time clock
+		*/
+		while (_simClock < _endTime)
+		{
+			//if (_leadComponent != nullptr)
+			//{
+			//	// add an event in the future to initialize eventlist
+			//	_leadComponent->update(_simClock, dataMap());
+			//}
+			// check for future events, advance the future list
+			if (_future != nullptr)
+			{
+				Future* nextInLine = _future->nextFuture;
+
+				// grab the stored events for execution at this timeslice
+				ComponentEventUpdate* endOfList = _future->tailEvent;
+				ComponentEventUpdate* sortedEvent = _future->headEvent;
+
+				// cleanup the Future because it is now the present, set the new _future
+				delete _future;
+				_future = nextInLine;
+
+				if (sortedEvent != nullptr)
+				{
+					// bubble sort to events by time
+					int swaps;
+					do
+					{
+						swaps = 0;
+						while (sortedEvent->_next_ != nullptr)
+						{
+							ComponentEventUpdate* next = sortedEvent->_next_;
+							if (sortedEvent->_time_ < sortedEvent->_next_->_time_)
+							{
+								//swap a<-S<->N->b; t
+								ComponentEventUpdate* temp = sortedEvent->_prev_; // t = a
+								next->_prev_ = temp; // a<-S->N->b; a<-N
+								temp = next->_next_; // t = b
+								sortedEvent->_next_ = temp; // a<-S->b; a<-N
+								temp = sortedEvent; // t = S
+								next->_next_ = sortedEvent; // a<-S->b; a<-N->S
+								sortedEvent->_prev_ = next; // a<-N<->S->b  fully swapped
+								swaps = 1;
+							}
+							sortedEvent = next; // move to next event
+						}
+						endOfList = sortedEvent;
+					} while (swaps); // sorted is 0 when nothing had to be organized
+				} 
+				// list ends up with smallest at the end, and cursor at the end, so wind down	
+				// execute stored events - unpackage them
+				while(endOfList != nullptr)
+				{
+					VComponent* source = endOfList->_vc_;
+					timestamp time = endOfList->_time_;
+					dataMap data = endOfList->_data_;
+					ComponentEventUpdate* deletable = endOfList;
+					endOfList = endOfList->_prev_;
+					delete deletable;
+					addEvent(source, time, data);
+				}
+			}
+
+			// perhaps an exchange with the ScenarioMetrics here?
+
+			// publish to the database with the events for this timeslice, before it advances
+			publishUpdates();
+
+			// check for collisions, which would mean early stop
+
+			// check to make sure the replication isn't over early because of what we just published
+			if (_endTime == _simClock) // time to stop
+				break;
+			// clear more room for events to be added by components for the next time slice
+			reportedComponents.clear();
+			advanceClock();
+		}
+
+		stop();
+
+	}
+}
+
+bool EventTree::stillAddingEvents(string componentName)
+{
+	bool accepting = true;
+	int alreadyReported = reportedComponents.size(); // how many have reported
+	if (_leadComponent->getName().compare(componentName)!= 0) // ignore lead
+	{
+		reportedComponents.insert(componentName); // try adding this one
+		accepting = alreadyReported != reportedComponents.size(); // did the size change?
+	}	
+	// we will not accept this event if the size is the same
+	return accepting;
+}
+
+void EventTree::publishUpdates()
 {
 	// send updates to database
 }
 
-void EventTree::advanceClock(double& __timeSlice, double& __timeRatio, double& __endTime)
+void EventTree::advanceClock()
 {
-	unique_lock<mutex> lock(_clockLock);
-	//double thisEndTime = __endTime; // the original endTime may change elsewhere
-	//double thisSimClockTime = __simClock;
-	//lock.unlock();
+	// wait for a time slice
+	sleep_for(microseconds(int(_timeSlice*_timeRatio * 1000000)));
 
-	// begin the march of the clock timeslice by timeslice
-	
-	while (_simClock < _endTime)
+	// advance the simClock time by a time slice
+	_simClock += getTimeSlice();  //***THIS IS THE ONLY PLACE THIS IS MODIFIED***
+}
+
+void EventTree::findFuture(VComponent* _eventSource, timestamp _eventTime, dataMap _eventDataMap, timestamp targetTimeSlice)
+{
+	//sort the incoming Event into timeslice Futures and subsequent Component Events
+	Future* peek = _future;
+	Future* last = nullptr;
+	while (_eventTime >= targetTimeSlice)
 	{
-		lock.unlock();
-		// wait for a time slice
-		sleep_for(microseconds(int(getTimeSlice()*getTimeRatio() * 1000000)));
-
-		// publish to the database with the events for this timeslice, before it advances
-		publishUpdates(_simClock);
-
-		// check for collisions, which would mean early stop
-
-/////////////// lock ///////////////////
-		// check to make sure the run isn't over early because of what we just published
-		if (_endTime == _simClock) // time to stop
-			cv.notify_all();
+		if (peek == nullptr && last == nullptr)
 		{
-			lock.lock();
-			// advance the simClock time by a time slice
-			_simClock += getTimeSlice();  //***THIS IS THE ONLY PLACE THIS IS MODIFIED***
-			cv.notify_all();
+			//put new Future here
+			peek = new Future(targetTimeSlice);
+			_future = peek; // set first future in line
 		}
-		lock.lock();
-		// advance the future list
-		if (_future != nullptr)
+		else if (peek == nullptr && last != nullptr)
 		{
-			Future* nextInLine = _future->nextFuture;
-
-			// grab the stored events for execution at this timeslice
-			ComponentEventUpdate* storedEvents = _future->headEvent;
-			
-			// cleanup the Future because it is now the present, set the new _future
-			delete _future;
-			_future = nextInLine;
-			lock.unlock();
-/////////////// unlock ///////////////////
-
-			// now execute stored events - unpackage them
-			while (storedEvents != nullptr)
-			{
-				thread storedAddEvent([&](EventTree* et)
-				{
-					et->addEvent(
-						std::ref(storedEvents->_vc_),
-						std::ref(storedEvents->_time_),
-						std::ref(storedEvents->_data_));
-				}, this);
-				storedAddEvent.join(); // wait for that thread to end
-				ComponentEventUpdate* deletable = storedEvents;
-				storedEvents = storedEvents->_next_;
-				delete deletable;
-			}
+			peek = new Future(targetTimeSlice);
+			last->nextFuture = peek;
 		}
+		// if this event is still further in the future, increment the target timeslice and loop again
+		if (_eventTime >= targetTimeSlice + _timeSlice)
+		{
+			targetTimeSlice += _timeSlice;
+			last = peek;
+			peek = peek->nextFuture;
+			continue;
+		}
+		// otherwise we have found the right time frame for this event
 		else
 		{
-			lock.unlock();
-		}		
-	}
+			//look for ComponentEventUpdate to store this in
+			bool stored = false;
+			ComponentEventUpdate* storedEvents = peek->headEvent;
+			while (storedEvents != nullptr)
+			{
+				if (storedEvents->_vc_ == _eventSource) // then store it
+				{
+					// update the time only if it's the most up to date event
+					if (storedEvents->_time_ >= _eventTime)
+					{
+						storedEvents->_time_ = _eventTime; // maintain the most current "raw", non-timesliced time
+						// store each new data type
+						dataMap::iterator storedEventData; // used to point to relevant data found in this stored event's data map
+						for (auto updateDataIterator = _eventDataMap.begin();
+							updateDataIterator != _eventDataMap.end();
+							++updateDataIterator)
+						{
+							// write to the storedEvent data whether the key is found or not
+							storedEvents->_data_.insert(namedData(updateDataIterator->first, updateDataIterator->second));
+						}
+					}
+					else
+					{
+						// this event happened before the "latest" event, do not overwrite the time
+						dataMap::iterator storedEventData; // used to point to relevant data found in this stored event's data map
+						for (auto updateDataIterator = _eventDataMap.begin();
+							updateDataIterator != _eventDataMap.end();
+							++updateDataIterator)
+						{
+							storedEventData = storedEvents->_data_.find(updateDataIterator->first); // try to find this key in the map
+							if (storedEventData == storedEvents->_data_.end())
+							{
+								// only write when the key is not found
+								storedEvents->_data_.insert(namedData(updateDataIterator->first, updateDataIterator->second));
+							}
+						}
+					}
+					stored = true; // the event has been absorbed into the ComponentEventUpdate and will get executed later as a single addEvent
+					break;
+				}
+				else
+				{
+					storedEvents = storedEvents->_next_;
+				}
+			}
+			if (!stored) // then store it
+			{
+				// were there any events inside the Future construct?
+				if (peek->headEvent == nullptr)
+				{
+					peek->headEvent = new ComponentEventUpdate(_eventSource, _eventTime, _eventDataMap);
+					peek->tailEvent = peek->headEvent;
+					break; // no longer need to loop through while (_eventTime >= targetTimeSlice)
+				}
+				else
+				{
+					// new construct
+					ComponentEventUpdate* temp = new ComponentEventUpdate(_eventSource, _eventTime, _eventDataMap);
+					// link old construct to new construct
+					peek->tailEvent->_next_ = temp;
+					temp->_prev_ = peek->tailEvent;
+					// update tail pointer to point to new construct
+					peek->tailEvent = temp;
+					break; // no longer need to loop through while (_eventTime >= targetTimeSlice)
+				}
+			} // looked through old and created new ComponentEventUpdate if necessary
+		} // event has been stored
+	} // end of while loop "while (_eventTime >= targetTimeSlice)"
 }
+
+void EventTree::earlyStop()
+{
+	_endTime = _simClock;
+	_numEarlyStops++;
+}
+
+void EventTree::stop()
+{
+	if (!running())
+	{	
+		_simClock = -1;
+		_numRuns--;
+		
+		// clear out Events and start with empty present Future
+		resetFutureListOfEvents();
+
+		// reset _componentPresentStateMap to _componentInitialStateMap
+		for (auto presentMapIterator = _componentPresentStateMap.begin();
+			presentMapIterator != _componentPresentStateMap.end();
+			++presentMapIterator)
+		{
+			presentMapIterator->second = _componentInitialStateMap[presentMapIterator->first];
+
+			// tell components to restart themselves
+			presentMapIterator->first->stopReplication((_numRuns > 0), _runID);
+		}	
+	}
+} // end of stop()
 
 void EventTree::resetFutureListOfEvents()
 {

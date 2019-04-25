@@ -9,10 +9,6 @@
 #include <thread>
 #include <iostream>
 
-using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
-using std::chrono::system_clock;
-using std::cout;
-
 /*Default true test*/
 TEST(DefaultTest, TrueInTestEventTree)
 {
@@ -109,176 +105,139 @@ TEST(Test_EventTree, EventTreeRegisterComponent)
 	delete et, env, av1, av2, sensor;
 }
 
-class SimClock
-{
-public:
-	/* timeRatio, timeSlice, endTime*/
-	SimClock(double timeRatio, double timeSlice, double endTime)
-	{
-		_timeRatio = timeRatio;
-		_timeSlice = timeSlice;
-		_endTime = endTime;
-		_simClockTime = 0;
-	};
-
-	void advanceToNextTimeSlice()
-	{
-		// sleep(seconds + seconds - seconds) 
-		_sleep(_timeSlice*1000*_timeRatio);
-		_simClockTime += _timeSlice;
-	}
-
-	double getSimClockTime()
-	{
-		return _simClockTime;
-	};
-private:
-	double _timeRatio;
-	double _timeSlice;
-	double _endTime;
-	double _simClockTime;
-};
-
 TEST(Test_EventTree, EventTreeStartAndStopClock)
 {
 	
 	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001);
 	EXPECT_FALSE(et->running());
 	EXPECT_EQ(et->getCurrentSimTime(), -1);
-	/*time_t startTime = time(0);
-	time_t timer;*/
 
-	et->start();
-	EXPECT_TRUE(et->running());
-	EXPECT_DOUBLE_EQ(et->getCurrentSimTime(), 0);
-
-	// now push the clock forward indirectly, it should stop
-	sleep_for(microseconds(1002)); // wait for just after relative time 0.001
-	//EXPECT_DOUBLE_EQ(0.001, et->getCurrentSimTime());
-	//time(&timer);
-	//double transpired = difftime(timer, startTime);
-	//ASSERT_NEAR(0.001002, transpired, 0.000000001);
-	EXPECT_FALSE(et->running());
-	// try again debugging
-	sleep_for(microseconds(1002)); // wait for just after relative time 0.001
-	/*time(&timer);
-	transpired = difftime(timer, startTime);*/
-	//ASSERT_NEAR(0.002004, transpired, 0.000000001);
+	EXPECT_NO_THROW(et->start());
 	EXPECT_FALSE(et->running());
 
-	// no other events are recorded, they just drop
-
-	//sleep_for(10ns);
-	//sleep_until(system_clock::now() + 1s);
-	//EventTree* et = new EventTree(0.1, 0.99, 1.0);
-	//Environment* env = new Environment();
-
+	// cleanup
+	delete et;
 }
 
-TEST(Test_EventTree, EventTreeFasterThanRealTime)
+TEST(Test_EventTree, ClockTime)
 {
-	// set the timeslice to 0.1 s, ratio smallest it can be set 0.01 (one real second per hundred seconds), run length 1.0 s
-	// this means timeslices actually take 0.1*0.01 = 0.001 s in real time
-	// the run duration should be 0.01 in real time
-	EventTree* et = new EventTree(0.1, ratio(0.01), 1.0);
-	time_t startTime =time(0);
-	et->start();
-	EXPECT_TRUE(et->running());
-	EXPECT_TRUE(et->getCurrentSimTime() < 0.000000001); // very close to relative time 0.0 s on simClock
-
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.1 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.1)*10), 1);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.2 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.2) * 10), 2);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.3 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.3) * 10), 3);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.4 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.4) * 10), 4);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.5 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.5) * 10), 5);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.6 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.6) * 10), 6);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.7 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.7) * 10), 7);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.8 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.8) * 10), 8);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.9 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.9) * 10), 9);
-	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 1.0 s on simClock
-	EXPECT_EQ(floor((et->getCurrentSimTime() - 1.0) * 10), 10);
-
-	// total runtime has been 0.01 s in relative real time
-	EXPECT_TRUE(difftime(time(0), startTime) - 0.01 < 0.000000001);
-
+	clock_t t;
+	t = clock();
+	sleep_for(milliseconds(1));
+	t = clock() - t;
+	float timePassed =((float)t) / CLOCKS_PER_SEC;
+	EXPECT_TRUE(timePassed < 0.002);
 }
 
-TEST(Test_EventTree, EventTreeAddEvent)
-{
-	EventTree* et = new EventTree(0.1, ratio(0.99), 1.0);
-	Environment* env = new Environment();
-	try
-	{
-		// clock has not started yet, so the current sim time is -1.0
-		EXPECT_EQ(et->getCurrentSimTime(), -1.0);
+// 4/21/2019 - this is likely not measuring correctly at this time; timePassed says 22 seconds, but the test
+// does not physically run for anywhere near that long.
+//TEST(Test_EventTree, EventTreeFasterThanRealTime)
+//{
+//	// set the timeslice to 0.1 s, ratio smallest it can be set 0.01 (one real second per hundred seconds), replication length 1.0 s
+//	// this means timeslices actually take 0.1*0.01 = 0.001 s in real time
+//	// the replication duration should be 0.01 in real time
+//	EventTree* et = new EventTree(0.1, ratio(0.01), 1.0);
+//	clock_t t;
+//	t = clock();
+//	et->start();
+//	t = clock() - t;
+//	float timePassed =((float)t) / CLOCKS_PER_SEC;
+//	
+//	EXPECT_TRUE(t > 0.01);
+//	EXPECT_EQ(t, 1.0);
+//	EXPECT_EQ(CLOCKS_PER_SEC, 1000);
+//	delete et;
+//}
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.1 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.1)*10), 1);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.2 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.2) * 10), 2);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.3 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.3) * 10), 3);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.4 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.4) * 10), 4);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.5 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.5) * 10), 5);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.6 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.6) * 10), 6);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.7 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.7) * 10), 7);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.8 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.8) * 10), 8);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.9 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.9) * 10), 9);
+//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 1.0 s on simClock
+//	EXPECT_EQ(floor((et->getCurrentSimTime() - 1.0) * 10), 10);
+//
+//	// total runtime has been 0.01 s in relative real time
+//	EXPECT_TRUE(difftime(time(0), startTime) - 0.01 < 0.000000001);
+//
+//}
 
-		// once the components are registered, the EventTree will not start running, will return false
-		et->registerComponent(env);
-		EXPECT_FALSE(et->running());
-
-		et->start();
-		EXPECT_TRUE(et->running());
-
-		// tell the system to wait a bit, then check to see if the time clock updated
-		sleep_for(milliseconds(300)); // 300ms -> 0.3 s * 100 sims / 99 s = 0.3030303...sims
-		EXPECT_TRUE(et->running());
-		EXPECT_TRUE(et->getCurrentSimTime() > 0.30); // expected passage of time
-
-		// Expect that a negative event time throws an exception
-		EXPECT_THROW(et->addEvent(env, -0.1, dataMap()), InvalidArgumentException);
-		// Expect that an unregistered component throws an exception if it tries to add an event
-		EXPECT_THROW(et->addEvent(new Environment(), 0.5, dataMap()), InvalidArgumentException);
-
-		// Expect that a good event does not throw an exception
-		EXPECT_NO_THROW(et->addEvent(env, 0.9, dataMap()));
-		sleep_for(milliseconds(701)); // wait for 0.701 seconds longer, to go over the end time of 1.0
-		EXPECT_FALSE(et->running()); // should  return false because the clock has stopped.
-	}
-	catch (...)
-	{
-		delete et, env; 
-		FAIL();
-	}
-	delete et, env;
-}
-
-/* Mock up class for use in the EventTreeSortEvents test case below.  Makes use of dataMap, 
+/* Mock-up class for use in test cases below.  Makes use of dataMap,
 update, EventTree registration, and a getter to verify that update happened.*/
-class MockComponent: public VComponent
+class MockComponent : public VComponent
 {
-public: 
-	MockComponent(string name, dataMap dataMap)
+public:
+	MockComponent(string name, dataMap dataMap, bool leadComp)
 	{
 		_name = name;
-		_myMap = dataMap; // copy
+		_myMap = dataMap; 
+		_initialMap = _myMap; // copy
+		_leadComp = leadComp;
 	}
 
 	/* Destructor clears the internal data map*/
 	~MockComponent()
 	{
 		_myMap.clear();
+		_genEvents.clear();
 	}
 
 	/* Manadatory override of this base class; implement this to receive updates to the _myMap*/
 	void update(timestamp time, dataMap updateMap)
 	{
+		_list = _genEvents.begin();
 		dataMap::iterator it;
 		for (auto mapIterator = updateMap.begin(); mapIterator != updateMap.end(); ++mapIterator)
 		{
 			it = _myMap.find(mapIterator->first);
 			if (it != _myMap.end())
+			{
 				it->second = mapIterator->second;
+				_lastUpdateTime = time;
+			}
+		}
+		_numUpdates++;
+
+		feaxConnection(time);
+	}
+
+	void stopReplication(bool another, string runID)
+	{
+		if (another)
+		{
+			_numUpdates = 0;
+			_genEvents = _initialEvents;
+			_myMap = _initialMap;
+			sleep_for(milliseconds(10)); // some time for restarting outside process
 		}
 	}
+
+	/* Fake correspondence with the outside process, that queries and waits for a response and then
+	turns around that data to sent back through the EventTree through addEvent.*/
+	void feaxConnection(timestamp messageTime)
+	{
+		// processing locally to compose the outgoing query, asking for a response, processing that message
+		
+		if (_leadComp)
+		{
+			double replyTime = getEventTree()->getTimeSlice();
+			generateEvent(messageTime + replyTime);
+		}
+		else
+			generateEvent(messageTime);
+	};
 
 	/* Allows us to check the updates to _myMap*/
 	int getUpdatedValue(string key)
@@ -287,23 +246,185 @@ public:
 		return i.value();
 	};
 
-	void registerEventTree(EventTree* et)
+	dataMap getDataMap()
 	{
-		_et = et;
+		return _myMap;
+	}
+
+	void storeEvent(timestamp time, dataMap updateMap)
+	{
+		_genEvents.emplace(time, updateMap);
+		_initialEvents.emplace(time, updateMap);
 	};
 
-	VComponent::VCType getVCType() { return Test_Avatar; }; // unused here
+	void generateEvent(timestamp now)
+	{
+		if (_list != _genEvents.end() && getEventTree()->getCurrentSimTime() >= 0.0)
+		{
+			timestamp record = _list->first;
+			if (record < now)
+			{
+				_genEvents.erase(record);
+				//_list++;
+			}
+			else if (record < now + getEventTree()->getTimeSlice())
+			{
+				dataMap newData = _genEvents[record];
+				for (auto updateDataIterator = newData.begin();
+					updateDataIterator != newData.end();
+					++updateDataIterator)
+				{
+					// write to the storedEvent data whether the key is found or not
+					_myMap[updateDataIterator->first] = updateDataIterator->second;
+				}
+
+				_genEvents.erase(record);
+				//_list++;
+				getEventTree()->addEvent(this, record, newData); // send stored event
+			}
+			else // there are stored events, but they are not happening yet
+			{
+				getEventTree()->addEvent(this, now, dataMap()); // for this case, echo empty map
+			}
+		}
+		else // there were no stored events, just echo the component map
+		{
+			getEventTree()->addEvent(this, now, dataMap());
+		}
+	}
+
+	timestamp getLastUpdateTime()
+	{
+		return _lastUpdateTime;
+	}
+
+	VComponent::VCType getVCType() 
+	{
+		if (_leadComp && _name.compare("av") != 0)
+		{
+			return Environment_Avatar;
+		}
+		else
+		{
+			return AV_Avatar;
+		}
+	}; 
 
 	string getName()
 	{
 		return _name;
 	};
 
+	int getNumUpdates()
+	{
+		return _numUpdates;
+	}
+
 private:
 	dataMap _myMap;
-	EventTree* _et;
+	dataMap _initialMap; // for resetting
+	map<timestamp, dataMap> _genEvents;
+	map<timestamp, dataMap> _initialEvents;
+	map<timestamp, dataMap>::iterator _list;
 	string _name;
+	bool _leadComp;
+	int _numUpdates = 0;
+	timestamp _lastUpdateTime;
 }; // end of MockComponent declaration/definition
+
+TEST(Test_EventTree, EventTreeAddEvent)
+{
+	EventTree* et = new EventTree(0.1, ratio(1.0), 1.0);
+	dataMap compData;
+	compData.emplace("ooo", new String());
+	MockComponent* env = new MockComponent("mockComponent", compData, true);
+	try
+	{
+		// clock has not started yet, so the current sim time is -1.0
+		EXPECT_EQ(et->getCurrentSimTime(), -1.0);
+
+		// once the components are registered, the EventTree will not start running, will return false
+		et->registerComponent(env);
+		et->setFirstComponent(env);
+		EXPECT_FALSE(et->running());
+
+		//create data for an event to be run when it starts
+		dataMap futureData;
+		futureData.emplace("ooo", new String("the future"));
+		
+		// test that bad times throw exceptions 
+		EXPECT_THROW(et->addEvent(env, -0.5, futureData), OutOfTimeException);
+		//EXPECT_THROW(et->addEvent(env, 1.5, futureData), OutOfTimeException);
+
+		// test that good event time does not throw an exception
+		EXPECT_NO_THROW(et->addEvent(env, 0.5, futureData));
+
+		// test that a good replication with appropriate event throws no exceptions
+		EXPECT_NO_THROW(et->start()); // goes until it stops
+		
+		// stopped
+		EXPECT_FALSE(et->running());
+
+	}
+	catch (...)
+	{
+		delete et;// , env;
+		FAIL(); // failed for another reason
+	}
+	delete et;// , env;
+}
+
+TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
+{
+	string valueA = "A";
+	string valueB = "B";
+
+	// define update maps for later
+	dataMap updateMap1; // first updater will update valueA to 1, value B will stay 0
+	updateMap1.emplace(valueA, new Integer(1));
+	updateMap1.emplace(valueB, new Integer(3));
+	EXPECT_EQ(Integer(updateMap1.at(valueA)).value(), 1);
+	EXPECT_EQ(Integer(updateMap1.at(valueB)).value(), 3);
+
+	// define the original value 0 map
+	dataMap dataMap0;
+	dataMap0.emplace(valueA, new Integer()); // initialize arbitrary map data to 0
+	dataMap0.emplace(valueB, new Integer()); // initialize arbitrary map data to 0
+	EXPECT_EQ(Integer(dataMap0.at(valueA)).value(), 0);
+	EXPECT_EQ(Integer(dataMap0.at(valueB)).value(), 0);
+
+	// two different event creators
+	MockComponent* environment = new MockComponent("environment", dataMap0, true);
+	// first event set for 0.1 will update av
+	environment->storeEvent(0.11, updateMap1);
+
+	MockComponent* av = new MockComponent("av", dataMap0, false);
+
+	// now the EventTree can be initialized and can register the 3 components
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5);
+	et->registerComponent(environment);
+	et->registerComponent(av);
+	et->setFirstComponent(av);
+	try
+	{
+		// should start with three events in system
+		EXPECT_NO_THROW(et->start());
+
+		// verify that values are still 3
+		EXPECT_EQ(av->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
+		EXPECT_EQ(av->getUpdatedValue(valueB), Integer(updateMap1.at(valueB)).value());
+		EXPECT_EQ(av->getNumUpdates(), 5);
+		EXPECT_EQ(av->getLastUpdateTime(), 0.11);
+	}
+	catch (...)
+	{
+		FAIL(); // failed for another reason
+		delete et;// , environment, av;
+	}
+
+	//cleanup
+	delete et;// , environment, av;
+}
 
 TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 {
@@ -331,107 +452,93 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 	EXPECT_EQ(Integer(dataMap0.at(valueB)).value(), 0);
 
 	// three different event creators
-	MockComponent* env1 = new MockComponent("env1", dataMap0);
-	MockComponent* env2 = new MockComponent("env2", dataMap0);
-	MockComponent* env3 = new MockComponent("env3", dataMap0);
-	
+	MockComponent* environment = new MockComponent("environment", dataMap0, false);
+	MockComponent* av = new MockComponent("av", dataMap0, true);
+
 	// now the EventTree can be initialized and can register the 3 components
 	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5);
-	et->registerComponent(env1);
-	et->registerComponent(env2);
-	et->registerComponent(env3);
+	et->registerComponent(environment);
+	et->registerComponent(av);
+
+	et->setFirstComponent(av);
+	environment->storeEvent(0.1, updateMap1); // valueA = 1
+	av->storeEvent(0.2, updateMap2); //  valueB = 2
+	environment->storeEvent(0.4, updateMap3); // value A and B = 3
 
 	try
 	{
-		// clock has not started yet, so the current sim time is -1
-		EXPECT_EQ(et->getCurrentSimTime(), -1);
-
-		// once the components are registered, the EventTree can start, running will return true
-		et->start();
-		EXPECT_TRUE(et->running());
-		sleep_for(milliseconds(1)); // wait a bit - close to t = 0
-
-		// first event set for now (or 0.1) will update env2 and env3 with valueA = 1
-		double firstEventTime = et->getCurrentSimTime() < et->getTimeSlice() ? 
-			et->getCurrentSimTime() : et->getTimeSlice();
-		et->addEvent(env1, firstEventTime, updateMap1);
-		// check that all components have valueA = 1 and valueB = 0
-		EXPECT_EQ(env1->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env1->getUpdatedValue(valueB), 0);
-		EXPECT_EQ(env2->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueB), 0);
-		EXPECT_EQ(env3->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueB), 0);
-
-		sleep_for(milliseconds(190)); // wait around until relative time .191 s, right before timeslice 2
-
-		// second event set for later (0.2) will update env1 and env3 with valueB = 2
-		double secondEventTime = 0.192;
-		et->addEvent(env2, secondEventTime, updateMap2);
 		
-		sleep_for(milliseconds(10)); // wait around for relative time .201 s, right after timeslice 2
-
-		// check that all components have valueA = 1 and valueB = 2; this is the new state at timeslice 2
-		EXPECT_EQ(env1->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env1->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
-
-		// third event set for right away, will update all components and all fields with 3 for next time slice
-		et->addEvent(env3, et->getCurrentSimTime(), updateMap3); 
-
-		// verify that values remain unchanged because the last event won't update until the next timeslice
-		EXPECT_EQ(env1->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env1->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueB), Integer(updateMap2.at(valueB)).value());
-
-		sleep_for(milliseconds(100)); // wait around for relative time .301 s, right after timeslice 3
-
-		// verify that values updated to 3
-		EXPECT_EQ(env1->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
-		EXPECT_EQ(env1->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
-
-		// no events, no updates, advance to timeslice 0.4 s
-		sleep_for(milliseconds(100)); // relative time .401 s
+		// should start with three events in system
+		EXPECT_NO_THROW(et->start());
 
 		// verify that values are still 3
-		EXPECT_EQ(env1->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
-		EXPECT_EQ(env1->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
-		EXPECT_EQ(env2->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
-		EXPECT_EQ(env3->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
-
-		// put in a "slow" event
-		EXPECT_THROW(et->addEvent(env1, 0.01, updateMap1), OutOfTimeException);
-
-		sleep_for(milliseconds(100)); // relative time .501 s
-		// simClock will stop
-		EXPECT_FALSE(et->running());
-
+		EXPECT_EQ(environment->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
+		EXPECT_EQ(environment->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
+		EXPECT_EQ(av->getUpdatedValue(valueA), Integer(updateMap3.at(valueA)).value());
+		EXPECT_EQ(av->getUpdatedValue(valueB), Integer(updateMap3.at(valueB)).value());
+		
+		EXPECT_EQ(environment->getNumUpdates(), 4);
+		EXPECT_EQ(av->getNumUpdates(),5);
 	}
 	catch (...)
 	{
-		delete et, env1, env2, env3;
+		FAIL(); // failed for another reason
+		delete et;//,environment, av;
 	}
-	delete et, env1, env2, env3;
-}
 
-TEST(Test_EventTree, EventTreeEarlyStop)
-{
-	FAIL();
+	//cleanup
+	delete et;// , environment, av;
 }
 
 TEST(Test_EventTree, EventTreeMultipleRuns)
 {
-	FAIL();
+	// simple replications
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 10);
+	EXPECT_NO_THROW(et->start());
+	delete et;
+
+	string valueA = "A";
+
+	// define update maps for later
+	dataMap updateMap1; // first updater will update valueA to 1, value B will stay 0
+	updateMap1.emplace(valueA, new Integer(1));
+	EXPECT_EQ(Integer(updateMap1.at(valueA)).value(), 1);
+
+	// define the original value 0 map
+	dataMap dataMap0;
+	dataMap0.emplace(valueA, new Integer()); // initialize arbitrary map data to 0
+	EXPECT_EQ(Integer(dataMap0.at(valueA)).value(), 0);
+	
+	// three different event creators
+	MockComponent* environment = new MockComponent("environment", dataMap0, false);
+	MockComponent* av = new MockComponent("av", dataMap0, true);
+
+	et = new EventTree(0.1, ratio(1.0), 0.5, 10);
+	et->registerComponent(environment);
+	et->registerComponent(av);
+
+	et->setFirstComponent(av);
+	environment->storeEvent(0.1, updateMap1);
+
+	try
+	{
+		// should start with three events in system
+		EXPECT_NO_THROW(et->start());
+
+		EXPECT_EQ(environment->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
+		EXPECT_EQ(av->getUpdatedValue(valueA), Integer(updateMap1.at(valueA)).value());
+		
+		EXPECT_EQ(environment->getNumUpdates(), 4);
+		EXPECT_EQ(av->getNumUpdates(), 5);
+
+		EXPECT_EQ(et->getCurrentSimTime(), -1);
+	}
+	catch (...)
+	{
+		FAIL(); // failed for another reason
+		delete et;
+	}
+
+	//cleanup
+	delete et;
 }

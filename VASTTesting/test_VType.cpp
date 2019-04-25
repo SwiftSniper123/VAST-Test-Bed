@@ -597,6 +597,8 @@ public:
 		}
 	};
 
+	void stopReplication(bool another, string runID) {	};
+
 	VComponent::VCType VComponent::getVCType() { return Test_Avatar; };
 
 	/* Returns the string name of the internal map.*/
