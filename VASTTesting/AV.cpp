@@ -40,3 +40,8 @@ dataMap AV::getDataMap()
 {
 	return _dataMap;
 }
+
+void AV::sensorReporting(string key, VType* data)
+{
+	_dataMap.insert(std::pair<string, VType*>(key, data));
+}
