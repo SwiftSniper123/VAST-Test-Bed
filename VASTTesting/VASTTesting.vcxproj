@@ -43,6 +43,8 @@
     <ClInclude Include="ScenarioMetric.h" />
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="socket.h" />
+    <ClInclude Include="sqlite3.h" />
+    <ClInclude Include="sqlite3ext.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />
@@ -52,13 +54,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AV.cpp" />
+    <ClCompile Include="Database.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="EventTree.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="socket.cpp" />
+    <ClCompile Include="sqlite3.c" />
     <ClCompile Include="storage.cpp" />
     <ClCompile Include="test_Broker.cpp" />
+    <ClCompile Include="test_Database.cpp" />
     <ClCompile Include="test_EventTree.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
@@ -110,6 +116,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>sqlite3.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,6 +151,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>sqlite3.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

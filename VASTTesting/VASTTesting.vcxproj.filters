@@ -40,6 +40,16 @@
     <ClCompile Include="EventTree.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="sqlite3.c">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="test_Database.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
@@ -55,9 +65,6 @@
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
     <ClInclude Include="TraCIDefs.h">
-      <Filter>OpenSourceCode\h</Filter>
-    </ClInclude>
-    <ClInclude Include="config.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
     <ClInclude Include="Broker.h">
@@ -86,6 +93,15 @@
     </ClInclude>
     <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3ext.h">
+      <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

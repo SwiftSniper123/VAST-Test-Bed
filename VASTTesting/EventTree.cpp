@@ -2,7 +2,7 @@
 
 // public functions---------------------------------------//
 
-EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
+EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, string databaseName)
 {
 	if (timeSlice <= 0.0)
 	{
@@ -23,9 +23,11 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
 	_simClock = -1;
 	_numRuns = 1;
 	_future = nullptr;
+
+	opendatabase(databaseName);
 }
 
-EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns)
+EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns, string databaseName)
 {
 	if (timeSlice <= 0.0)
 	{
@@ -50,13 +52,20 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 	_simClock = -1;
 	_numRuns = numRuns;
 	_future = nullptr;
+
+	opendatabase(databaseName);
 }
 
 EventTree::~EventTree()
 {
-	metrics.clear();
-	_componentInitialStateMap.clear();
-	_componentPresentStateMap.clear();
+	// completely close down operations
+	_runID = 0;
+	closedatabase();
+
+	// clear out data maps
+	_metrics->clear();
+	_componentInitialStateMap->clear();
+	_componentPresentStateMap->clear();
 
 	// clear out the linked list of Futures and the attached ComponentEventUpdates.
 	resetFutureListOfEvents();
@@ -64,46 +73,77 @@ EventTree::~EventTree()
 
 void EventTree::registerComponent(VComponent* vc)
 {
+	bool running = this->running();
 	// only register components before a set of replications
-	if (!running() && vc->getVCType() != VComponent::VCType::ScenarioMetric)
+	if (!running && vc->getVCType() != VComponent::VCType::ScenarioMetric)
 	{
-		map<VComponent*, dataMap>::iterator it;
-		it = _componentInitialStateMap.find(vc);
-		if (it == _componentInitialStateMap.end())
+		tableMap::iterator it;
+		it = _componentInitialStateMap->find(vc);
+		if (it == _componentInitialStateMap->end())
 		{
 			// register this EventTree with the component so EventTree::addEvent 
 			// can be called from within the component
 			vc->registerEventTree(this);
 			// store initial state (not modified after this)
-			_componentInitialStateMap.emplace(vc, vc->getDataMap());
+			_componentInitialStateMap->emplace(vc, vc->getDataMap());
 			// and initialize present state (modified)
-			_componentPresentStateMap.emplace(vc, vc->getDataMap());
+			_componentPresentStateMap->emplace(vc, vc->getDataMap());
 
 			// if lead component hasn't been set, give it a first-come first-serve vc
 			_leadComponent = _leadComponent == nullptr ? vc : _leadComponent;
 		}
-
-		// TODO: add intialization of database tables here
-		//  get vc type "AV_Avatar" etc, insert entry to that table
-		//  create a table for this "AV" and insert initial values
+	}
+	else if (running)
+	{
+		throw OutOfTimeException(vc->getName(), string("register VComponent"), running);
+	}
+	else if (vc->getVCType() == VComponent::VCType::ScenarioMetric)
+	{
+		throw InvalidArgumentException("Cannot add a Scenario Metric. Use EventTree::registerMetric instead.");
 	}
 }
 
 void EventTree::registerMetric(ScenarioMetric* sm)
 {
-	metrics.push_back(sm);
+	bool running = this->running();
+	// only register components before a set of replications
+	if (!running)
+	{
+		tableMap::iterator it;
+		it = _metrics->find(sm);
+		if (it == _metrics->end())
+		{
+			sm->registerEventTree(this);
+			_metrics->emplace(sm, sm->getDataMap);
+		}
+	}
+	else
+	{
+		throw OutOfTimeException(sm->getName(), string("register ScenarioMetric"), running);
+	}
 }
 
 int EventTree::getNumberOfVComp() const
-{ return _componentInitialStateMap.size(); }
+{ return _componentInitialStateMap->size(); }
 
 void EventTree::setFirstComponent(VComponent* vc)
 { _leadComponent = vc; }
 
 void EventTree::start()
 {
+	// initialize the tables for each component's run data
+	createtable(_componentInitialStateMap);
+	createtable(_metrics);
+
+	// these need to be composed sometime between parsing and starting emf4/28/2018
+	//createtable(_VASTconfiguration);
+	//createtable(_EnvironmentConfiguration);
+	//createtable(_AVConfiguration); 
+	
+
 	while (_numRuns > 0)
 	{
+		++_runID;
 		replication();
 	}
 }
@@ -135,9 +175,9 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 		map<VComponent*, dataMap>::iterator presentMapIterator; // used to point to relevant VComponent & datamap
 		if (stillAddingEvents(_eventSource->getName()))
 		{
-			presentMapIterator = _componentPresentStateMap.find(_eventSource); // try to find this VComponent data map
+			presentMapIterator = _componentPresentStateMap->find(_eventSource); // try to find this VComponent data map
 			// if we did find it
-			if (presentMapIterator != _componentPresentStateMap.end())
+			if (presentMapIterator != _componentPresentStateMap->end())
 			{
 				// then for every value in present _eventDataMap, overwrite the 
 				// corresponding element in the componentPresentState state map
@@ -170,8 +210,8 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 			/*VComponent::VCType sourceVCType = _eventSource->getVCType();
 			VComponent::VCType targetVCType = targetComponent->getVCType();*/
 
-			for (presentMapIterator = _componentPresentStateMap.begin();
-				presentMapIterator != _componentPresentStateMap.end();
+			for (presentMapIterator = _componentPresentStateMap->begin();
+				presentMapIterator != _componentPresentStateMap->end();
 				++presentMapIterator)
 			{
 				targetComponent = presentMapIterator->first;
@@ -216,11 +256,20 @@ bool EventTree::running()
 	}
 	return result; 
 }
-
-string EventTree::setRunID() 
+string EventTree::getRunID()
 {
-	// TODO: generate replication ID
-	return "runID generator function needs to be implemented";
+	stringstream ss;
+	/* if the run ID is not zero, the scenario has passed initialization and can 
+		write to the database about replication data.*/
+	if (_runID)
+	{
+		ss << _runID;
+	}
+	else
+	{
+		throw OutOfTimeException(string("EventTree"), string("get run replication ID from"), running());
+	}
+	return ss.str();
 }
 
 //-----------------------------------------------------------------------------//
@@ -467,19 +516,20 @@ void EventTree::stop()
 	{	
 		_simClock = -1;
 		_numRuns--;
-		
+				
 		// clear out Events and start with empty present Future
 		resetFutureListOfEvents();
 
 		// reset _componentPresentStateMap to _componentInitialStateMap
-		for (auto presentMapIterator = _componentPresentStateMap.begin();
-			presentMapIterator != _componentPresentStateMap.end();
+		for (auto presentMapIterator = _componentPresentStateMap->begin();
+			presentMapIterator != _componentPresentStateMap->end();
 			++presentMapIterator)
 		{
-			presentMapIterator->second = _componentInitialStateMap[presentMapIterator->first];
+			// resets the central map with initial values
+			presentMapIterator->second = _componentInitialStateMap->at(presentMapIterator->first);
 
 			// tell components to restart themselves
-			presentMapIterator->first->stopReplication((_numRuns > 0), _runID);
+			presentMapIterator->first->stopReplication((_numRuns > 0), "" + _runID);
 		}	
 	}
 } // end of stop()

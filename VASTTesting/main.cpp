@@ -1,18 +1,13 @@
 //Virtual Autonomous System Testbed
 //ODU Capstone 2018-2019
 
-#include "..\h\VComponent.h"
-#include <iostream>
-#include <map>
-#include<variant>
-#include "..\h\VType.h"
-#include "..\h\AV.h"
-#include <Windows.h>
+#include "gtest/gtest.h"
 
 
 int main(int argc, char **argv1)
 {
-	
+	::testing::InitGoogleTest(&argc, argv1);
+	RUN_ALL_TESTS();
 	return 0;
 }
 

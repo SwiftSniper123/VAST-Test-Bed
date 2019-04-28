@@ -4,6 +4,7 @@
 #include <set>
 #include "VComponent.h" // timestamp, dataMap
 #include "ScenarioMetric.h"
+#include "sqlite3.h"
 #include <exception>
 
 
@@ -12,35 +13,77 @@ using std::chrono::milliseconds;
 using std::chrono::microseconds;
 typedef std::invalid_argument InvalidArgumentException;
 typedef double ratio;
-
-struct OutOfTimeException : public std::exception
-{
-	OutOfTimeException(timestamp currentTime, string offendingComponent, double offendingTime)
-	{
-		_currentTime = currentTime;
-		_component = offendingComponent;
-		_offendingTime = offendingTime;
-	}
-	const char* what() const throw ()
-	{
-		stringstream ss;
-		ss << "VAST EventTree has received an event that was too slow for the system or beyond the run length: "
-			<< _component << " attempted to add an event at " << _offendingTime 
-			<< " but the clock was at " << _currentTime;
-		return ss.str().c_str();
-	}
-
-	double _currentTime;
-	string _component;
-	double _offendingTime;
-};
+typedef map<VComponent*, dataMap> tableMap;
 
 class EventTree
 {
 private:
+	/* Exception for time clock discrepencies.*/
+	class OutOfTimeException : public exception
+	{
+	public:
+		/* Shows the error of adding an event out of sync with the sim clock.*/
+		OutOfTimeException(timestamp currentTime, string offendingComponent, double offendingTime) :
+			exception()
+		{
+			stringstream ss;
+			ss << offendingComponent << " attempted to add an event at " << offendingTime
+				<< " but the clock was at " << currentTime;
+			_messageEnd = ss.str();
+		}
+		
+		/* Shows the error of adding a VAST component when in the middle of replications.*/
+		OutOfTimeException(string functionName, string offendingComponent, bool running)
+		{
+			stringstream ss;
+			ss << "User cannot " << functionName << " " << offendingComponent
+				<< " during this phase: ";
+			if (running)
+			{
+				ss << "Replication Running";
+			}
+			else
+			{
+				ss << "No Replication Running";
+			}
+			_messageEnd = ss.str();
+		}
+
+		/* Overridden from parent std::exception.  Identifies this as an exception thrown
+		by VAST for reasons specific to this system and the clock phases by which the system 
+		operates.*/
+		virtual const char* what() const throw ()
+		{
+			stringstream ss;
+			ss << "VAST EventTree cannot perform this action at this clock phase: "
+				<< _messageEnd;
+			return ss.str().c_str();
+		}
+	private:
+		string _messageEnd;
+	};
+
+	/* Exception for database discrepencies*/
+	class DatabaseException : public exception
+	{
+	public:
+		DatabaseException(string message) : exception()
+		{
+			_msg = message;
+		}
+
+		virtual const char* what() const throw ()
+		{
+			string result = "VAST Database Exception: " + _msg;
+			return result.c_str();
+		}
+
+	private:
+		string _msg;
+	};
 
 	/* ID for this replication.*/
-	string _runID;
+	int _runID;
 
 	/* The length of each timeslice that the clock progresses.*/
 	double _timeSlice;
@@ -69,13 +112,13 @@ private:
 	std::set<string> reportedComponents;
 
 	/* Registered metrics.*/
-	vector<ScenarioMetric*> metrics;
+	tableMap* _metrics;
 
 	/* The map of "past" values*/
-	map<VComponent*, dataMap> _componentInitialStateMap;
+	tableMap* _componentInitialStateMap;
 
 	/* The map of "past" values*/
-	map<VComponent*, dataMap> _componentPresentStateMap;
+	tableMap* _componentPresentStateMap;
 
 	/* Structure for storing incoming Events for later execution.*/
 	struct ComponentEventUpdate
@@ -136,8 +179,39 @@ private:
 	/* Empties the Future linked list completely.*/
 	void resetFutureListOfEvents();
 
+	/*database parameters---------------------------------------*/
+	sqlite3 *db = nullptr;
+	
+	/* Callback variable that stores error messages from the 
+	SQLite3 library.*/
+	char *zErrMsg = 0;
+
+	/* Integer result of calls to sqlite3 library.  Zero is 
+	SQLITE_OK and signifies no errors or exceptions.*/
+	int rc;
+	
+	/* Creates a database file and opens the connection to it.  If a fileName is not provided, the default name is "VASTdatabase.db".*/
+	void opendatabase(string fileName);
+
+	/* Closes the database connection.  The file is preserved.*/
+	void closedatabase();
+
+	/* Creates all of the tables in the database to keep until the database is closed.*/
+	void createtable(tableMap* componentsToData, const char* tableType);
+	
+	/*database callback function*/
+	static int callback(void *NotUsed, int argc, char **argv, char **azColName) 
+	{
+		int i;
+		for (i = 0; i < argc; i++) {
+			printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+		}
+		printf("\n");
+		return 0;
+	}
+
 public:
-	/* Creates an EventTree, sets the simClock to -1.
+	/* Creates an EventTree, sets the simClock to -1.  Opens the database connection.
 	timeSlice	The unit of timestamp by which update events are organized 
 				and collected.  Throws an exception for values less than
 				or equal to 0.
@@ -146,9 +220,9 @@ public:
 	endTime		The end time for the replication.  Throws an exception for values less 
 				than or equal to 0.
 	Default number of runs is 1.*/
-	EventTree(double timeSlice, ratio timeRatio, double endTime) ;
+	EventTree(double timeSlice, ratio timeRatio, double endTime, string databaseName) ;
 
-	/* Creates an EventTree, sets the simClock to -1.
+	/* Creates an EventTree, sets the simClock to -1.  Opens the database connection.
 	timeSlice			The unit of time by which update events are organized 
 						and collected.  Throws an exception for values less than
 						or equal to 0.
@@ -157,9 +231,9 @@ public:
 	endTime				The end time for the replication.  Throws an exception for values less 
 						than or equal to 0.
 	numberOfRuns		Number of runs to be performed under these scenario parameters.*/
-	EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns);
+	EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns, string databaseName);
 
-	/* Destructor - destroys internal components*/
+	/* Destructor - destroys internal components, closes connection to database.*/
 	~EventTree();
 
 	/* A VComponent should register themselves with the EventTree and initialize the dataMap.*/
@@ -206,6 +280,13 @@ public:
 	time has been reached, it returns false.*/
 	bool running();
 
-	/* Sets the replication ID for this replication.*/
-	string setRunID();
+	/* Gets the replication ID for this replication.*/
+	string getRunID();
+
+	void publishEvent(VComponent* source, timestamp time, dataMap *tablemap, dataMap *avmap);
+
+	/*show the data in the database*/
+	void showdata(dataMap *tablemap);
+
+	void updateDatabase(timestamp time, dataMap data) {};
 };
