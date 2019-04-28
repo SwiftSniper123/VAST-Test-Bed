@@ -1,7 +1,7 @@
 #include "ParseXML.h"
 
 
-Configuration::Configuration() {};
+//Configuration::Configuration() {};
 
 /*Configuration Configuration::LoadConfig(string filelocation)
 {

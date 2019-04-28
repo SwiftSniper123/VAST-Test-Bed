@@ -12,6 +12,7 @@
 
 using namespace boost::property_tree;
 
+/*
 struct AV_Config {
 	string _av_name;
 	int _av_movement_port;
@@ -39,7 +40,7 @@ struct VAST_Config {
 	string _metrics;
 	AV_Config **_AVs;
 	Environment_Config *_env_config;
-};
+};*/
 
 
 class XMLParser
@@ -76,6 +77,7 @@ private:
 	AV_Config **_AVs;
 };
 
+/*
 class Configuration
 {
 public:
@@ -112,4 +114,4 @@ private:
 		Environment_Config *_env_config;
 	};
 	
-};
+};*/
