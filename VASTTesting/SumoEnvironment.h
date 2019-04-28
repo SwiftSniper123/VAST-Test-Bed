@@ -1,4 +1,5 @@
 #pragma once
+#include "TraCIAPI.h"
 #include "Environment.h"
 
 class SumoEnvironment : public Environment
