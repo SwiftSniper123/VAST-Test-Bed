@@ -74,7 +74,7 @@ private:
 
 	
 
-	AV_Config **_AVs;
+	//AV_Config **_AVs;
 };
 
 /*

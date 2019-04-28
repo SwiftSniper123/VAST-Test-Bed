@@ -64,7 +64,7 @@ void XMLParser::Parse()
 		if (node.first == "module")
 		{
 			_currentModule = subtree.get<std::string>("<xmlattr>.module");
-			std::cout << "module: " << subtree.get<std::string>("<xmlattr>.module") << "\n";
+			//std::cout << "module: " << subtree.get<std::string>("<xmlattr>.module") << "\n";
 
 			BOOST_FOREACH(boost::property_tree::ptree::value_type const& map, subtree.get_child("map"))
 			{
@@ -80,14 +80,14 @@ void XMLParser::Parse()
 					{
 						if (label == "key")
 						{
-							std::cout << "Key: " << key.get<std::string>("name") << "\n";
+							//std::cout << "Key: " << key.get<std::string>("name") << "\n";
 							_currentKey = key.get<std::string>("name");
 						}
 						
 						else if (label == "value")
 						{
 							_currentValue = key.get<std::string>("name");
-							std::cout << "Value: " << _currentValue << "\n";
+							//std::cout << "Value: " << _currentValue << "\n";
 
 							if (_currentValue != "")
 							{
