@@ -512,6 +512,18 @@ public:
 		}
 		return this;     // return the object  
 	}
+
+	/* Overloaded assignment operator for less than evaluator*/
+	bool operator<(Double& d)
+	{
+		return this->value() < d.value();     // return the object  
+	}
+
+	/* Overloaded assignment operator for greater than evaluator*/
+	bool operator>(Double& d)
+	{
+		return this->value() > d.value();     // return the object  
+	}
 };
 
 /* Special Double+double addition arithmetic. */
@@ -1074,6 +1086,11 @@ public:
 	double z()
 	{
 		return _z;
+	}
+
+	Vector3* operator-(Vector3& other)
+	{
+		return new Vector3(_x - other.x(), _y - other.y(), _z - other.z());
 	}
 
 	/* compares two Vector3 objects.  Returns true if the double values are identical.*/

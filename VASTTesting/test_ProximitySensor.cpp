@@ -48,7 +48,7 @@ TEST(Test_ProximitySensor, UpdateVsAVUpdate)
 	// test that nothing is set on these pieces of data
 	EXPECT_EQ(ps->getClosestObstacle(), nullptr);
 	EXPECT_EQ(ps->getClosestProximity(), nullptr);
-	EXPECT_EQ(ps->getObstaclesInView(), nullptr);
+	EXPECT_EQ(ps->getObstaclesList(), nullptr);
 
 	// create update information
 	dataMap updateMap;
@@ -67,19 +67,19 @@ TEST(Test_ProximitySensor, UpdateVsAVUpdate)
 	ps->update(0.0, updateMap);
 	EXPECT_EQ(ps->getClosestObstacle(), nullptr);
 	EXPECT_EQ(ps->getClosestProximity(), nullptr);
-	EXPECT_EQ(ps->getObstaclesInView(), nullptr);
+	EXPECT_EQ(ps->getObstaclesList(), nullptr);
 
 	// test that AVUpdate call DOES update the data in the ProximitySensor
 	ps->AVUpdate(0.0, updateMap);
 	EXPECT_TRUE(ps->getClosestObstacle() != nullptr);
 	EXPECT_TRUE(ps->getClosestProximity() != nullptr);
-	EXPECT_TRUE(ps->getObstaclesInView() != nullptr);
+	EXPECT_TRUE(ps->getObstaclesList() != nullptr);
 
 	double dist_o1 = sqrt(pow(psLoc->x() - pos_o1->x(), 2) + pow(psLoc->y() - pos_o1->y(), 2));
 	EXPECT_TRUE(ps->getClosestObstacle()->first->value() == "o1");
 	EXPECT_EQ(ps->getClosestObstacle()->second->value(), pos_o1->value());
 	EXPECT_TRUE(abs(ps->getClosestProximity()->value() - dist_o1) < 0.000001);
-	EXPECT_EQ(ps->getObstaclesInView()->s_value(), "o1");
+	EXPECT_EQ(ps->getObstaclesList()->s_value(), "o1");
 
 	// cleanup
 	positions.clear();
@@ -116,15 +116,26 @@ TEST(Test_ProximitySensor, ReportToAV)
 	dataMap avMap;
 	ProximityTestAV* av = new ProximityTestAV(avMap);
 	dataMap sensorConfig;
+	sensorConfig.emplace(SENSOR_LOC, new Vector3(0, 0, 0));
+	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
 	sensorConfig.emplace(SENSOR_QUAD, new Integer(4)); // pos x, neg y
 	ProximitySensor* ps = new ProximitySensor(av, sensorConfig);
 	dataMap updateMap;
-	updateMap.emplace(CLOSEST_ID, new String("o1"));
+	updateMap.emplace(OBSTACLE_IDS, new Array("o1,o2,o3"));
+	Vector3* pos_o1 = new Vector3(2.0, -1.0, 0.0);
+	Vector3* pos_o2 = new Vector3(4.0, -111.0, 0.0);
+	Vector3* pos_o3 = new Vector3(-2.0, 4.0, 0.0);
+	vector<VType*> positions;
+	positions.push_back(pos_o1);
+	positions.push_back(pos_o2);
+	positions.push_back(pos_o3);
+	updateMap.emplace(OBSTACLE_POS, new Array(positions));
 	
 	EXPECT_TRUE(av->getDataMap().empty());
 	ps->reportToAV();
 	EXPECT_TRUE(!av->getDataMap().empty());
 	EXPECT_EQ(av->getDataMap().at(CLOSEST_ID)->s_value(), "o1");
+	EXPECT_TRUE(new Vector3(av->getDataMap().at(CLOSEST_POS)) == pos_o1);
 
 	// cleanup
 	updateMap.clear();
@@ -164,14 +175,14 @@ TEST(Test_ProximitySensor, StopReplication)
 	// verify that data changed
 	EXPECT_TRUE(ps->getClosestObstacle() != nullptr);
 	EXPECT_TRUE(ps->getClosestProximity() != nullptr);
-	EXPECT_TRUE(ps->getObstaclesInView() != nullptr);
+	EXPECT_TRUE(ps->getObstaclesList() != nullptr);
 
 	ps->stopReplication(true, "2");
 
 	// test that stopReplication set relevant data back to nullptr
 	EXPECT_EQ(ps->getClosestObstacle(), nullptr);
 	EXPECT_EQ(ps->getClosestProximity(), nullptr);
-	EXPECT_EQ(ps->getObstaclesInView(), nullptr);
+	EXPECT_EQ(ps->getObstaclesList(), nullptr);
 	// and did not set back other persistent data
 	EXPECT_TRUE(!ps->getDataMap().empty());
 	EXPECT_TRUE(ps->getDataMap().size() == sensorConfig.size());
