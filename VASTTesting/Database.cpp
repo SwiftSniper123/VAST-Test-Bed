@@ -53,64 +53,180 @@ void EventTree::createtable(tableMap* componentsToData, const char* tableType)
 
 	for (auto component = componentsToData->begin(); component != componentsToData->end(); ++component)
 	{
-		    
-		/*this part is to print the first column name and value type
-			for example : AV_ID INTEGER NOT NULL PRIMARY KEY*/
-		auto componentDataMap = component->second.begin();
-			
-		statement1 << componentDataMap->first << " " << componentDataMap->second->getSQLite3Text() 
-			<< " NOT NULL PRIMARY KEY, ";
-			
-		for (componentDataMap; componentDataMap != avmap->end(); ++componentDataMap)
+		// first columns based upon which table type it is
+		if (string(tableType).compare("Configuration") == 0)
+		{
+			statement1 << "SCENARIO_ID INTEGER NOT NULL, COMPONENT_ID varchar(20) PRIMARY KEY";
+		}
+		else if (string(tableType).compare("Run_Data") == 0)
+		{
+			statement1 << "run_ID INTEGER NOT NULL, sim_Time_Step DOUBLE(10) NOT NULL PRIMARY KEY";
+		}
+
+		for (auto componentDataMap = component->second.begin(); componentDataMap != component->second.end(); ++componentDataMap)
 		{
 			/*this part is to print the rest column name and value type*/
-			statement2 << componentDataMap->first << " " << component->second->getSQLite3Text() << " NOT NULL, ";
+			statement2 << "," << componentDataMap->first << " " << componentDataMap->second->getSQLite3Text() << " NOT NULL";
 		}
 		/*print first and rest column name and value type*/
 		statement3 << statement1.str() << statement2.str();
 	    /*this is print all sql statement*/
 		statement4 << " CREATE TABLE IF NOT EXISTS "<< component->first->getName() << tableType 
-			<< " ('" << statement3.str() << "');";
+			<< " (" << statement3.str() << ");";
 	}
-
-	/*change stringstream to const char*/
-	sql = statement4.str().c_str();
 
 	/* Execute SQL statement */
-	rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+	rc = sqlite3_exec(db, statement4.str().c_str(), callback, 0, &zErrMsg);
 
 	if (rc != SQLITE_OK) {
-		throw DatabaseException();
+		closedatabase();
+		throw DatabaseException(zErrMsg);
 		sqlite3_free(zErrMsg);
 	}
-	else {
-		fprintf(stdout, "Table created successfully\n");
-	}
-
 }
-void EventTree::publishEvent(VComponent* source, timestamp time, dataMap *tablemap, dataMap *avmap)
-//void database::insertdata()
+
+void EventTree::publishConfigTable(string tableName, tableMap configurations)
 {
 	stringstream statement1;
 	stringstream statement2;
 	stringstream statement3;
 
-	for (auto mapIterator = tablemap->begin(); mapIterator != tablemap->end(); ++mapIterator)
+	for (auto component = configurations.begin(); component != configurations.end(); ++component)
 	{
-		for (auto mapIterator2 = avmap->begin(); mapIterator2 != avmap->end(); ++mapIterator2)
+		statement1 << "SCENARIO_ID INTEGER NOT NULL, COMPONENT_ID varchar(20) PRIMARY KEY";
+		statement2 << _scenario_ID << "," << component->first << ",";
+
+		for (auto dataIt = component->second.begin(); dataIt != component->second.end(); ++dataIt)
 		{
-			/*print column name , example: SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE */
-			statement1 << statement1.str() << "," << mapIterator2->first;
-			/*print valuse, example: 1,1,0.02,1,0,0,0,90,'SUV',10,2*/
-			statement2 << statement2.str() << "," << mapIterator2->second;
+			VType* data = dataIt->second;
+			if (data->isA(BOOLEAN_TYPE))
+			{
+				if ((new Boolean(data))->value())
+				{
+					/*print column name */
+					statement1 << statement1.str() << "," << dataIt->first;
+					/*print value*/
+					statement2 << statement2.str() << "," << "'true'";
+				}
+				else
+				{
+					/*print column name */
+					statement1 << statement1.str() << "," << dataIt->first;
+					/*print value*/
+					statement2 << statement2.str() << "," << "'false'";
+				}
+			}
+			else if (data->isA(VECTOR3_TYPE))
+			{
+				string name = dataIt->first;
+				Vector3* vector = new Vector3(data);
+				/*print column name with vector part suffix */
+				statement1 << statement1.str() << "," << name << "_x," << name << "_y," << name << "_z";
+				/*print value*/
+				statement2 << statement2.str() << "," << vector->x() << vector->y() << vector->z();
+			}
+			else if (data->isA(ARRAY_TYPE))
+			{
+				// splice all elements in the array into one column as a string
+				statement1 << statement1.str() << "," << dataIt->first;
+				/*print value*/
+				statement2 << statement2.str() << "," << "'" << dataIt->second->s_value() << "'";
+			}
+			else
+			{
+				/*print column name , example: SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE */
+				statement1 << statement1.str() << "," << dataIt->first;
+				/*print valuse, example: 1,1,0.02,1,0,0,0,90,'SUV',10,2*/
+				statement2 << statement2.str() << "," << dataIt->second->s_value();
+			}
 		}
 		/*print full sql statement*/
-		statement3 << "INSERT INTO "<< mapIterator->first<<"(" << statement1.str() << ") VALUES (" << statement2.str() << ");";
+		statement3 << "INSERT INTO " << tableName << "_Configuration (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
+
+
+		/*example of insert value sql statement
+		sql = "INSERT INTO"\
+		" RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
+		"VALUES (1,1,0.02,1,0,0,0,90,'SUV',10,2); " \
+		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
+		"VALUES (2,1,0.04,1,0,10,0,90,'SUV',10 ,2); "     \
+		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE)" \
+		"VALUES (3,1,0.06,1,0,20,0,0,'SUV',10,2);" \
+		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE)" \
+		"VALUES (4,1,0.08,1,0,30,0,0,'SUV',10,2);";*/
+
+		/* Execute SQL statement */
+		rc = sqlite3_exec(db, statement3.str().c_str(), callback, 0, &zErrMsg);
+
+		if (rc != SQLITE_OK)
+		{
+			closedatabase();
+			throw DatabaseException(zErrMsg);
+			sqlite3_free(zErrMsg);
+		}
+	}
+}
+
+void EventTree::publishUpdates()
+{
+	stringstream statement1;
+	stringstream statement2;
+	stringstream statement3;
+
+	statement1 << "run_ID,sim_Time_Step";
+	statement2 <<  getRunID() << "," << getCurrentSimTime();
+
+	for (auto componentIt = _componentPresentStateMap->begin(); componentIt != _componentPresentStateMap->end(); ++componentIt)
+	{
+		for (auto dataMapIt = componentIt->second.begin(); dataMapIt != componentIt->second.end(); ++dataMapIt)
+		{
+			VType* data = dataMapIt->second;
+			if (data->isA(BOOLEAN_TYPE))
+			{
+				bool val = ((Boolean*)data)->value();
+				if (val)
+				{
+					/*print column name */
+					statement1 << statement1.str() << "," << dataMapIt->first;
+					/*print value*/
+					statement2 << statement2.str() << "," << "'true'";
+				}
+				else
+				{
+					/*print column name */
+					statement1 << statement1.str() << "," << dataMapIt->first;
+					/*print value*/
+					statement2 << statement2.str() << "," << "'false'";
+				}
+			}
+			else if(data->isA(VECTOR3_TYPE))
+			{
+				string name = dataMapIt->first;
+				Vector3* vector = new Vector3(data);
+				/*print column name with vector part suffix */
+				statement1 << statement1.str() << "," << name << "_x," << name << "_y," << name << "_z";
+				/*print value*/
+				statement2 << statement2.str() << "," << vector->x() << vector->y() << vector->z();
+			}
+			else if (data->isA(ARRAY_TYPE))
+			{
+				// splice all elements in the array into one column as a string
+				statement1 << statement1.str() << "," << dataMapIt->first;
+				/*print value*/
+				statement2 << statement2.str() << "," << "'" << dataMapIt->second->s_value() << "'";
+			}
+			else
+			{
+				/*print column name , example: SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE */
+				statement1 << statement1.str() << "," << dataMapIt->first;
+				/*print valuse, example: 1,1,0.02,1,0,0,0,90,'SUV',10,2*/
+				statement2 << statement2.str() << "," << dataMapIt->second->s_value();
+			}
+		}
+		/*print full sql statement*/
+		statement3 << "INSERT INTO "<< componentIt->first<<"_Run_Data (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
 	}
 	
-	sql = statement3.str().c_str();
-
-
 	/*example of insert value sql statement
 	sql = "INSERT INTO"\
 		" RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
@@ -123,43 +239,39 @@ void EventTree::publishEvent(VComponent* source, timestamp time, dataMap *tablem
 		"VALUES (4,1,0.08,1,0,30,0,0,'SUV',10,2);";*/
 
 		/* Execute SQL statement */
-	rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+	rc = sqlite3_exec(db, statement3.str().c_str(), callback, 0, &zErrMsg);
 
 	if (rc != SQLITE_OK) {
-		fprintf(stderr, "SQL error: %s\n", zErrMsg);
+		closedatabase();
+		throw DatabaseException(zErrMsg);
 		sqlite3_free(zErrMsg);
-	}
-	else {
-		fprintf(stdout, "Records created successfully\n");
 	}
 }
 
-void EventTree::showdata(dataMap *tablemap)
+void EventTree::listenForCollision()
 {
 	/* Create SQL statement */
-
-	string statement1;
-	stringstream statement2;
-	for (auto mapIterator = tablemap->begin(); mapIterator != tablemap->end(); ++mapIterator)
+	//string statement1;
+	stringstream statement1;
+	/*for (auto mapIterator = tablemap->begin(); mapIterator != tablemap->end(); ++mapIterator)
 	{
 		statement1 += (mapIterator->first)+" ";
-	}
+	}*/
 	/*print show data sql statement example : SELECT * FROM TABLE_NAME */
-	statement2 << "SELECT * from " << statement1;
-	sql = statement2.str().c_str();
-
+	statement1 << "SELECT * from Collisions";
+	
 	/* Execute SQL statement */
-	rc = sqlite3_exec(db, sql, callback, (void*)datas, &zErrMsg);
+	//rc = sqlite3_exec(db, statement2.str().c_str(), callback, (void*)datas, &zErrMsg);
+	rc = sqlite3_exec(db, statement1.str().c_str(), collisionSearch, 0, &zErrMsg);
 
 	if (rc != SQLITE_OK) {
-		fprintf(stderr, "SQL error: %s\n", zErrMsg);
+		closedatabase();
+		throw DatabaseException(zErrMsg);
 		sqlite3_free(zErrMsg);
-	}
-	else {
-		fprintf(stdout, "select Operation done successfully\n");
 	}
 }
 
+// 4/30/2019 emf keeping these two functions here for future use, if desired
 //void database::updatedata()
 //{
 //	/* Create merged SQL statement */

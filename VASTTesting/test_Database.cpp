@@ -42,7 +42,7 @@ protected:
 };
 
 // a function provided as a parameter to the sqlite3 execution function that brings us the data from the database
-static int callback(void *NotUsed, int argc, char **argv, char **azColName) 
+static int callback(void * data, int argc, char **argv, char **azColName) 
 {	
 	++callbackRow;
 	EXPECT_EQ(argc, 3);
@@ -52,7 +52,7 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 		for (i = 0; i < argc; i++)
 		{
 			EXPECT_EQ(*azColName[i], *colNames[i]);
-			EXPECT_EQ(*argv[i], *colValues[i]);
+			EXPECT_EQ(*argv[i], *colValues[i]);			
 		}
 	}
 	return 0;

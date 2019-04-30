@@ -79,11 +79,11 @@ TEST(Test_VType, GetSQLite3Type)
 	VType* u4 = new Boolean();
 
 	ASSERT_EQ(s->getSQLite3Text(), "VARCHAR(255)");
-	ASSERT_EQ(d->getSQLite3Text(), "DOUBLE");
+	ASSERT_EQ(d->getSQLite3Text(), "DOUBLE(10)");
 	ASSERT_EQ(i->getSQLite3Text(), "INT");
 	ASSERT_EQ(b->getSQLite3Text(), "BOOLEAN");
 	ASSERT_EQ(unknown->getSQLite3Text(), "VARCHAR(255)");
-	ASSERT_EQ(u2->getSQLite3Text(), "DOUBLE");
+	ASSERT_EQ(u2->getSQLite3Text(), "DOUBLE(10)");
 	ASSERT_EQ(u3->getSQLite3Text(), "INT");
 	ASSERT_EQ(u4->getSQLite3Text(), "BOOLEAN");
 

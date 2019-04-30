@@ -85,6 +85,9 @@ private:
 	/* ID for this replication.*/
 	int _runID;
 
+	/* Scenario id for all replications running.*/
+	int _scenario_ID;
+
 	/* The length of each timeslice that the clock progresses.*/
 	double _timeSlice;
 
@@ -160,10 +163,6 @@ private:
 	/* Tracks which components have replied to the lead component.*/
 	bool stillAddingEvents(string componentName);
 
-	/* Publishes the update event to the database to all tables relevant to
-	that component.  */
-	void publishUpdates();
-
 	/* Once the simClock moves into the next timeSlice, the old timeSlice's events will be discarded.*/
 	void advanceClock();
 
@@ -198,20 +197,41 @@ private:
 
 	/* Creates all of the tables in the database to keep until the database is closed.*/
 	void createtable(tableMap* componentsToData, const char* tableType);
+		
+	/* Publishes the configuration of this scenario.*/
+	void publishConfigTable(string tableName, tableMap configurations);
 	
-	/*database callback function*/
-	static int callback(void *NotUsed, int argc, char **argv, char **azColName) 
+	/* Publishes the update event to the database to all tables relevant to
+	that component.  */
+	void publishUpdates();
+
+	/*show the data in the database*/
+	void listenForCollision();
+
+	/*database callback function checking collision table*/
+	static int collisionSearch(void* eventTreePointer, int argc, char **argv, char **azColName)
 	{
 		int i;
 		for (i = 0; i < argc; i++) {
-			printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+			if (string(azColName[i]).compare("run_ID") == 0)
+			{
+				EventTree* thisEventTree = ((EventTree*)eventTreePointer);
+				if (string(argv[i]).compare(thisEventTree->getRunID()))
+				{
+					thisEventTree->earlyStop();
+				}
+			}
 		}
 		printf("\n");
 		return 0;
-	}
+	};
+
+	/*empty callback function to do nothing*/
+	static int callback(void* eventTreePointer, int argc, char **argv, char **azColName)
+	{return 0;};
 
 public:
-	/* Creates an EventTree, sets the simClock to -1.  Opens the database connection.
+	/* Creates an EventTree, sets the simClock to -1.  Random scenario ID.  Opens the database connection.
 	timeSlice	The unit of timestamp by which update events are organized 
 				and collected.  Throws an exception for values less than
 				or equal to 0.
@@ -222,7 +242,7 @@ public:
 	Default number of runs is 1.*/
 	EventTree(double timeSlice, ratio timeRatio, double endTime, string databaseName) ;
 
-	/* Creates an EventTree, sets the simClock to -1.  Opens the database connection.
+	/* Creates an EventTree, sets the simClock to -1.  Random scenario ID.  Opens the database connection.
 	timeSlice			The unit of time by which update events are organized 
 						and collected.  Throws an exception for values less than
 						or equal to 0.
@@ -230,8 +250,23 @@ public:
 						an exception for values less than or equal to 0.
 	endTime				The end time for the replication.  Throws an exception for values less 
 						than or equal to 0.
-	numberOfRuns		Number of runs to be performed under these scenario parameters.*/
+	numberOfRuns		Number of runs to be performed under these scenario parameters.
+	databaseName		Desired file name of the database that will be generated.*/
 	EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns, string databaseName);
+
+	/* Creates an EventTree, sets the simClock to -1.  Random scenario ID.  Opens the database connection.
+	timeSlice			The unit of time by which update events are organized
+						and collected.  Throws an exception for values less than
+						or equal to 0.
+	timeRatio			The number of simulated seconds per real seconds.  Throws
+						an exception for values less than or equal to 0.
+	endTime				The end time for the replication.  Throws an exception for values less
+						than or equal to 0.
+	numberOfRuns		Number of runs to be performed under these scenario parameters.
+	databaseName		Desired file name of the database that will be generated.
+	scenarioID			The integer ID number given to this set of replications to identify the 
+						configuration of parameters.*/
+	EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns, string databaseName, int scenarioID);
 
 	/* Destructor - destroys internal components, closes connection to database.*/
 	~EventTree();
@@ -282,11 +317,4 @@ public:
 
 	/* Gets the replication ID for this replication.*/
 	string getRunID();
-
-	void publishEvent(VComponent* source, timestamp time, dataMap *tablemap, dataMap *avmap);
-
-	/*show the data in the database*/
-	void showdata(dataMap *tablemap);
-
-	void updateDatabase(timestamp time, dataMap data) {};
 };

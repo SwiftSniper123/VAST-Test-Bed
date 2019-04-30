@@ -463,7 +463,7 @@ public:
 	/* Provides string text "DOUBLE" which is an acceptable SQLite3 type.*/
 	string getSQLite3Text()
 	{
-		return "DOUBLE";
+		return "DOUBLE(10)";
 	};
 
 	/* The cumulative addition and assignment operator overloadm, 
