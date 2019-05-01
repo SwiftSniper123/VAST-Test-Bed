@@ -19,6 +19,14 @@ public:
 	/* The inherited update function*/
 	virtual void update(timestamp t, dataMap dataMap) = 0;
 
+	/* Informs the component that the replication is coming to an end.  This function
+	is called by the EventTree to give the component the opportunity to reset data, or
+	processes that must be refreshed in a new replication.
+	bool	another		A signal that there will be another replication
+						after this replication stops.
+	string	runID		The id number used for this replication.*/
+	virtual void stopReplication(bool another, string runID);
+
 	/* Overridden from VComponent.  Returns ID name.*/
 	virtual string getName()
 	{

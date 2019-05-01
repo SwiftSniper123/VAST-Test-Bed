@@ -21,6 +21,11 @@ void AV::update(timestamp t, dataMap dataMap)
 
 }
 
+void AV::stopReplication(bool another, string runID)
+{
+
+}
+
 VComponent::VCType AV::getVCType()
 {
 	return AV_Avatar;

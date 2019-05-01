@@ -21,6 +21,11 @@ void Environment::update(timestamp t, dataMap dataMap)
 
 }
 
+void Environment::stopReplication(bool another, string runID)
+{
+
+}
+
 VComponent::VCType Environment::getVCType()
 {
 	return Environment_Avatar;
