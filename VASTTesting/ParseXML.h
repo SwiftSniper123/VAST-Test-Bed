@@ -8,9 +8,20 @@
 #include "AV.h"
 #include "Environment.h"
 #include "VType.h"
+#include "EventTree.h"
 
 
 using namespace boost::property_tree;
+
+class VAST 
+{
+public:
+	map<std::string, VType> _VASTMap;
+	EventTree *_EventTree;
+	AV _AV;
+	Environment
+
+};
 
 /*
 struct AV_Config {
