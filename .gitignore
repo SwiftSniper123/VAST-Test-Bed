@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /VASTelise.zip
+/VASTTesting/testOutput
+/VASTTesting/VASTdatabase.db

@@ -79,7 +79,7 @@ TEST(Test_ProximitySensor, UpdateVsAVUpdate)
 	EXPECT_TRUE(ps->getClosestObstacle()->first->value() == "o1");
 	EXPECT_EQ(ps->getClosestObstacle()->second->value(), pos_o1->value());
 	EXPECT_TRUE(abs(ps->getClosestProximity()->value() - dist_o1) < 0.000001);
-	EXPECT_EQ(ps->getObstaclesList()->s_value(), "o1");
+	EXPECT_EQ(ps->getObstaclesList()->s_value(), "o1,o2,o3");
 
 	// cleanup
 	positions.clear();
@@ -104,6 +104,30 @@ public:
 	{
 		_dataMap.emplace(key, data);
 	};
+
+	String* getClosestIDforTest()
+	{
+		String* reply;
+		if(_dataMap.count(CLOSEST_ID) > 0)
+			reply = (String*)_dataMap.at(CLOSEST_ID);
+		else
+		{
+			reply = nullptr;
+		}
+			return reply;
+	}
+
+	Double* getClosestDistanceForTest()
+	{
+		Double* reply;
+		if (_dataMap.count(CLOSEST_DIST) > 0)
+			reply = (Double*)_dataMap.at(CLOSEST_DIST);
+		else
+		{
+			reply = nullptr;
+		}
+		return reply;
+	}
 };
 
 /* ReportToAV - Tests that ProximitySensor sends a report to the AV that updates the AV map upon receipt, without the update system.
@@ -113,16 +137,10 @@ Fail: The function reportToAV is not modifying AV data.
 */
 TEST(Test_ProximitySensor, ReportToAV)
 {
-	dataMap avMap;
-	ProximityTestAV* av = new ProximityTestAV(avMap);
-	dataMap sensorConfig;
-	sensorConfig.emplace(SENSOR_LOC, new Vector3(0, 0, 0));
-	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
-	sensorConfig.emplace(SENSOR_QUAD, new Integer(4)); // pos x, neg y
-	ProximitySensor* ps = new ProximitySensor(av, sensorConfig);
+	// set up AV
 	dataMap updateMap;
 	updateMap.emplace(OBSTACLE_IDS, new Array("o1,o2,o3"));
-	Vector3* pos_o1 = new Vector3(2.0, -1.0, 0.0);
+	Vector3* pos_o1 = new Vector3(3.0, -4.0, 0.0);
 	Vector3* pos_o2 = new Vector3(4.0, -111.0, 0.0);
 	Vector3* pos_o3 = new Vector3(-2.0, 4.0, 0.0);
 	vector<VType*> positions;
@@ -130,12 +148,26 @@ TEST(Test_ProximitySensor, ReportToAV)
 	positions.push_back(pos_o2);
 	positions.push_back(pos_o3);
 	updateMap.emplace(OBSTACLE_POS, new Array(positions));
+	ProximityTestAV* av = new ProximityTestAV(updateMap);
 	
-	EXPECT_TRUE(av->getDataMap().empty());
-	ps->reportToAV();
-	EXPECT_TRUE(!av->getDataMap().empty());
-	EXPECT_EQ(av->getDataMap().at(CLOSEST_ID)->s_value(), "o1");
-	EXPECT_TRUE(new Vector3(av->getDataMap().at(CLOSEST_POS)) == pos_o1);
+	// set up PS
+	dataMap sensorConfig;
+	sensorConfig.emplace(SENSOR_LOC, new Vector3(0, 0, 0));
+	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
+	sensorConfig.emplace(SENSOR_QUAD, new Integer(4)); // pos x, neg y
+	ProximitySensor* ps = new ProximitySensor(av, sensorConfig);
+	
+	// initial AV values for closest ID and Distance are nullptr
+	EXPECT_EQ(av->getClosestIDforTest(), nullptr);
+	EXPECT_EQ(av->getClosestDistanceForTest(), nullptr);
+
+	// test that sensor is reporting to AV what closest dimension and obstacle id are
+	ps->AVUpdate(0.0, updateMap);
+	EXPECT_TRUE(av->getClosestIDforTest() != nullptr);
+	EXPECT_TRUE(av->getClosestDistanceForTest() != nullptr);
+
+	EXPECT_EQ(av->getClosestIDforTest()->value(), "o1");
+	EXPECT_EQ(av->getClosestDistanceForTest()->value(), 5.0);
 
 	// cleanup
 	updateMap.clear();

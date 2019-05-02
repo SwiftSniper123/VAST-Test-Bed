@@ -31,9 +31,13 @@ int ProximitySensor::calculateQuadrant(Vector3* vec)
 
 distance* ProximitySensor::findDistance(Vector3* localVec)
 {
-	Vector3* sensorVec = new Vector3(_currentData.at(SENSOR_LOC));
+	Vector3* sensorVec =((Vector3*)_currentData.at(SENSOR_LOC));
 	// square root of( (x2 - x1)^2 + (y2 - y1)^2 )
-	return new Double(sqrt(pow(localVec->x() - sensorVec->x(), 2) + pow(localVec->y() - sensorVec->y(), 2)));
+	double x2minusx1 = localVec->x() - sensorVec->x();
+	double y2minusy1 = localVec->y() - sensorVec->y();
+	double xtermsquared = pow(x2minusx1, 2);
+	double ytermsquared = pow(y2minusy1, 2);
+	return new Double(sqrt(xtermsquared + ytermsquared));
 }
 
 // public functions-------------------------------------------------------------//
@@ -83,9 +87,23 @@ void ProximitySensor::AVUpdate(timestamp t, dataMap updateDataMap)
 
 void ProximitySensor::reportToAV()
 {
-	_owningAV->sensorReporting(CLOSEST_ID, this->getClosestObstacle()->first);
-	_owningAV->sensorReporting(CLOSEST_POS, this->getClosestObstacle()->second);
-	_owningAV->sensorReporting(CLOSEST_DIST, this->getClosestProximity());
+	// if local values are not nullptr, a scan was accomplished
+	if (this->getClosestObstacle() != nullptr)
+	{
+		// if all local values are filled, report
+		if (this->getClosestProximity() != nullptr)
+		{
+			_owningAV->sensorReporting(CLOSEST_ID, this->getClosestObstacle()->first);
+			_owningAV->sensorReporting(CLOSEST_POS, this->getClosestObstacle()->second);
+			_owningAV->sensorReporting(CLOSEST_DIST, this->getClosestProximity());
+		}
+		else // otherwise there was weird data received
+		{
+			throw UnpredictableBehaviorException(
+				"Proximity Sensor cannot transmit.  The problem is likely to be \
+				 the type of input ProximitySensor received from the AV map.");
+		}
+	}
 }
 
 void ProximitySensor::stopReplication(bool another, string runID)
@@ -108,22 +126,24 @@ void ProximitySensor::scan()
 		_currentData.find(OBSTACLE_POS) != _currentData.end() &&
 		_currentData.at(OBSTACLE_IDS)->isA(ARRAY_TYPE) &&
 		_currentData.at(OBSTACLE_POS)->isA(ARRAY_TYPE) &&
-		((new Array(_currentData.at(OBSTACLE_IDS)))->arraySize() ==
-		(new Array(_currentData.at(OBSTACLE_POS)))->arraySize()))
+		(((Array*)_currentData.at(OBSTACLE_IDS))->arraySize() ==
+		((Array*)_currentData.at(OBSTACLE_POS))->arraySize()))
 	{
-		Array* obs_ids = new Array(_currentData.at(OBSTACLE_IDS));
-		Array* obs_poss = new Array(_currentData.at(OBSTACLE_POS));
+		Array* obs_ids = ((Array*)_currentData.at(OBSTACLE_IDS));
+		Array* obs_poss = ((Array*)_currentData.at(OBSTACLE_POS));
 		Vector3* inspectedObstacleLocalPos;
 		Double* inspectedObstacleLocalDist;
 		int inspectedObstacleQuad = 0;
 		int sensorQuad = 0;
-		Double* sensorDepthRange = new Double(_currentData.at(SENSOR_DEPTH));
+		Double* sensorDepthRange = ((Double*)_currentData.at(SENSOR_DEPTH));
 		for (int i = 0; i < obs_ids->arraySize(); i++)
 		{
 			//calculate if they are in the proper quadrant,
-			inspectedObstacleLocalPos = *(obs_poss->at_Vector3(i)) - Vector3(_currentData.at(SENSOR_LOC));
+			Vector3* thisPos = ((Vector3*)_currentData.at(SENSOR_LOC));
+			Vector3* thatPos = obs_poss->at_Vector3(i);
+			inspectedObstacleLocalPos = *thatPos - thisPos;
 			inspectedObstacleQuad = calculateQuadrant(inspectedObstacleLocalPos);
-			sensorQuad = (new Integer(_currentData.at(SENSOR_QUAD)))->value();
+			sensorQuad = ((Integer*)_currentData.at(SENSOR_QUAD))->value();
 			if (sensorQuad == inspectedObstacleQuad)
 			{
 				//and then measure distance,
@@ -131,17 +151,18 @@ void ProximitySensor::scan()
 				inspectedObstacleLocalDist = findDistance(inspectedObstacleLocalPos);
 				
 				//set variables,
-				if (inspectedObstacleLocalDist < sensorDepthRange && 
-					inspectedObstacleLocalDist < shortestDistance)
+				if (inspectedObstacleLocalDist->value() < sensorDepthRange->value() && 
+					inspectedObstacleLocalDist->value() < shortestDistance->value())
 				{
 					_lastClosestProximity = inspectedObstacleLocalDist;
 					_lastClosestObstacle = new pair<String*, Vector3*>(obs_ids->at_String(i), obs_poss->at_Vector3(i));
 
-					//make the call to _owningAV with reportToAV
-					reportToAV();
+					
 				}
 			}
 		}
+		//make the call to _owningAV with reportToAV
+		reportToAV();
 	}	 
 }
 

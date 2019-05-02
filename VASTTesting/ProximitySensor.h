@@ -5,6 +5,7 @@
 
 using std::pair;
 typedef std::invalid_argument InvalidArgumentException;
+typedef std::domain_error UnpredictableBehaviorException;
 typedef pair<String*, Vector3*> locatedObstacle;
 typedef Double distance;
 
