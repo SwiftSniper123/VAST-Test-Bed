@@ -1,38 +1,5 @@
 #include "VAST.h"
 
-string indent(int level) {
-	string s;
-	for (int i = 0; i < level; i++) s += "  ";
-	return s;
-}
-
-void printTree(ptree &pt, int level) {
-	if (pt.empty()) {
-		cerr << "\"" << pt.data() << "\"";
-	}
-
-	else {
-		if (level) cerr << endl;
-
-		cerr << indent(level) << "{" << endl;
-		//std::cout << "Test";
-		for (ptree::iterator pos = pt.begin(); pos != pt.end();) {
-			cerr << indent(level + 1) << "\"" << pos->first << "\": ";
-
-			printTree(pos->second, level + 1);
-			++pos;
-			if (pos != pt.end()) {
-				cerr << ",";
-			}
-			cerr << endl;
-		}
-
-		cerr << indent(level) << " }";
-	}
-
-	return;
-}
-
 VAST::VAST() {}
 
 VAST::VAST(string file)

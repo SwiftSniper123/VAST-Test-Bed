@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "ParseXML.h"
+#include "VAST.h"
 #include "VType.h"
 
 /*Default true test*/
