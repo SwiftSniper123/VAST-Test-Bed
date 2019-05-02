@@ -11,6 +11,13 @@ using std::cout;
 using std::endl;
 using std::chrono::milliseconds;
 
+#include <map>
+#include<variant>
+#include "VType.h"
+#include "AV.h"
+#include <Windows.h>
+#include "VAST.h"
+#include <gtest/gtest.h>
 
 int main(int argc, char **argv1)
 {
