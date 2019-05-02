@@ -16,11 +16,20 @@ using namespace boost::property_tree;
 class VAST 
 {
 public:
-	map<std::string, VType> _VASTMap;
+	VAST();
+	VAST(string file);
+	void Parse();
+	dataMap _ConfigMap;
 	EventTree *_EventTree;
-	AV _AV;
-	Environment
+	vector<AV*> *_AVs;
+	Environment *_Env;
 
+private:
+	dataMap _EnvMap;
+	dataMap _AVMap;
+	string _file;
+	void fillMap(string currentModule, string type, string key, string value);
+	
 };
 
 /*
@@ -73,7 +82,7 @@ public:
 
 private:
 	void InstantiateObjects();
-	void fillMap(string currentModule, string type, string key, string value);
+	
 
 	string _file;
 	ptree pt1;

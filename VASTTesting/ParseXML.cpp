@@ -46,8 +46,22 @@ void printTree(ptree &pt, int level) {
 	return;
 }
 
-void XMLParser::Parse()
+VAST::VAST() {}
+
+VAST::VAST(string file)
 {
+	_file = file;
+}
+
+void VAST::Parse()
+{
+	ptree pt1;
+	string _currentKey;
+	string _currentModule;
+	string _currentValue;
+	string _type;
+	const string _delim = ", ";
+
 	read_xml(_file, pt1);
 	//printTree(pt1, 0);
 
@@ -95,43 +109,43 @@ void XMLParser::Parse()
 								{
 									if (_currentKey == "output_file_location")
 									{
-										String v = new VType(key.get<string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										String *v = new String(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "viz_option")
 									{
-										Boolean v = new VType(key.get<string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Boolean *v = new Boolean(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "time_ratio")
 									{
-										Integer v = new VType(key.get<string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Integer *v = new Integer(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "time_step")
 									{
-										Double v = new VType(key.get<std::string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Double *v = new Double(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "num_replications")
 									{
-										Integer v = new VType(key.get<std::string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Integer *v = new Integer(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "seeds")
 									{
-										Array v = new VType(key.get<std::string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Array *v = new Array(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "max_run_time")
 									{
-										Double v = new VType(key.get<std::string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Double *v = new Double(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "metrics")
 									{
-										Array v = new VType(key.get<std::string>("name"));
-										_VASTMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Array *v = new Array(new VType(key.get<string>("name")));
+										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 
 								}
@@ -140,18 +154,18 @@ void XMLParser::Parse()
 								{
 									if (_currentKey == "env_obstacle_port")
 									{
-										Integer v = new VType(key.get<std::string>("name"));
-										_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Integer *v = new Integer(new VType(key.get<string>("name")));
+										_EnvMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "exe_location")
 									{
-										String v = new VType(key.get<std::string>("name"));
-										_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										String *v = new String(new VType(key.get<string>("name")));
+										_EnvMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "Env_bounds")
 									{
-										Vector3 v = new VType(key.get<std::string>("name"));
-										_EnvMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
+										_EnvMap.insert(namedData(_currentKey, v));
 									}
 									else
 									{
@@ -167,38 +181,38 @@ void XMLParser::Parse()
 								{
 									if (_currentKey == "av_name")
 									{
-										String v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										String *v = new String(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "av_movement_port")
 									{
-										Integer v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Integer *v = new Integer(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "exe_location")
 									{
-										String v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										String *v = new String(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "AV_location")
 									{
-										String v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										String *v = new String(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "AV_orientation")
 									{
-										Vector3 v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "AV_bounds")
 									{
-										Vector3 v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "sensors")
 									{
-										Array v = new VType(key.get<std::string>("name"));
-										_AVMap.insert(std::pair<std::string, VType>(_currentKey, v));
+										Array *v = new Array(new VType(key.get<string>("name")));
+										_AVMap.insert(namedData(_currentKey, v));
 									}
 									else
 									{
@@ -252,24 +266,29 @@ void XMLParser::Parse()
 
 			if (_currentModule == "AV")
 			{
-				AvVector.push_back(_AVMap);
+				string name = _AVMap.at("av_name")->s_value;
+				_AVs->push_back(new AV(name,_AVMap));
+			}
+			else if (_currentModule == "Environment")
+			{
+				_Env = new Environment("Environment", _EnvMap);
 			}
 		}
 	}//
 	
 }
 
-void XMLParser::fillMap(string currentModule, string type, string key, string value)
+void VAST::fillMap(string currentModule, string type, string key, string value)
 {
 	char first = type.at(0);
-	VType v;
+	VType *v;
 
-	String s;
-	Double d;
-	Integer i;
-	Boolean b;
-	Vector3 vec;
-	Array a;
+	String *s;
+	Double *d;
+	Integer *i;
+	Boolean *b;
+	Vector3 *vec;
+	Array *a;
 
 	//std::cout << first;
 	
@@ -277,42 +296,42 @@ void XMLParser::fillMap(string currentModule, string type, string key, string va
 	{
 	case 's':
 	case 'S':
-		s = new VType(value);
+		s = new String(new VType(value));
 		v = s;
 		break;
 	case 'd':
 	case 'D':
-		d = new VType(value);
+		d = new Double(new VType(value));
 		v = d;
 		break;
 	case 'i':
 	case 'I':
-		i = new VType(value);
+		i = new Integer(new VType(value));
 		v = i;
 		break;
 	case 'b':
 	case 'B':
-		b = new VType(value);
+		b = new Boolean(new VType(value));
 		v = b;
 		break;
 	case 'v':
 	case 'V':
-		vec = new VType(value);
+		vec = new Vector3(new VType(value));
 		v = vec;
 		break;
 	case 'a':
 	case 'A':
-		a = new VType(value);
+		a = new Array(new VType(value));
 		v = a;
 		break;
 	}
 
 	if (currentModule == "Environment")
 	{
-		XMLParser::_EnvMap.insert(std::pair<std::string, VType>(key, v));
+		_EnvMap.insert(namedData(key, v));
 	}
 	else if (currentModule == "AV")
 	{
-		XMLParser::_AVMap.insert(std::pair<std::string, VType>(key, v));
+		_AVMap.insert(namedData(key, v));
 	}
 }

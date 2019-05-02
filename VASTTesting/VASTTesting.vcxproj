@@ -69,7 +69,7 @@
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="storage.cpp" />
-    <ClCompile Include="TestParser.cpp" />
+    <ClCompile Include="test_Parser.cpp" />
     <ClCompile Include="test_Broker.cpp" />
     <ClCompile Include="test_EventTree.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />

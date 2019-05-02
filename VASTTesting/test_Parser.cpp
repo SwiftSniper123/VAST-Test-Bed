@@ -8,18 +8,23 @@ TEST(Test_Parser, TrueInTestVASTLibrary)
 	ASSERT_TRUE(true);
 }
 
-/*Tests base Environment class constructor.*/
+VAST *p = new VAST("C:/Users/jaron/Documents/test.xml");
+
+/*Tests base VAST class constructor.*/
 TEST(Test_Parser, Constructor)
 {
-	XMLParser* p = new XMLParser("File");
+	VAST *v;
+	ASSERT_NO_FATAL_FAILURE(v = new VAST());
 
 	ASSERT_NO_FATAL_FAILURE(delete p);
 }
 
+
 TEST(Test_Parser, Parse)
 {
-	XMLParser* p = new XMLParser("C:/Users/jaron/Documents/test.xml");
 	p->Parse();
+
+	//ASSERT_NO_FATAL_FAILURE(p->_AV.at(0))
 
 	//VType test = p->_EnvMap.find("env_obstacle_port");
 	//std::cout << p->env->_env_obstacle_port.value();
