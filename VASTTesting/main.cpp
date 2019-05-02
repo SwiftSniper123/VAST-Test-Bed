@@ -8,7 +8,7 @@
 #include "VType.h"
 #include "AV.h"
 #include <Windows.h>
-#include "ParseXML.h"
+#include "VAST.h"
 #include <gtest/gtest.h>
 
 
