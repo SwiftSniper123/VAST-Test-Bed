@@ -62,6 +62,7 @@
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="EventTree.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ProximitySensor.cpp" />
     <ClCompile Include="Sensor.cpp" />
