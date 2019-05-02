@@ -18,12 +18,15 @@ AV::AV(string name, dataMap avData)
 
 void AV::update(timestamp t, dataMap dataMap)
 {
+	EventTree *temp = getEventTree();
 
-}
+	_sensorDataMap["VehicleID"] = dataMap["VehicleID"];
+	_sensorDataMap["Speed"] = dataMap["Speed"];
+	_sensorDataMap["Position"] = dataMap["Position"];
 
-void AV::stopReplication(bool another, string runID)
-{
+	_sensorDataMap = callUpdateFunctions();
 
+	temp->addEvent(this, t, _sensorDataMap);
 }
 
 VComponent::VCType AV::getVCType()
@@ -39,4 +42,9 @@ string AV::getName()
 dataMap AV::getDataMap()
 {
 	return _dataMap;
+}
+
+dataMap AV::getSensorDataMap()
+{
+	return _sensorDataMap;
 }
