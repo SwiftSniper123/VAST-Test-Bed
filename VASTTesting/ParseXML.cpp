@@ -223,51 +223,19 @@ void VAST::Parse()
 
 										fillMap(_currentModule, _type, _currentKey, _currentValue);
 									}
-									//std::cout << "Placeholder";
 								}
-
-								
 							}
 						}
-						
 					}
-
-					//BOOST_FOREACH(boost::property_tree::ptree::value_type const& value, key.get_child(""))
-					//{
-					//	std::string label = value.first;
-					//	//std::cout << "value" << label <<"\n";
-					//	boost::property_tree::ptree keyValue = value.second;
-
-					//	std::string test = keyValue.get<std::string>("");
-					//	//std::cout << test;
-					//	/*
-					//	if (label != "<xmlattr>")
-					//	{
-					//		//std::cout << pair.first << "\n";
-					//		std::cout << value.first;
-					//		//std::string key = keyValue.get<std::string>("type.key");
-					//	}*/
-					//}
 				}
-				//std::string value = test.get<std::string>("pair.value");
-
-				//std::cout << "key: " << key << "value: " << value;
-
-				//std::string label = v.second;
-				//std::cout << label;
-				
-				/*if (label != "<xmlattr>")
-				{
-					std::string value = subtree.get<std::string>(label);
-					std::cout << label << ":  " << value << std::endl;
-				}*/
 			}
 			//std::cout << std::endl;
 
 			if (_currentModule == "AV")
 			{
-				string name = _AVMap.at("av_name")->s_value;
-				_AVs->push_back(new AV(name,_AVMap));
+				string name = _AVMap.at("av_name")->s_value();
+				AV *av = new AV(name, _AVMap);
+				_AVs.push_back(av);
 			}
 			else if (_currentModule == "Environment")
 			{

@@ -21,7 +21,7 @@ public:
 	void Parse();
 	dataMap _ConfigMap;
 	EventTree *_EventTree;
-	vector<AV*> *_AVs;
+	vector<AV*> _AVs;
 	Environment *_Env;
 
 private:

@@ -16,7 +16,7 @@ TEST(Test_Parser, Constructor)
 	VAST *v;
 	ASSERT_NO_FATAL_FAILURE(v = new VAST());
 
-	ASSERT_NO_FATAL_FAILURE(delete p);
+	ASSERT_NO_FATAL_FAILURE(delete v);
 }
 
 
