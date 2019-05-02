@@ -1,18 +1,5 @@
 #include "ParseXML.h"
 
-
-//Configuration::Configuration() {};
-
-/*Configuration Configuration::LoadConfig(string filelocation)
-{
-
-};*/
-
-XMLParser::XMLParser(string file)
-{
-	_file = file;
-}
-
 string indent(int level) {
 	string s;
 	for (int i = 0; i < level; i++) s += "  ";
