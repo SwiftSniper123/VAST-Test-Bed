@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="test.cpp">
@@ -38,6 +38,12 @@
       <Filter>UnitTests</Filter>
     </ClCompile>
     <ClCompile Include="EventTree.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="test_Parser.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="VAST.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
     <ClCompile Include="sqlite3.c">
@@ -97,6 +103,7 @@
     <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+    <ClInclude Include="VAST.h">
     <ClInclude Include="ScenarioMetric.h">
     <ClInclude Include="config.h">
       <Filter>OpenSourceCode\h</Filter>
@@ -135,5 +142,8 @@
     <Filter Include="OpenSourceCode\cpp">
       <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

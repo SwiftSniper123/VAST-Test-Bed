@@ -1,8 +1,15 @@
 //Virtual Autonomous System Testbed
 //ODU Capstone 2018-2019
 
-#include "gtest/gtest.h"
+#include "VComponent.h"
 #include <iostream>
+#include <map>
+#include<variant>
+#include "VType.h"
+#include "AV.h"
+#include <Windows.h>
+#include "ParseXML.h"
+#include <gtest/gtest.h>
 #include <thread> // sleep_for
 using namespace std::this_thread;     // sleep_for, sleep_until
 
@@ -12,7 +19,7 @@ using std::endl;
 using std::chrono::milliseconds;
 
 
-int main(int argc, char **argv1)
+int main(int argc, WCHAR *argv[])
 {
 	// ask user for config file
 
@@ -55,3 +62,4 @@ void sumoConnection() {
 	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
 	client.close();
 } */
+
