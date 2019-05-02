@@ -55,6 +55,12 @@
     <ClCompile Include="test_ProximitySensor.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
+    <ClCompile Include="VAST.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="test_Parser.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
@@ -109,6 +115,9 @@
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
     <ClInclude Include="ProximitySensor.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VAST.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>

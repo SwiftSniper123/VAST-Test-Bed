@@ -33,6 +33,9 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(solutionDir)\VASTTesting;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="AV.h" />
     <ClInclude Include="Broker.h" />
@@ -50,6 +53,7 @@
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />
     <ClInclude Include="TraCIDefs.h" />
+    <ClInclude Include="VAST.h" />
     <ClInclude Include="VComponent.h" />
     <ClInclude Include="VType.h" />
   </ItemGroup>
@@ -67,11 +71,13 @@
     <ClCompile Include="test_Broker.cpp" />
     <ClCompile Include="test_Database.cpp" />
     <ClCompile Include="test_EventTree.cpp" />
+    <ClCompile Include="test_Parser.cpp" />
     <ClCompile Include="test_ProximitySensor.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
     <ClCompile Include="TraCIAPI.cpp" />
+    <ClCompile Include="VAST.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VAST\VAST.vcxproj">
