@@ -2,7 +2,7 @@
 
 // public functions---------------------------------------//
 
-EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
+EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, string databaseName)
 {
 	if (timeSlice <= 0.0)
 	{
@@ -17,15 +17,18 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime)
 		throw InvalidArgumentException("Run end time must be greater than 0 seconds.");
 	}
 
+	_scenario_ID = rand();
 	_timeSlice = timeSlice;
 	_timeRatio = timeRatio;
 	_endTime = endTime;
 	_simClock = -1;
 	_numRuns = 1;
 	_future = nullptr;
+
+	opendatabase(databaseName);
 }
 
-EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns)
+EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns, string databaseName)
 {
 	if (timeSlice <= 0.0)
 	{
@@ -44,19 +47,57 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 		throw InvalidArgumentException("Must have at least one run to test the scenario.");
 	}
 
+	_scenario_ID = rand();
 	_timeSlice = timeSlice;
 	_timeRatio = timeRatio;
 	_endTime = endTime;
 	_simClock = -1;
 	_numRuns = numRuns;
 	_future = nullptr;
+
+	opendatabase(databaseName);
+}
+
+EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numRuns, string databaseName, int scenarioID)
+{
+	if (timeSlice <= 0.0)
+	{
+		throw InvalidArgumentException("Time slices must be greater than 0 seconds.");
+	}
+	else if (timeRatio <= 0.0 || timeRatio > 1.0)
+	{
+		throw InvalidArgumentException("Time ratio must be greater than 0.");
+	}
+	else if (endTime <= 0.0)
+	{
+		throw InvalidArgumentException("Run end time must be greater than 0 seconds.");
+	}
+	else if (numRuns < 1)
+	{
+		throw InvalidArgumentException("Must have at least one run to test the scenario.");
+	}
+
+	_scenario_ID = scenarioID;
+	_timeSlice = timeSlice;
+	_timeRatio = timeRatio;
+	_endTime = endTime;
+	_simClock = -1;
+	_numRuns = numRuns;
+	_future = nullptr;
+
+	opendatabase(databaseName);
 }
 
 EventTree::~EventTree()
 {
-	metrics.clear();
-	_componentInitialStateMap.clear();
-	_componentPresentStateMap.clear();
+	// completely close down operations
+	this->_runID = 0;
+	closedatabase();
+
+	// clear out data maps
+	_metrics->clear();
+	_componentInitialStateMap->clear();
+	_componentPresentStateMap->clear();
 
 	// clear out the linked list of Futures and the attached ComponentEventUpdates.
 	resetFutureListOfEvents();
@@ -64,46 +105,80 @@ EventTree::~EventTree()
 
 void EventTree::registerComponent(VComponent* vc)
 {
+	bool running = this->running();
 	// only register components before a set of replications
-	if (!running() && vc->getVCType() != VComponent::VCType::ScenarioMetric)
+	if (!running && vc->getVCType() != VComponent::VCType::ScenarioMetric)
 	{
-		map<VComponent*, dataMap>::iterator it;
-		it = _componentInitialStateMap.find(vc);
-		if (it == _componentInitialStateMap.end())
+		tableMap::iterator it;
+		it = _componentInitialStateMap->find(vc);
+		if (it == _componentInitialStateMap->end())
 		{
 			// register this EventTree with the component so EventTree::addEvent 
 			// can be called from within the component
 			vc->registerEventTree(this);
 			// store initial state (not modified after this)
-			_componentInitialStateMap.emplace(vc, vc->getDataMap());
+			_componentInitialStateMap->emplace(vc, vc->getDataMap());
 			// and initialize present state (modified)
-			_componentPresentStateMap.emplace(vc, vc->getDataMap());
+			_componentPresentStateMap->emplace(vc, vc->getDataMap());
 
 			// if lead component hasn't been set, give it a first-come first-serve vc
 			_leadComponent = _leadComponent == nullptr ? vc : _leadComponent;
 		}
-
-		// TODO: add intialization of database tables here
-		//  get vc type "AV_Avatar" etc, insert entry to that table
-		//  create a table for this "AV" and insert initial values
+	}
+	else if (running)
+	{
+		closedatabase();
+		throw OutOfTimeException(vc->getName(), string("register VComponent"), running);
+	}
+	else if (vc->getVCType() == VComponent::VCType::ScenarioMetric)
+	{
+		closedatabase();
+		throw InvalidArgumentException("Cannot add a Scenario Metric. Use EventTree::registerMetric instead.");
 	}
 }
 
 void EventTree::registerMetric(ScenarioMetric* sm)
 {
-	metrics.push_back(sm);
+	bool running = this->running();
+	// only register components before a set of replications
+	if (!running)
+	{
+		tableMap::iterator it;
+		it = _metrics->find(sm);
+		if (it == _metrics->end())
+		{
+			sm->registerEventTree(this);
+			_metrics->emplace(sm, sm->getDataMap());
+		}
+	}
+	else
+	{
+		closedatabase();
+		throw OutOfTimeException(sm->getName(), string("register ScenarioMetric"), running);
+	}
 }
 
 int EventTree::getNumberOfVComp() const
-{ return _componentInitialStateMap.size(); }
+{ return _componentInitialStateMap->size(); }
 
 void EventTree::setFirstComponent(VComponent* vc)
 { _leadComponent = vc; }
 
 void EventTree::start()
 {
+	// initialize the tables for each component's run data
+	createtable(_componentInitialStateMap, "Run_Data");
+	createtable(_metrics, "Run_Data");
+
+	// these need to be composed sometime between parsing and starting emf4/28/2018
+	//createtable(_VASTconfiguration, "Configuration");
+	//createtable(_EnvironmentConfiguration, "Configuration");
+	//createtable(_AVConfiguration, "Configuration"); 
+	
+
 	while (_numRuns > 0)
 	{
+		++_runID;
 		replication();
 	}
 }
@@ -115,12 +190,12 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 	// if an event is set outside of the run time:
 	if(_eventTime < 0 || _eventTime < currentSchedulableTime - _timeSlice)  // too far left
 	{
+		closedatabase();
 		throw OutOfTimeException(currentSchedulableTime, _eventSource->getName(), _eventTime);
 	}
 	// otherwise if this event happens in the distant future
 	else if (_eventTime >= getEndSimTime())  // too far right
 	{
-		// throw OutOfTimeException(currentSchedulableTime, _eventSource->getName(), _eventTime);
 		return; // leave the addEvent to finish the replication
 	}
 	// if the time clock has not yet started, everything is a Future
@@ -135,9 +210,9 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 		map<VComponent*, dataMap>::iterator presentMapIterator; // used to point to relevant VComponent & datamap
 		if (stillAddingEvents(_eventSource->getName()))
 		{
-			presentMapIterator = _componentPresentStateMap.find(_eventSource); // try to find this VComponent data map
+			presentMapIterator = _componentPresentStateMap->find(_eventSource); // try to find this VComponent data map
 			// if we did find it
-			if (presentMapIterator != _componentPresentStateMap.end())
+			if (presentMapIterator != _componentPresentStateMap->end())
 			{
 				// then for every value in present _eventDataMap, overwrite the 
 				// corresponding element in the componentPresentState state map
@@ -148,19 +223,12 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 					// get the present map's old component data, and the new update data, and overwrite
 					VType* oldData = presentMapIterator->second[updateIterator->first];
 					VType* newData = updateIterator->second;
-					/*if (oldData->isA(newData->getType()))
-					{*/
-						*presentMapIterator->second[updateIterator->first] = *newData;
-					//}
-					/*else
-					{
-						throw InvalidArgumentException("Data swap on \"" + updateIterator->first +
-							"\" takes a " + oldData->getType() + " not a " + newData->getType());
-					}*/
+					*presentMapIterator->second[updateIterator->first] = *newData;
 				}
 			}
 			else
 			{
+				closedatabase();
 				// we didn't find the VComponent in the state map, which is a problem
 				throw InvalidArgumentException("Current system does not contain component: " + _eventSource->getName());
 			}
@@ -170,8 +238,8 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 			/*VComponent::VCType sourceVCType = _eventSource->getVCType();
 			VComponent::VCType targetVCType = targetComponent->getVCType();*/
 
-			for (presentMapIterator = _componentPresentStateMap.begin();
-				presentMapIterator != _componentPresentStateMap.end();
+			for (presentMapIterator = _componentPresentStateMap->begin();
+				presentMapIterator != _componentPresentStateMap->end();
 				++presentMapIterator)
 			{
 				targetComponent = presentMapIterator->first;
@@ -216,11 +284,21 @@ bool EventTree::running()
 	}
 	return result; 
 }
-
-string EventTree::setRunID() 
+string EventTree::getRunID()
 {
-	// TODO: generate replication ID
-	return "runID generator function needs to be implemented";
+	stringstream ss;
+	/* if the run ID is not zero, the scenario has passed initialization and can 
+		write to the database about replication data.*/
+	if (this->_runID)
+	{
+		ss << this->_runID;
+	}
+	else
+	{
+		closedatabase();
+		throw OutOfTimeException(string("EventTree"), string("get run replication ID from"), running());
+	}
+	return ss.str();
 }
 
 //-----------------------------------------------------------------------------//
@@ -250,11 +328,6 @@ void EventTree::replication()
 		*/
 		while (_simClock < _endTime)
 		{
-			//if (_leadComponent != nullptr)
-			//{
-			//	// add an event in the future to initialize eventlist
-			//	_leadComponent->update(_simClock, dataMap());
-			//}
 			// check for future events, advance the future list
 			if (_future != nullptr)
 			{
@@ -315,6 +388,7 @@ void EventTree::replication()
 			publishUpdates();
 
 			// check for collisions, which would mean early stop
+			listenForCollision();
 
 			// check to make sure the replication isn't over early because of what we just published
 			if (_endTime == _simClock) // time to stop
@@ -340,11 +414,6 @@ bool EventTree::stillAddingEvents(string componentName)
 	}	
 	// we will not accept this event if the size is the same
 	return accepting;
-}
-
-void EventTree::publishUpdates()
-{
-	// send updates to database
 }
 
 void EventTree::advanceClock()
@@ -467,19 +536,20 @@ void EventTree::stop()
 	{	
 		_simClock = -1;
 		_numRuns--;
-		
+				
 		// clear out Events and start with empty present Future
 		resetFutureListOfEvents();
 
 		// reset _componentPresentStateMap to _componentInitialStateMap
-		for (auto presentMapIterator = _componentPresentStateMap.begin();
-			presentMapIterator != _componentPresentStateMap.end();
+		for (auto presentMapIterator = _componentPresentStateMap->begin();
+			presentMapIterator != _componentPresentStateMap->end();
 			++presentMapIterator)
 		{
-			presentMapIterator->second = _componentInitialStateMap[presentMapIterator->first];
+			// resets the central map with initial values
+			presentMapIterator->second = _componentInitialStateMap->at(presentMapIterator->first);
 
 			// tell components to restart themselves
-			presentMapIterator->first->stopReplication((_numRuns > 0), _runID);
+			presentMapIterator->first->stopReplication((_numRuns > 0), "" + this->_runID);
 		}	
 	}
 } // end of stop()

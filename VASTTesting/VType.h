@@ -44,6 +44,8 @@ public:
 	{
 		return stringValue;
 	};
+
+	virtual string getSQLite3Text() { return ""; };
 protected:
 	string stringValue;
 	string type;
@@ -96,7 +98,7 @@ public:
 		VType::type = STRING_TYPE;
 	};
 
-	String::String(String& old_str)
+	String(String& old_str)
 	{
 		//val = old_str.value();
 	};
@@ -461,7 +463,7 @@ public:
 	/* Provides string text "DOUBLE" which is an acceptable SQLite3 type.*/
 	string getSQLite3Text()
 	{
-		return "DOUBLE";
+		return "DOUBLE(10)";
 	};
 
 	/* The cumulative addition and assignment operator overloadm, 
