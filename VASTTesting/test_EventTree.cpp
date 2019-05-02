@@ -24,45 +24,30 @@ TEST(Test_EventTree, EventTreeConstructor)
 {
 	EventTree* e;
 	// test constructor with a timeslice less than or equal to 0
-	ASSERT_THROW(e = new EventTree(0, ratio(0.99), 1.0), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(-0.1, ratio(0.99), 1.0), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0, ratio(0.99), 1.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(-0.1, ratio(0.99), 1.0, ""), InvalidArgumentException);
 
 	// test constructor with a timeRatio less than or equal to 0, or greater than 1.0
-	ASSERT_THROW(e = new EventTree(0.1, ratio(0), 1.0), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(0.1, ratio(-0.1), 1.0), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(0.1, ratio(1.1), 1.0), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(0), 1.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(-0.1), 1.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(1.1), 1.0, ""), InvalidArgumentException);
 
 	// test constructor with a end time less than or equal to 0
-	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), 0.0), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), -1.0), InvalidArgumentException);
-	
-	// test special constructor with a databaseTimeUnit not in the approved list:
-	//  s, m, h, d, w
-	//ASSERT_THROW(e = new EventTree(0.1, ratio(1.0), 1.0, 'a'), InvalidArgumentException);
-	//ASSERT_THROW(e = new EventTree(0.1, ratio(1.0), 1.0, 'b'), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), 0.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), -1.0, ""), InvalidArgumentException);
 
 	//// test that correct constructors create the EventTree
-	ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0));
+	ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, ""));
 	ASSERT_NO_FATAL_FAILURE(delete e);
-	//ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, 's'));
-	//ASSERT_NO_FATAL_FAILURE(delete e);
-	//ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, 'm'));
-	//ASSERT_NO_FATAL_FAILURE(delete e);
-	//ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, 'h'));
-	//ASSERT_NO_FATAL_FAILURE(delete e);
-	//ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, 'd'));
-	//ASSERT_NO_FATAL_FAILURE(delete e);
-	//ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, 'w'));
-	//ASSERT_NO_FATAL_FAILURE(delete e);
-
+	
 	//test getters retrieve the timeslice, timeratio
-	e = new EventTree(0.1, 0.99, 1.0);
+	e = new EventTree(0.1, 0.99, 1.0, "");
 	ASSERT_EQ(e->getTimeSlice(), 0.1);
 	ASSERT_EQ(e->getTimeRatio(), 0.99);
 	ASSERT_EQ(e->getEndSimTime(), 1.0);
 	delete e;
 
-	e = new EventTree(0.5, 0.1, 2.0);
+	e = new EventTree(0.5, 0.1, 2.0, "");
 	ASSERT_EQ(e->getTimeSlice(), 0.5);
 	ASSERT_EQ(e->getTimeRatio(), 0.1);
 	ASSERT_EQ(e->getEndSimTime(), 2.0);
@@ -80,7 +65,7 @@ Fail: Exceptions that were expected were not thrown, getters returned the wrong 
 */
 TEST(Test_EventTree, EventTreeRegisterComponent)
 {
-	EventTree* et = new EventTree(0.1, ratio(0.99), 1.0);
+	EventTree* et = new EventTree(0.1, ratio(0.99), 1.0, "");
 	// no components are added yet
 	ASSERT_EQ(et->getNumberOfVComp(), 0);
 	
@@ -108,7 +93,7 @@ TEST(Test_EventTree, EventTreeRegisterComponent)
 TEST(Test_EventTree, EventTreeStartAndStopClock)
 {
 	
-	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001);
+	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001, "");
 	EXPECT_FALSE(et->running());
 	EXPECT_EQ(et->getCurrentSimTime(), -1);
 
@@ -118,61 +103,6 @@ TEST(Test_EventTree, EventTreeStartAndStopClock)
 	// cleanup
 	delete et;
 }
-
-TEST(Test_EventTree, ClockTime)
-{
-	clock_t t;
-	t = clock();
-	sleep_for(milliseconds(1));
-	t = clock() - t;
-	float timePassed =((float)t) / CLOCKS_PER_SEC;
-	EXPECT_TRUE(timePassed < 0.002);
-}
-
-// 4/21/2019 - this is likely not measuring correctly at this time; timePassed says 22 seconds, but the test
-// does not physically run for anywhere near that long.
-//TEST(Test_EventTree, EventTreeFasterThanRealTime)
-//{
-//	// set the timeslice to 0.1 s, ratio smallest it can be set 0.01 (one real second per hundred seconds), replication length 1.0 s
-//	// this means timeslices actually take 0.1*0.01 = 0.001 s in real time
-//	// the replication duration should be 0.01 in real time
-//	EventTree* et = new EventTree(0.1, ratio(0.01), 1.0);
-//	clock_t t;
-//	t = clock();
-//	et->start();
-//	t = clock() - t;
-//	float timePassed =((float)t) / CLOCKS_PER_SEC;
-//	
-//	EXPECT_TRUE(t > 0.01);
-//	EXPECT_EQ(t, 1.0);
-//	EXPECT_EQ(CLOCKS_PER_SEC, 1000);
-//	delete et;
-//}
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.1 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.1)*10), 1);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.2 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.2) * 10), 2);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.3 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.3) * 10), 3);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.4 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.4) * 10), 4);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.5 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.5) * 10), 5);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.6 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.6) * 10), 6);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.7 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.7) * 10), 7);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.8 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.8) * 10), 8);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 0.9 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 0.9) * 10), 9);
-//	sleep_for(milliseconds(1)); // wait 1 timeslice to relative time 1.0 s on simClock
-//	EXPECT_EQ(floor((et->getCurrentSimTime() - 1.0) * 10), 10);
-//
-//	// total runtime has been 0.01 s in relative real time
-//	EXPECT_TRUE(difftime(time(0), startTime) - 0.01 < 0.000000001);
-//
-//}
 
 /* Mock-up class for use in test cases below.  Makes use of dataMap,
 update, EventTree registration, and a getter to verify that update happened.*/
@@ -334,7 +264,7 @@ private:
 
 TEST(Test_EventTree, EventTreeAddEvent)
 {
-	EventTree* et = new EventTree(0.1, ratio(1.0), 1.0);
+	EventTree* et = new EventTree(0.1, ratio(1.0), 1.0, "");
 	dataMap compData;
 	compData.emplace("ooo", new String());
 	MockComponent* env = new MockComponent("mockComponent", compData, true);
@@ -352,8 +282,8 @@ TEST(Test_EventTree, EventTreeAddEvent)
 		dataMap futureData;
 		futureData.emplace("ooo", new String("the future"));
 		
-		// test that bad times throw exceptions 
-		EXPECT_THROW(et->addEvent(env, -0.5, futureData), OutOfTimeException);
+		// test that bad times throw exceptions; they are private so no access from here
+		EXPECT_THROW(et->addEvent(env, -0.5, futureData), exception);
 		//EXPECT_THROW(et->addEvent(env, 1.5, futureData), OutOfTimeException);
 
 		// test that good event time does not throw an exception
@@ -401,7 +331,7 @@ TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
 	MockComponent* av = new MockComponent("av", dataMap0, false);
 
 	// now the EventTree can be initialized and can register the 3 components
-	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5);
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, "");
 	et->registerComponent(environment);
 	et->registerComponent(av);
 	et->setFirstComponent(av);
@@ -456,7 +386,7 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 	MockComponent* av = new MockComponent("av", dataMap0, true);
 
 	// now the EventTree can be initialized and can register the 3 components
-	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5);
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, "");
 	et->registerComponent(environment);
 	et->registerComponent(av);
 
@@ -493,7 +423,7 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 TEST(Test_EventTree, EventTreeMultipleRuns)
 {
 	// simple replications
-	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 10);
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 10, "");
 	EXPECT_NO_THROW(et->start());
 	delete et;
 
@@ -513,7 +443,7 @@ TEST(Test_EventTree, EventTreeMultipleRuns)
 	MockComponent* environment = new MockComponent("environment", dataMap0, false);
 	MockComponent* av = new MockComponent("av", dataMap0, true);
 
-	et = new EventTree(0.1, ratio(1.0), 0.5, 10);
+	et = new EventTree(0.1, ratio(1.0), 0.5, 10, "");
 	et->registerComponent(environment);
 	et->registerComponent(av);
 

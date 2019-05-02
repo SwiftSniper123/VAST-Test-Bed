@@ -44,6 +44,8 @@ public:
 	{
 		return stringValue;
 	};
+
+	virtual string getSQLite3Text() { return ""; };
 protected:
 	string stringValue;
 	string type;
@@ -96,7 +98,7 @@ public:
 		VType::type = STRING_TYPE;
 	};
 
-	String::String(String& old_str)
+	String(String& old_str)
 	{
 		//val = old_str.value();
 	};
@@ -461,7 +463,7 @@ public:
 	/* Provides string text "DOUBLE" which is an acceptable SQLite3 type.*/
 	string getSQLite3Text()
 	{
-		return "DOUBLE";
+		return "DOUBLE(10)";
 	};
 
 	/* The cumulative addition and assignment operator overloadm, 
@@ -528,6 +530,30 @@ public:
 			ss >> this->val;
 		}
 		return this;     // return the object  
+	}
+
+	/* Overloaded assignment operator for less than evaluator*/
+	bool operator<(Double& d)
+	{
+		return this->value() < d.value();     // return the object  
+	}
+
+	/* Overloaded assignment operator for greater than evaluator*/
+	bool operator>(Double& d)
+	{
+		return this->value() > d.value();     // return the object  
+	}
+
+	/* Overloaded assignment operator for equal to evaluator.  Evaluates to wihin a micro unit*/
+	bool operator==(Double& d)
+	{
+		return abs(this->value() - d.value()) < 0.000000001;     // return the object  
+	}
+
+	/* Overloaded assignment operator for equal to evaluator.  Evaluates to wihin a micro unit*/
+	bool operator==(double& d)
+	{
+		return abs(this->value() - d) < 0.000000001;     // return the object  
 	}
 };
 
@@ -972,25 +998,38 @@ private:
 			int currentIndex = 0;
 			for (int i = 0; i < len; i++) // loop through every character
 			{
-				if (parsable[i] != ',')
+				if (parsable[i] == '-')
 				{
-					// piece together the value character by character
 					stowable << parsable[i];
 				}
-				else if (parsable[i] == ',' && currentIndex == 0)	// x
+				else
 				{
-					stowable >> _x;
-					currentIndex++;
-				}
-				else if (parsable[i] == ',' && currentIndex == 1)	// y
-				{
-					stowable >> _y;
-					currentIndex++;
-				}
-				
-				if (currentIndex == 2 && i == len - 1) 				// z
-				{
-					stowable >> _z;
+					if (parsable[i] != ',')
+					{
+						// piece together the value character by character
+						stowable << parsable[i];
+					}
+					else if (parsable[i] == ',' && currentIndex == 0)	// x
+					{
+						stowable >> _x;
+						currentIndex++;
+						stowable.str("");
+						stowable.clear();
+					}
+					else if (parsable[i] == ',' && currentIndex == 1)	// y
+					{
+						stowable >> _y;
+						currentIndex++;
+						stowable.str("");
+						stowable.clear();
+					}
+
+					if (currentIndex == 2 && i == len - 1) 				// z
+					{
+						stowable>> _z;
+						stowable.str("");
+						stowable.clear();
+					}
 				}
 			}
 		}
@@ -1016,7 +1055,7 @@ public:
 		_z = 0;
 		VType::type = VECTOR3_TYPE;
 		stringstream ss;
-		ss << _x << "," << _y << "," << _z;
+		ss <<  _x << "," << _y << "," << _z ;
 		VType::stringValue = ss.str();
 	}
 
@@ -1032,6 +1071,7 @@ public:
 	/*Creates a new Vector3 type from a string assumed to have three comma delimited numericals.  */
 	Vector3(string parsable)
 	{
+		
 		parseVector(parsable);
 		VType::type = VECTOR3_TYPE;
 		VType::stringValue = parsable;
@@ -1091,6 +1131,11 @@ public:
 	double z()
 	{
 		return _z;
+	}
+
+	Vector3* operator-(Vector3* that)
+	{
+		return new Vector3(this->_x - that->x(),this-> _y - that->y(), this->_z - that->z());
 	}
 
 	/* compares two Vector3 objects.  Returns true if the double values are identical.*/
@@ -1159,7 +1204,7 @@ private:
 			// read in the comma as a place to create a VType
 			else if (parsable[i] == ',' && currentIndex < size)
 			{
-				objStringVal += parsable[i];
+				//objStringVal += parsable[i];
 				stowArray[currentIndex] = new String(objStringVal);
 				currentIndex++;
 				objStringVal = ""; // empty string again
@@ -1193,10 +1238,11 @@ public:
 	{
 		if (obj->isA(ARRAY_TYPE))
 		{
+			Array* arrayObj = (Array*)obj;
 			VType::type = ARRAY_TYPE;
-			VType::stringValue = obj->s_value();
+			VType::stringValue = obj->s_value();			
 			parseAndStow(stringValue); // handles size and stowArray contents
-			stowType = V_TYPE;
+			stowType = arrayObj->getStowType();		
 		}
 	}
 
@@ -1263,7 +1309,7 @@ public:
 			else if (_stowtype.compare(VECTOR3_TYPE) == 0)
 			{
 				stowArray[i] = new Vector3(0);
-				newStringValue << "0.0,0.0,0.0";
+				newStringValue << "{0.0,0.0,0.0}";
 			}
 			else if (_stowtype.compare(ARRAY_TYPE) == 0)
 			{
@@ -1296,51 +1342,54 @@ public:
 			{
 				for (int i = 0; i < _size; i++)
 				{
-					if (dynamic_cast<VType*>(_objArray[i]))
+					otherIndex++; // increment the number of VTypes we discovered
+					if (_objArray[i]->isA(STRING_TYPE)) // copy VTypes
 					{
-						otherIndex++; // increment the number of VTypes we discovered
-						if (_objArray[i]->isA(STRING_TYPE)) // copy VTypes
-						{
-							stowArray[i] = new String(_objArray[i]);
-						}
-						else if (_objArray[i]->isA(DOUBLE_TYPE))
-						{
-							stowArray[i] = new Double(_objArray[i]);
-						}
-						else if (_objArray[i]->isA(INTEGER_TYPE))
-						{
-							stowArray[i] = new Integer(_objArray[i]);
-						}
-						else if (_objArray[i]->isA(BOOLEAN_TYPE))
-						{
-							stowArray[i] = new Boolean(_objArray[i]);
-						}
-						else if (_objArray[i]->isA(VECTOR3_TYPE))
-						{
-							stowArray[i] = new Vector3(_objArray[i]);
-						}
-						else if (_objArray[i]->isA(ARRAY_TYPE))
-						{
-							throw std::invalid_argument("Cannot create an Array of Arrays with VTypes.");
-						}
-						// set the type is previously unset or the same as this type
-						string incomingType = _objArray[i]->getType();
-						_stowtype = (_stowtype.compare("") == 0) ||  // if no type is set yet
-							(_objArray[i]->isA(_stowtype)) ?	 // or the types are the same
-							incomingType :		 // set the new type
-							V_TYPE; // or, set to V_TYPE
+						stowArray[i] = new String(_objArray[i]);
 					}
-					else // did not find a VType object
+					else if (_objArray[i]->isA(DOUBLE_TYPE))
 					{
-						// position in the other array where there was a problem
-						throw otherIndex++;
+						stowArray[i] = new Double(_objArray[i]);
 					}
-
+					else if (_objArray[i]->isA(INTEGER_TYPE))
+					{
+						stowArray[i] = new Integer(_objArray[i]);
+					}
+					else if (_objArray[i]->isA(BOOLEAN_TYPE))
+					{
+						stowArray[i] = new Boolean(_objArray[i]);
+					}
+					else if (_objArray[i]->isA(VECTOR3_TYPE))
+					{
+						stowArray[i] = new Vector3(_objArray[i]);
+					}
+					else if (_objArray[i]->isA(ARRAY_TYPE))
+					{
+						throw std::invalid_argument("Cannot create an Array of Arrays with VTypes.");
+					}
+					// set the type is previously unset or the same as this type
+					string incomingType = _objArray[i]->getType();
+					_stowtype = (_stowtype.compare("") == 0) ||  // if no type is set yet
+						(_objArray[i]->isA(_stowtype)) ?	 // or the types are the same
+						incomingType :		 // set the new type
+						V_TYPE; // or, set to V_TYPE
+					
 					// if there are 5 objects, only place comma in stringValue up 
-						// to the 4th object
+							// to the 4th object
 					if (i < _size - 1)
 					{
-						newStringValue << _objArray[i]->s_value() << ",";
+						if (_objArray[i]->isA(VECTOR3_TYPE))
+						{
+							newStringValue << "{" << _objArray[i]->s_value() << "},";
+						}
+						else
+						{
+							newStringValue << _objArray[i]->s_value() << ",";
+						}
+					}
+					else if (i == _size - 1 && _objArray[i]->isA(VECTOR3_TYPE))
+					{
+						newStringValue << "{" << _objArray[i]->s_value() << "}";
 					}
 				}
 			}
@@ -1378,28 +1427,32 @@ public:
 			{
 				for (int i = 0; i < objs.size(); i++)
 				{
-					if (dynamic_cast<VType*>(objs[i]))
-					{
-						otherIndex++; // increment the number of VTypes we discovered
-						stowArray[i] = objs[i];	// copy VTypes
-						// set the type is previously unset or the same as this type
-						_stowtype = (_stowtype.compare("") == 0) ||  // if no type is set yet
-							(objs[i]->isA(_stowtype)) ?	 // or the types are the same
-							objs[i]->getType() :		 // set the new type
-							V_TYPE; // or, set to V_TYPE
+					otherIndex++; // increment the number of VTypes we discovered
+					stowArray[i] = objs[i];	// copy VTypes
+					// set the type is previously unset or the same as this type
+					_stowtype = (_stowtype.compare("") == 0) ||  // if no type is set yet
+						(objs[i]->isA(_stowtype)) ?	 // or the types are the same
+						objs[i]->getType() :		 // set the new type
+						V_TYPE; // or, set to V_TYPE
 
-						// if there are 5 objects, only place comma in stringValue up 
-						// to the 4th object
-						if (i < objs.size() - 1)
+					// if there are 5 objects, only place comma in stringValue up 
+					// to the 4th object
+					if (i < objs.size() - 1)
+					{
+						if (objs[i]->isA(VECTOR3_TYPE))
+						{
+							newStringValue << "{" << objs[i]->s_value() << "},";
+						}
+						else
 						{
 							newStringValue << objs[i]->s_value() << ",";
 						}
 					}
-					else // did not find a VType
+					else if (i == objs.size() - 1 && objs[i]->isA(VECTOR3_TYPE))
 					{
-						// position in the other array where there was a problem
-						throw otherIndex++;
+						newStringValue << "{" << objs[i]->s_value() << "}";
 					}
+					
 				}
 			}
 			else
@@ -1462,11 +1515,19 @@ public:
 		int newSize = size + 1;
 		stringstream newArrayStringValue;
 		VType** newArray = new VType*[newSize];
-		// add all old objects from the Array to this new larger array
+		// add all old objects from the Array to this new larger array string value
 		for (int i = 0; i < size; i++)
 		{
 			newArray[i] = stowArray[i];
-			newArrayStringValue << stowArray[i]->s_value() << ",";
+			if (stowType.compare(VECTOR3_TYPE) == 0)
+			{
+				newArrayStringValue << "{" << stowArray[i]->s_value() << "},";
+			}
+			else
+			{
+
+				newArrayStringValue << stowArray[i]->s_value() << ",";
+			}
 		}
 
 		// add the object to the newArray at this index
@@ -1480,7 +1541,17 @@ public:
 		for (int i = 0; i < newSize; i++)
 		{
 			stowArray[i] = newArray[i];
+			if (stowType.compare(VECTOR3_TYPE) == 0)
+			{
+				newArrayStringValue << "{" << stowArray[i]->s_value() << "}";
+			}
+			else
+			{
+
+				newArrayStringValue << stowArray[i]->s_value();
+			}
 		}
+		VType::stringValue = newArrayStringValue.str();
 		// if the new object type does not match this Array's stowed objects' 
 		// type, convert stowType to general VType
 		stowType = obj->isA(stowType) ? stowType : V_TYPE;
