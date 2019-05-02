@@ -98,6 +98,8 @@
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="ScenarioMetric.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
@@ -106,6 +108,7 @@
     </ClInclude>
     <ClInclude Include="sqlite3ext.h">
       <Filter>OpenSourceCode\h</Filter>
+     </ClInclude>
     <ClInclude Include="ProximitySensor.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
