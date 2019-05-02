@@ -40,6 +40,7 @@
     <ClInclude Include="Environment.h" />
     <ClInclude Include="EventTree.h" />
     <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="ProximitySensor.h" />
     <ClInclude Include="ScenarioMetric.h" />
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="socket.h" />
@@ -55,11 +56,13 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="EventTree.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="ProximitySensor.cpp" />
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="storage.cpp" />
     <ClCompile Include="test_Broker.cpp" />
     <ClCompile Include="test_EventTree.cpp" />
+    <ClCompile Include="test_ProximitySensor.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
