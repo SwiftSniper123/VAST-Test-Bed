@@ -469,35 +469,52 @@ public:
 	/* The cumulative addition and assignment operator overloadm, 
 	companion to the operator overload for + below.  Can add a double
 	to a Double or vice versa.*/
-	double operator+=(const double rhs)
+	Double operator+=(const double rhs)
 	{
 		val += rhs;
-		return val;
+		return Double(val);
 	};
 	
 	/* The cumulative addition and assignment operator overloadm,
 	companion to the operator overload for + below.  Can add a double
 	to a Double or vice versa.*/
-	double operator+=(Double& rhs)
+	Double operator+=(Double& rhs)
 	{
 		val += rhs.value();
-		return val;
+		return Double(val);
 	};
 
 	/* The cumulative subtraction and assignment operator overloadm,
 	companion to the operator overload for - below.*/
-	double Double::operator -=(Double& otherDouble)
+	Double Double::operator -=(Double& otherDouble)
 	{
 		val -= otherDouble.value();
-		return val;
+		return Double(val);
 	};
 
 	/* The cumulative subtraction and assignment operator overloadm,
 	companion to the operator overload for - below.*/
-	double operator -=(const double other)
+	Double operator -=(const double other)
 	{
 		val -= other;
-		return val;
+		return Double(val);
+	};
+
+	/* The cumulative division  operator overload,
+	Can divide a double with a Double or vice versa.*/
+	Double operator/(const double rhs)
+	{
+		val / rhs;
+		return Double(val);
+	};
+
+	/* The cumulative addition and assignment operator overloadm,
+	companion to the operator overload for + below.  Can add a double
+	to a Double or vice versa.*/
+	Double operator/(const int rhs)
+	{
+		val += rhs;
+		return Double(val);
 	};
 
 	/* Overloaded assignment operator for deep copy*/
