@@ -35,7 +35,12 @@ public:
 
 	/* Overridden from VComponent.  Returns a copy of the internal data map.*/
 	virtual dataMap getDataMap();
-private:
+
+	/* Cooperates with internal Sensor component to update locally rather than use
+	the EventTree and update system of communication.*/
+	virtual void sensorReporting(string key, VType* data);
+
+protected:
 	string _name = "AV";
 
 	/*AV map that stores all variable information*/
