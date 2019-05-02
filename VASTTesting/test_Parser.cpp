@@ -19,10 +19,16 @@ TEST(Test_Parser, Constructor)
 	ASSERT_NO_FATAL_FAILURE(delete v);
 }
 
-
+//Verifies Parsing is constructing the AVs and Environments properly
 TEST(Test_Parser, Parse)
 {
 	p->Parse();
+
+	// Populate Environment datamap based on results from parsing
+	// 
+	dataMap env = p->_Env->getDataMap();
+	ASSERT_TRUE(env.size() > 0);
+	ASSERT_TRUE(Integer(env.at("env_obstacle_port")).value() == 12345);
 
 	//ASSERT_NO_FATAL_FAILURE(p->_AV.at(0))
 
