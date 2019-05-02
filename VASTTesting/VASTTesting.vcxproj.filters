@@ -43,11 +43,11 @@
     <ClCompile Include="main.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="ParseXML.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
     <ClCompile Include="test_Parser.cpp">
       <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="VAST.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,15 +96,12 @@
     <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <ClInclude Include="ParseXML.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="VAST.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="UnitTests">

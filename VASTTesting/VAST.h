@@ -1,22 +1,33 @@
 #pragma once
 
+#include <string>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/foreach.hpp>
+
 #include "AV.h"
 #include "Environment.h"
+#include "VType.h"
+#include "EventTree.h"
 
-class VAST
+
+using namespace boost::property_tree;
+
+class VAST 
 {
 public:
+	VAST();
+	VAST(string file);
+	void Parse();
+	dataMap _ConfigMap;
+	EventTree *_EventTree;
+	vector<AV*> _AVs;
+	Environment *_Env;
 
 private:
-	string _output_file_location;
-	bool _viz_option;
-	int _time_ratio;
-	float _time_step;
-	int _num_replications;
-	string seeds;
-	float _max_run_time;
-	string _metrics;
-	Environment *_env;
-	AV *_AV;
-
+	dataMap _EnvMap;
+	dataMap _AVMap;
+	string _file;
+	void fillMap(string currentModule, string type, string key, string value);
+	
 };

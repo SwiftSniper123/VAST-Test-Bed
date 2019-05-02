@@ -48,7 +48,7 @@
     <ClInclude Include="Environment.h" />
     <ClInclude Include="EventTree.h" />
     <ClInclude Include="Obstacle.h" />
-    <ClInclude Include="ParseXML.h" />
+    <ClInclude Include="VAST.h" />
     <ClInclude Include="ScenarioMetric.h" />
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="socket.h" />
@@ -56,7 +56,6 @@
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />
     <ClInclude Include="TraCIDefs.h" />
-    <ClInclude Include="VAST.h" />
     <ClInclude Include="VComponent.h" />
     <ClInclude Include="VType.h" />
   </ItemGroup>
@@ -76,7 +75,7 @@
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
     <ClCompile Include="TraCIAPI.cpp" />
-    <ClCompile Include="ParseXML.cpp" />
+    <ClCompile Include="VAST.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VAST\VAST.vcxproj">
