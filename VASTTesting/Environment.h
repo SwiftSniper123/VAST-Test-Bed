@@ -4,7 +4,7 @@
 
 class Environment : public VComponent
 {
-	friend class EventTree;
+	//friend class EventTree;
 public:
 	/* Base class constructor. */
 	Environment();
@@ -20,6 +20,9 @@ public:
 	time		timestamp for the update
 	updateMap	data that changed for this update*/
 	void update(timestamp t, dataMap dataMap);
+
+	//called by the update function to run all of the functions of the child classes
+	virtual dataMap callUpdateFunctions();
 
 	/* Informs the component that the replication is coming to an end.  This function
 	is called by the EventTree to give the component the opportunity to reset data, or
@@ -40,6 +43,7 @@ public:
 private:
 	string _name;
 
+	dataMap _changingMap;
 	dataMap _dataMap;
 };
 

@@ -17,10 +17,14 @@ public:
 
 	void sendInformation();
 
+	//calls this child classes functions
+	dataMap callUpdateFunctions();
+
 
 private:
 	ofstream _output;
 	ifstream _input;
 
 	string _vehicleID;
+	dataMap currentData;
 };

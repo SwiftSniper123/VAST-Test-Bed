@@ -17,8 +17,15 @@ public:
 	//Gets the information from Sumo via traci commands
 	void getMapInformation();
 
+	//sends the new command to the AV in sumo if this is required
+	void changeAVCommand();
+
+	//calls this child classes functions
+	dataMap callUpdateFunctions();
+
 private:
 	string _fileLocation;
 	string _AVid;
 	TraCIAPI traci;
+	dataMap currentData;
 };

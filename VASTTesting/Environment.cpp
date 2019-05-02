@@ -1,4 +1,5 @@
 #include "Environment.h"
+#include "EventTree.h"
 
 Environment::Environment()
 {
@@ -20,7 +21,12 @@ void Environment::update(timestamp t, dataMap dataMap)
 {
 	EventTree *temp = getEventTree();
 
-	temp->addEvent(this, t, dataMap);
+	_changingMap["Duration"] = dataMap["Duration"];
+	_changingMap["TargetVelocity"] = dataMap["TargetVelocity"];
+
+	_changingMap = callUpdateFunctions();
+
+	temp->addEvent(this, t, _changingMap);
 }
 
 VComponent::VCType Environment::getVCType()

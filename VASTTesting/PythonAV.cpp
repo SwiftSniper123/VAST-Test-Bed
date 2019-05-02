@@ -2,17 +2,16 @@
 
 void PythonVehicle::sendInformation()
 {
-	dataMap currentMap = getSensorDataMap();
-
 	_output.open("AVInput.csv");
 
 	_output << "RangeFinder" << "," << "Speedometer" << endl;
-	_output << currentMap["Range"] << "," << currentMap["Speed"] << endl;
+	_output << currentData["Range"] << "," << currentData["Speed"] << endl;
+
+	return;
 }
 
 void PythonVehicle::retrieveInformation()
 {
-	dataMap currentData;
 	string holder;
 	string holder2;
 	
@@ -27,10 +26,17 @@ void PythonVehicle::retrieveInformation()
 
 	Integer targetVelocity(stoi(targetVelocityholder));
 	Integer duration(stoi(durationholder));
-
+	
 	currentData["TargetVelocity"] = ("Target Velocity", &targetVelocity);
 	currentData["Duration"] = ("Duration", &duration);
 
 	return;
 
+}
+
+dataMap PythonVehicle::callUpdateFunctions()
+{
+	sendInformation();
+	retrieveInformation();
+	return currentData;
 }

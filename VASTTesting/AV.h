@@ -19,6 +19,9 @@ public:
 	updateMap	data that changed for this update*/
 	void update(timestamp t, dataMap dataMap);
 
+	//called by the update function to run all of the functions of the child classes
+	virtual dataMap callUpdateFunctions();
+
 	/* Informs the component that the replication is coming to an end.  This function
 	is called by the EventTree to give the component the opportunity to reset data, or
 	processes that must be refreshed in a new replication.
@@ -35,6 +38,9 @@ public:
 
 	/* Overridden from VComponent.  Returns a copy of the internal data map.*/
 	virtual dataMap getDataMap();
+
+
+	dataMap getSensorDataMap();
 private:
 	string _name = "AV";
 
