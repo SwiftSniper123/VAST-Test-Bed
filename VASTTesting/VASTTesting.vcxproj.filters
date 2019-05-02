@@ -49,7 +49,6 @@
     <ClCompile Include="Database.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="ProximitySensor.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
@@ -108,7 +107,7 @@
     </ClInclude>
     <ClInclude Include="sqlite3ext.h">
       <Filter>OpenSourceCode\h</Filter>
-     </ClInclude>
+    </ClInclude>
     <ClInclude Include="ProximitySensor.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
