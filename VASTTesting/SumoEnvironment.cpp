@@ -80,8 +80,8 @@ void SumoEnvironment::changeAVCommand()
 
 	double speed, duration;
 
-	speed = stod(currentMap["TargetVelocity"]->getType());
-	duration = stod(currentMap["Duration"]->getType());
+	speed = stod(currentMap["TargetVelocity"]->s_value());
+	duration = stod(currentMap["Duration"]->s_value());
 
 	if (currentMap["AVLogic"] == &one)
 	{
