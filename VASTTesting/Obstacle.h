@@ -35,7 +35,7 @@ public:
 
 	/* Overridden from VComponent.  Returns a copy of the internal data map.*/
 	virtual dataMap getDataMap();
-private:
+protected:
 
 	string _name;
 
