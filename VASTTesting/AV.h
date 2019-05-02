@@ -1,5 +1,9 @@
 #pragma once
 #include "VComponent.h"
+#include <iostream>
+#include <fstream>
+
+using namespace std;
 
 class AV : public VComponent
 {
@@ -22,14 +26,6 @@ public:
 	//called by the update function to run all of the functions of the child classes
 	virtual dataMap callUpdateFunctions();
 
-	/* Informs the component that the replication is coming to an end.  This function
-	is called by the EventTree to give the component the opportunity to reset data, or
-	processes that must be refreshed in a new replication.
-	bool	another		A signal that there will be another replication 
-						after this replication stops.
-	string	runID		The id number used for this replication.*/
-	virtual void stopReplication(bool another, string runID);
-
 	/*return the type of VComponent as AV*/
 	virtual VComponent::VCType getVCType();
 
@@ -38,13 +34,18 @@ public:
 
 	/* Overridden from VComponent.  Returns a copy of the internal data map.*/
 	virtual dataMap getDataMap();
+	
+	/* Gets the data the sensor sends over */
+	virtual dataMap getSensorDataMap();
 
-
-	dataMap getSensorDataMap();
 private:
 	string _name = "AV";
 
 	/*AV map that stores all variable information*/
 	dataMap _dataMap;
+
+	/*AV map that stores the sensor data*/
+	dataMap _sensorDataMap;
 };
+
 
