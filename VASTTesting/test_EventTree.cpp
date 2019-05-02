@@ -9,6 +9,8 @@
 #include <thread>
 #include <iostream>
 
+static const string testDatabaseName = "DeleteThisDatabase.db";
+
 /*Default true test*/
 TEST(DefaultTest, TrueInTestEventTree)
 {
@@ -24,30 +26,32 @@ TEST(Test_EventTree, EventTreeConstructor)
 {
 	EventTree* e;
 	// test constructor with a timeslice less than or equal to 0
-	ASSERT_THROW(e = new EventTree(0, ratio(0.99), 1.0, ""), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(-0.1, ratio(0.99), 1.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0, ratio(0.99), 1.0, testDatabaseName), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(-0.1, ratio(0.99), 1.0, testDatabaseName), InvalidArgumentException);
 
 	// test constructor with a timeRatio less than or equal to 0, or greater than 1.0
-	ASSERT_THROW(e = new EventTree(0.1, ratio(0), 1.0, ""), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(0.1, ratio(-0.1), 1.0, ""), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(0.1, ratio(1.1), 1.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(0), 1.0, testDatabaseName), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(-0.1), 1.0, testDatabaseName), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(1.1), 1.0, testDatabaseName), InvalidArgumentException);
 
 	// test constructor with a end time less than or equal to 0
-	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), 0.0, ""), InvalidArgumentException);
-	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), -1.0, ""), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), 0.0, testDatabaseName), InvalidArgumentException);
+	ASSERT_THROW(e = new EventTree(0.1, ratio(0.99), -1.0, testDatabaseName), InvalidArgumentException);
 
 	//// test that correct constructors create the EventTree
-	ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, ""));
+	ASSERT_NO_FATAL_FAILURE(e = new EventTree(0.1, ratio(0.99), 1.0, testDatabaseName));
 	ASSERT_NO_FATAL_FAILURE(delete e);
-	
+	remove(testDatabaseName.c_str());
+
 	//test getters retrieve the timeslice, timeratio
-	e = new EventTree(0.1, 0.99, 1.0, "");
+	e = new EventTree(0.1, 0.99, 1.0, testDatabaseName);
 	ASSERT_EQ(e->getTimeSlice(), 0.1);
 	ASSERT_EQ(e->getTimeRatio(), 0.99);
 	ASSERT_EQ(e->getEndSimTime(), 1.0);
 	delete e;
+	remove(testDatabaseName.c_str());
 
-	e = new EventTree(0.5, 0.1, 2.0, "");
+	e = new EventTree(0.5, 0.1, 2.0, testDatabaseName);
 	ASSERT_EQ(e->getTimeSlice(), 0.5);
 	ASSERT_EQ(e->getTimeRatio(), 0.1);
 	ASSERT_EQ(e->getEndSimTime(), 2.0);
@@ -55,7 +59,7 @@ TEST(Test_EventTree, EventTreeConstructor)
 	// verify that time clock has not started
 	ASSERT_EQ(e->getCurrentSimTime(), -1.0);
 	delete e;
-
+	remove(testDatabaseName.c_str());
 }
 
 /* EventTreeRegisterComponent - Tests that the EventTree can register the component data maps.
@@ -65,7 +69,7 @@ Fail: Exceptions that were expected were not thrown, getters returned the wrong 
 */
 TEST(Test_EventTree, EventTreeRegisterComponent)
 {
-	EventTree* et = new EventTree(0.1, ratio(0.99), 1.0, "");
+	EventTree* et = new EventTree(0.1, ratio(0.99), 1.0, testDatabaseName);
 	// no components are added yet
 	ASSERT_EQ(et->getNumberOfVComp(), 0);
 	
@@ -88,12 +92,13 @@ TEST(Test_EventTree, EventTreeRegisterComponent)
 	ASSERT_EQ(et->getNumberOfVComp(), 4);
 
 	delete et, env, av1, av2, sensor;
+	remove(testDatabaseName.c_str());
 }
 
 TEST(Test_EventTree, EventTreeStartAndStopClock)
 {
 	
-	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001, "");
+	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001, testDatabaseName);
 	EXPECT_FALSE(et->running());
 	EXPECT_EQ(et->getCurrentSimTime(), -1);
 
@@ -102,6 +107,7 @@ TEST(Test_EventTree, EventTreeStartAndStopClock)
 
 	// cleanup
 	delete et;
+	remove(testDatabaseName.c_str());
 }
 
 /* Mock-up class for use in test cases below.  Makes use of dataMap,
@@ -264,7 +270,7 @@ private:
 
 TEST(Test_EventTree, EventTreeAddEvent)
 {
-	EventTree* et = new EventTree(0.1, ratio(1.0), 1.0, "");
+	EventTree* et = new EventTree(0.1, ratio(1.0), 1.0, testDatabaseName);
 	dataMap compData;
 	compData.emplace("ooo", new String());
 	MockComponent* env = new MockComponent("mockComponent", compData, true);
@@ -298,10 +304,12 @@ TEST(Test_EventTree, EventTreeAddEvent)
 	}
 	catch (...)
 	{
-		delete et;// , env;
+		delete et;//, env;
 		FAIL(); // failed for another reason
+		remove(testDatabaseName.c_str());
 	}
 	delete et;// , env;
+	remove(testDatabaseName.c_str());
 }
 
 TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
@@ -350,10 +358,12 @@ TEST(Test_EventTree, EventTreeTwoComponentsAndEvent)
 	{
 		FAIL(); // failed for another reason
 		delete et;// , environment, av;
+		remove(testDatabaseName.c_str());
 	}
 
 	//cleanup
 	delete et;// , environment, av;
+	remove(testDatabaseName.c_str());
 }
 
 TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
@@ -386,7 +396,7 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 	MockComponent* av = new MockComponent("av", dataMap0, true);
 
 	// now the EventTree can be initialized and can register the 3 components
-	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, "");
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, testDatabaseName);
 	et->registerComponent(environment);
 	et->registerComponent(av);
 
@@ -414,16 +424,18 @@ TEST(Test_EventTree, EventTreeSeveralComponentsAndEvents)
 	{
 		FAIL(); // failed for another reason
 		delete et;//,environment, av;
+		remove(testDatabaseName.c_str());
 	}
 
 	//cleanup
 	delete et;// , environment, av;
+	remove(testDatabaseName.c_str());
 }
 
 TEST(Test_EventTree, EventTreeMultipleRuns)
 {
 	// simple replications
-	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 10, "");
+	EventTree* et = new EventTree(0.1, ratio(1.0), 0.5, 10, testDatabaseName);
 	EXPECT_NO_THROW(et->start());
 	delete et;
 
@@ -467,8 +479,10 @@ TEST(Test_EventTree, EventTreeMultipleRuns)
 	{
 		FAIL(); // failed for another reason
 		delete et;
+		remove(testDatabaseName.c_str());
 	}
 
 	//cleanup
 	delete et;
+	remove(testDatabaseName.c_str());
 }
