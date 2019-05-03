@@ -29,8 +29,6 @@ private:
 	dataMap _EnvMap;
 	dataMap _AVMap;
 
-	
-
 	string _file;
 	string _dbName;
 	void fillMap(string currentModule, string type, string key, string value);

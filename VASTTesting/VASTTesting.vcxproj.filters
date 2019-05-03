@@ -136,6 +136,9 @@
     <ClInclude Include="PythonAV.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
+    <ClInclude Include="ScenarioMetric.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
