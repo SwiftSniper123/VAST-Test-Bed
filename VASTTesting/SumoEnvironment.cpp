@@ -110,12 +110,12 @@ void SumoEnvironment::changeAVCommand()
 
 	for (vector<string>::iterator av = _AVid.begin(); av != _AVid.end(); av++)
 	{
-		if (currentMap["AVLogic"] == &one)
+		if (currentData["AVLogic"] == &one)
 		{
 			traci.vehicle.slowDown(*av, speed, duration);
 			return;
 		}
-		if (currentMap["AVLogic"] == &zero)
+		if (currentData["AVLogic"] == &zero)
 		{
 			return;
 		}
