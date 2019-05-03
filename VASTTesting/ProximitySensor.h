@@ -8,7 +8,7 @@ typedef std::domain_error UnpredictableBehaviorException;
 typedef pair<String*, Vector3*> locatedObstacle;
 typedef Double distance;
 
-static const string SENSOR_LOC = "sensor_location"; 
+static const string SENSOR_LOC = "sensor_location";
 static const string SENSOR_QUAD = "sensor_viewquadrant";
 static const string SENSOR_DEPTH = "sensor_viewdepth";
 static const string OBSTACLE_IDS = "obstacle_ids";

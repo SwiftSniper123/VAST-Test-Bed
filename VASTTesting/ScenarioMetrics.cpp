@@ -40,7 +40,7 @@ void ScenarioMetric::stopReplication(bool another, string runID)
 	_myMap.emplace(AVG_DECELERATION, new Double());
 	_myMap.emplace(AVG_SPEED, new Double());
 	_myMap.emplace(SPEED, new Double());
-	_myMap.emplace(POSITION, new Double())
+	_myMap.emplace(POSITION, new Double());
 }
 
 

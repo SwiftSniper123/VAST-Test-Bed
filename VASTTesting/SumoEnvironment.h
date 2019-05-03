@@ -6,6 +6,17 @@
 class SumoEnvironment : public Environment
 {
 public:
+	SumoEnvironment(dataMap envConfigData, dataMap envRunData)
+	{
+		_configData = envConfigData;
+		_runData = envRunData;
+
+		_fileLocation = _configData["config_location"]->s_value();
+		_SUMOexeLocation = _configData["exe_location"]->s_value();
+		_port = Integer(_configData["env_obstacle_port"]);
+		_bounds = Vector3(_configData["Env_bounds"]);
+	}
+
 	SumoEnvironment(string configFileLocation, string SUMOexeLocation, Integer port, Vector3 bounds)
 	{
 		_fileLocation = configFileLocation;
@@ -49,5 +60,10 @@ private:
 	vector<string> _AVid;
 	TraCIAPI traci;
 	dataMap currentData;
+	dataMap _runData;
+	dataMap _configData;
 	Vector3 _bounds;
+
+	PROCESS_INFORMATION ProcessInfo; //This is what we get as an [out] parameter
+	STARTUPINFO StartupInfo; //This is an [in] parameter
 };

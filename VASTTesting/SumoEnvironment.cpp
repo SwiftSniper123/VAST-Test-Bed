@@ -1,5 +1,6 @@
 #include "VC_HEADERS.h"
 #include "SumoEnvironment.h"
+#include <Windows.h>
 
 void SumoEnvironment::update(timestamp t, dataMap dataMap)
 {
@@ -15,31 +16,40 @@ void SumoEnvironment::openEnvironment()
 {
 	string str = _SUMOexeLocation;
 
+	ZeroMemory(&StartupInfo, sizeof(StartupInfo)); //Fills StartupInfo with zeros
+	StartupInfo.cb = sizeof StartupInfo; //Only parameter of StartupInfo that needs to be configured
+
 	if (_seed == "r" || _seed == "R")
 	{
 		srand(time(NULL)); //Provides a seed for the random number generator
 
 		int seed = rand() % 10000; //Generates a random seed for Sumo
 
-		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337" + " --seed " + std::to_string(seed);
+		str = "\"" + _SUMOexeLocation + "\" -c " + _fileLocation + " --remote-port 1337" + " --seed " + std::to_string(seed);
 
 	}
 
 	else if (!_seed.empty())
 	{
-		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337" + " --seed " + _seed;
+		str = "\"" + _SUMOexeLocation + "\" -c " + _fileLocation + " --remote-port 1337" + " --seed " + _seed;
 	}
 
 	else
-		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337 --full-output localhost:1338";
+		str = "\"" + _SUMOexeLocation + "\" -c " + _fileLocation + " --remote-port 1337 --full-output localhost:1338";
 
-	const char *command = str.c_str();
+	LPWSTR cmdArgs = const_cast<char *>(str.c_str());
+
+	CreateProcess(NULL, cmdArgs,
+		NULL, NULL, FALSE, 0, NULL,
+		NULL, &StartupInfo, &ProcessInfo);
 
 	system(command);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(50000));
 
 	traci.connect("localhost", 1337);
+	std::cout << "TEST";
+	this->getEventTree()->start();
 
 	return;
 }

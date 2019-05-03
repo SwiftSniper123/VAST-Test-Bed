@@ -4,21 +4,21 @@
 #include "gtest/gtest.h"
 #include <iostream>
 #include <thread> // sleep_for
+#include<variant>
+
+#include "SumoEnvironment.h"
+#include "ProximitySensor.h"
+#include "PythonAV.h"
+#include "VAST.h"
+#include <Windows.h>
+#include <gtest/gtest.h>
 using namespace std::this_thread;     // sleep_for, sleep_until
 
 using std::cin;
 using std::cout;
 using std::endl;
 using std::chrono::milliseconds;
-
-#include <map>
-#include<variant>
-#include "VType.h"
-#include "AV.h"
-#include "SumoEnvironment.h"
-#include <Windows.h>
-#include "VAST.h"
-#include <gtest/gtest.h>
+using std::string;
 
 int main(int argc, char **argv1)
 {
@@ -35,38 +35,42 @@ int main(int argc, char **argv1)
 	{
 		cout << "\n\n=========Scenario Replications=========" << endl;
 		//get file location and name
-		std::string fileName = "";
+		string fileName = "";
 		cout << "Please type the configuration file location and name: ";
 		cin >> fileName;
 
-		std:string dbName = "";
-		cout << "\nIf desired, provide a database file name (default - VASTDatabase.db): ";
-		cin >> dbName;
+		string dbName = "VASTDatabase.db";
+		//cout << "\nIf desired, provide a database file name (default - VASTDatabase.db): ";
+		//cin >> dbName;
 
 		//parse file
-		VAST *v = new VAST(fileName, dbName);
+		//VAST *v = new VAST(fileName, dbName);
+		VAST *v = new VAST("VASTConfig.xml", "test.db");
 		cout << "Parsing begins" << endl;
 		v->Parse();
 		cout << "Parsing ends" << endl;
 
-		dataMap envMap = v->_EnvConfig;
-		dataMap configMap = v->_ConfigMap;
-		
-		SumoEnvironment *sumo = new SumoEnvironment(envMap["config_location"]->s_value(), envMap["exe_location"]->s_value(), Integer(envMap["env_obstacle_port"]), Vector3(envMap["Env_bounds"]));
+		dataMap envMap = v->getEnvConfig();
+		vector<dataMap> avMaps = v->getAVConfigs();
+		dataMap configMap = v->getConfig();
 
-		for (int i = 0; i < v->_AVs.size(); i++)
-		{
-			sumo->addAV(v->_AVs[i]);
-		}		
+		SumoEnvironment *sumo = new SumoEnvironment(envMap, v->_Env->getDataMap());
+		PythonVehicle *firstAV = new PythonVehicle(avMaps[0],v->_AVs[0]->getDataMap());
+		//PythonVehicle *secondAV = new PythonVehicle(avMaps[1], v->_AVs[1]->getDataMap());
+		ProximitySensor *proxSensor = new ProximitySensor(firstAV, v->_AVs[0]->getDataMap());
 
 		v->_EventTree->registerComponent(sumo);
+		v->_EventTree->registerComponent(firstAV);
+		//v->_EventTree->registerComponent(secondAV);
+		v->_EventTree->registerComponent(proxSensor);
 		v->_EventTree->setFirstComponent(sumo);
-		v->_EventTree->start();
+
+		sumo->openEnvironment();
+
+		//v->_EventTree->start(); //May start event tree within sumo environment
 
 		//run VAST
 		cout << "VAST run begins" << endl;
-		//v->
-
 
 		cout << "VAST run ends" << endl;
 	}

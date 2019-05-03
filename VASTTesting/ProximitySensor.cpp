@@ -45,6 +45,7 @@ distance* ProximitySensor::findDistance(Vector3* localVec)
 ProximitySensor::ProximitySensor(AV* owningAV, dataMap initialDataMap)
 	: Sensor("ProximitySensor", initialDataMap)
 {
+	/*
 	if (owningAV == nullptr)
 	{
 		throw InvalidArgumentException("ProximitySensor cannot be instantiated without an owning AV.");
@@ -53,12 +54,12 @@ ProximitySensor::ProximitySensor(AV* owningAV, dataMap initialDataMap)
 	{
 		throw InvalidArgumentException("ProximitySensor cannot be instantiated with an empty datamap of configurations.");
 	}
-	if (initialDataMap.find(SENSOR_LOC) == initialDataMap.end() ||
-		initialDataMap.find(SENSOR_QUAD) == initialDataMap.end() ||
-		initialDataMap.find(SENSOR_DEPTH) == initialDataMap.end())
+	if (initialDataMap.find(CLOSEST_ID) == initialDataMap.end() ||
+		initialDataMap.find(CLOSEST_POS) == initialDataMap.end() ||
+		initialDataMap.find(CLOSEST_DIST) == initialDataMap.end())
 	{
 		throw InvalidArgumentException("ProximitySensor cannot scan without the appropriate sensor parameters.");
-	}
+	}*/
 	_owningAV = owningAV;
 	_currentData = initialDataMap;
 

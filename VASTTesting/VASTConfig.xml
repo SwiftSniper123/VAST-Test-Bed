@@ -83,7 +83,7 @@
                     <name>exe_location</name>
                 </key>
                 <value>
-                    <name>test</name>
+                    <name>"C:/Program Files (x86)/Eclipse/Sumo/bin/sumo.exe"</name>
                 </value>
             </pair>
             <pair type="mandatory">
@@ -135,7 +135,7 @@
                     <name>exe_location</name>
                 </key>
                 <value>
-                    <name>C:/Users/jaron/Documents/InsertRunDB.sql</name>
+                    <name>C:/Users/jaron/source/repos/VAST-Test-Bed/VASTTesting/AVLogic.py</name>
                 </value>
             </pair>
             <pair type="mandatory">
@@ -219,7 +219,7 @@
                     <name>exe_location</name>
                 </key>
                 <value>
-                    <name>test</name>
+                    <name>C:/Users/jaron/source/repos/VAST-Test-Bed/VASTTesting/AVLogicCrash.py</name>
                 </value>
             </pair>
             <pair type="mandatory">

@@ -1,5 +1,8 @@
 #include "VAST.h"
 
+static const string OUTPUT_FILE = "output_file_location";
+static const string VIZ = "viz_option";
+
 VAST::VAST() {}
 
 VAST::VAST(string file, string dbName)
@@ -11,6 +14,21 @@ VAST::VAST(string file, string dbName)
 	}
 	else
 		_dbName = dbName;
+}
+
+vector<dataMap> VAST::getAVConfigs()
+{
+	return _AVConfigs;
+}
+
+dataMap VAST::getEnvConfig()
+{
+	return _EnvConfig;
+}
+
+dataMap VAST::getConfig()
+{
+	return _ConfigMap;
 }
 
 void VAST::Parse()
@@ -31,7 +49,7 @@ void VAST::Parse()
 	}
 	//printTree(pt1, 0);
 
-	//std::cout << "\n\n" << pt1.get<std::string>("VAST.module.map.pair.key");
+	//std::cout << "\n\n" << pt1.get<string>("VAST.module.map.pair.key");
 	
 	//std::cout << pt1.size;
 	//std::cout << pt1.get_child("VAST.module");
@@ -44,8 +62,8 @@ void VAST::Parse()
 		if (node.first == "module")
 		{
 			dataMap _AVConfig;
-			_currentModule = subtree.get<std::string>("<xmlattr>.module");
-			//std::cout << "module: " << subtree.get<std::string>("<xmlattr>.module") << "\n";
+			_currentModule = subtree.get<string>("<xmlattr>.module");
+			//std::cout << "module: " << subtree.get<string>("<xmlattr>.module") << "\n";
 
 			BOOST_FOREACH(boost::property_tree::ptree::value_type const& map, subtree.get_child("map"))
 			{
@@ -56,18 +74,18 @@ void VAST::Parse()
 					//std::cout << "pair: " << pair.first << "\n";
 					boost::property_tree::ptree key = pair.second;
 
-					std::string label = pair.first;
+					string label = pair.first;
 					if (label != "<xmlattr>")
 					{
 						if (label == "key")
 						{
-							//std::cout << "Key: " << key.get<std::string>("name") << "\n";
-							_currentKey = key.get<std::string>("name");
+							//std::cout << "Key: " << key.get<string>("name") << "\n";
+							_currentKey = key.get<string>("name");
 						}
 						
 						else if (label == "value")
 						{
-							_currentValue = key.get<std::string>("name");
+							_currentValue = key.get<string>("name");
 							//std::cout << "Value: " << _currentValue << "\n";
 
 							if (_currentValue != "")
@@ -76,7 +94,7 @@ void VAST::Parse()
 								{
 									if (_currentKey == "output_file_location")
 									{
-										String *v = new String(new VType(key.get<string>("name")));
+										String *v = new String(key.get<string>("name"));
 										_ConfigMap.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "viz_option")
@@ -112,7 +130,7 @@ void VAST::Parse()
 									else if (_currentKey == "metrics")
 									{
 										Array *v = new Array(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
+										_ConfigMap.emplace(_currentKey, v);
 									}
 								}
 								
@@ -241,16 +259,19 @@ void VAST::Parse()
 			{
 				if (Integer(_ConfigMap["num_replications"]).value() > 1)
 				{
-					_EventTree = new EventTree(Double(_ConfigMap["time_Step"]).value(), int(Double(_ConfigMap["time_ratio"]).value() * 100), Double(_ConfigMap["max_run_time"]).value(), Integer(_ConfigMap["num_replications"]).value(), _dbName);
+					_EventTree = new EventTree(Double(_ConfigMap["time_step"]).value(), Integer(Double(_ConfigMap["time_ratio"]).value() * 100).value(), Double(_ConfigMap["max_run_time"]).value(), Integer(_ConfigMap["num_replications"]).value(), _dbName);
 				}
 				else
-					_EventTree = new EventTree(Double(_ConfigMap["time_Step"]).value(), int(Double(_ConfigMap["time_ratio"]).value() * 100), Double(_ConfigMap["max_run_time"]).value(), _dbName);
+				{
+					_EventTree = new EventTree(Double(_ConfigMap["time_step"]).value(), Integer(Double(_ConfigMap["time_ratio"]).value() * 100).value(), Double(_ConfigMap["max_run_time"]).value(), _dbName);
+				}
 			}
 		}
 	}//
 	//registerMetrics();
 }
 
+/*
 void VAST::Register()
 {
 	_EventTree->registerComponent(_Env);
@@ -258,7 +279,7 @@ void VAST::Register()
 	{
 		_EventTree->registerComponent(_AVs[i]);
 	}
-}
+}*/
 
 void VAST::fillMap(string currentModule, string type, string key, string value)
 {
