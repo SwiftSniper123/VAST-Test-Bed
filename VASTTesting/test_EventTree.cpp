@@ -95,10 +95,24 @@ TEST(Test_EventTree, EventTreeRegisterComponent)
 	remove(testDatabaseName.c_str());
 }
 
+class TestMetric : public ScenarioMetric
+{
+public:
+	TestMetric() {};
+	void update(timestamp time, dataMap metricData) {};
+	void stopReplication(bool another, string runID) {};
+	VCType getVCType() 	{ return VCType::Test_Avatar; }
+};
+
 TEST(Test_EventTree, EventTreeStartAndStopClock)
 {
-	
+	dataMap compData;
+	compData.emplace("ooo", new String());
+	AV* av = new AV("av", compData);
+	TestMetric* sm = new TestMetric();
 	EventTree* et = new EventTree(0.001, ratio(1.0), 0.001, testDatabaseName);
+	et->registerComponent(av);
+	et->registerMetric(sm);
 	EXPECT_FALSE(et->running());
 	EXPECT_EQ(et->getCurrentSimTime(), -1);
 

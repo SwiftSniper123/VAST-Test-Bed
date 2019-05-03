@@ -11,7 +11,7 @@ public:
 
 	/* returns the statistical metric value as defined by the extending metric 
 	class.*/
-	virtual VType calculate();
+	virtual VType calculate() { return nullptr; };
 	
 	//declares the virtual function for Vcomponent
 	void update()

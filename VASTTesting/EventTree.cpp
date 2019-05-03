@@ -24,7 +24,9 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, string d
 	_simClock = -1;
 	_numRuns = 1;
 	_future = nullptr;
-
+	_metrics = new tableMap();
+	_componentInitialStateMap = new tableMap();
+	_componentPresentStateMap = new tableMap();
 	opendatabase(databaseName);
 }
 
@@ -54,7 +56,9 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 	_simClock = -1;
 	_numRuns = numRuns;
 	_future = nullptr;
-
+	_metrics = new tableMap();
+	_componentInitialStateMap = new tableMap();
+	_componentPresentStateMap = new tableMap();
 	opendatabase(databaseName);
 }
 
@@ -84,7 +88,9 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 	_simClock = -1;
 	_numRuns = numRuns;
 	_future = nullptr;
-
+	_metrics = new tableMap();
+	_componentInitialStateMap = new tableMap();
+	_componentPresentStateMap = new tableMap();
 	opendatabase(databaseName);
 }
 
@@ -187,6 +193,10 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 {
 	double currentSchedulableTime = _simClock < 0? 0: _simClock;
 	
+	if (_eventSource->getVCType() == VComponent::VCType::ScenarioMetric)
+	{
+
+	}
 	// if an event is set outside of the run time:
 	if(_eventTime < 0 || _eventTime < currentSchedulableTime - _timeSlice)  // too far left
 	{

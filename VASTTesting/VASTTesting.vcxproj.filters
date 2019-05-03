@@ -61,9 +61,7 @@
     <ClCompile Include="test_Parser.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
+	 <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">

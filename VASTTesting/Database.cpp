@@ -16,7 +16,7 @@ void EventTree::opendatabase(string fileName)
 	}
 	rc = sqlite3_open(fileName.c_str(), &db);
 
-	if (!SQLITE_OK) 
+	if (rc != SQLITE_OK)
 	{
 		throw DatabaseException("Cannot open. " + string(sqlite3_errmsg(db)));
 	}
@@ -26,7 +26,7 @@ void EventTree::closedatabase()
 {
 	rc = sqlite3_close(db);
 
-	if (!SQLITE_OK)
+	if (rc != SQLITE_OK)
 	{
 		throw DatabaseException("Cannot close. " + string(sqlite3_errmsg(db)));
 	}

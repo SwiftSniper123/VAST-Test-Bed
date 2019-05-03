@@ -21,6 +21,9 @@ TEST(Test_ProximitySensor, ConstructorAndDestructor)
 	sensorConfig.emplace(SENSOR_LOC, new Vector3(0, 0, 0));
 	sensorConfig.emplace(SENSOR_QUAD, new Integer(1));
 	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
+	sensorConfig.emplace(CLOSEST_ID, new String());
+	sensorConfig.emplace(CLOSEST_POS, new Vector3());
+	sensorConfig.emplace(CLOSEST_DIST, new Double());
 	
 	EXPECT_THROW(ps = new ProximitySensor(nullptr, dataMap()), InvalidArgumentException);
 	EXPECT_THROW(ps = new ProximitySensor(av, dataMap()), InvalidArgumentException);

@@ -144,7 +144,11 @@ void ProximitySensor::scan()
 			inspectedObstacleLocalPos = *thatPos - thisPos;
 			inspectedObstacleQuad = calculateQuadrant(inspectedObstacleLocalPos);
 			sensorQuad = ((Integer*)_currentData.at(SENSOR_QUAD))->value();
-			if (sensorQuad == inspectedObstacleQuad)
+			if (sensorQuad == 0 || inspectedObstacleQuad == 0)
+			{
+				continue;
+			}
+			else if (sensorQuad == inspectedObstacleQuad)
 			{
 				//and then measure distance,
 				Double* shortestDistance = _lastClosestProximity == nullptr ? new Double(_currentData.at(SENSOR_DEPTH)) : _lastClosestProximity;
@@ -156,8 +160,6 @@ void ProximitySensor::scan()
 				{
 					_lastClosestProximity = inspectedObstacleLocalDist;
 					_lastClosestObstacle = new pair<String*, Vector3*>(obs_ids->at_String(i), obs_poss->at_Vector3(i));
-
-					
 				}
 			}
 		}
