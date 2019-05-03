@@ -15,8 +15,14 @@ void VAST::Parse()
 	string _currentValue;
 	string _type;
 	const string _delim = ", ";
-
-	read_xml(_file, pt1);
+	
+	try {
+		read_xml(_file, pt1);
+	}
+	catch(const std::exception& e) {
+		std::cout << "Invalid File. Ending.";
+		return;
+	}
 	//printTree(pt1, 0);
 
 	//std::cout << "\n\n" << pt1.get<std::string>("VAST.module.map.pair.key");
@@ -101,7 +107,6 @@ void VAST::Parse()
 										Array *v = new Array(new VType(key.get<string>("name")));
 										_ConfigMap.insert(namedData(_currentKey, v));
 									}
-
 								}
 								
 								if (_currentModule == "Environment")
@@ -121,6 +126,11 @@ void VAST::Parse()
 										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
 										_EnvConfig.insert(namedData(_currentKey, v));
 									}
+									else if (_currentKey == "config_location")
+									{
+										String *v = new String(new VType(key.get<string>("name")));
+										_EnvConfig.insert(namedData(_currentKey, v));
+									}
 									else
 									{
 										size_t pos = _currentValue.find(_delim);
@@ -131,6 +141,7 @@ void VAST::Parse()
 										fillMap(_currentModule, _type, _currentKey, _currentValue);
 									}
 								}
+
 								else if (_currentModule == "AV")
 								{
 									if (_currentKey == "av_name")

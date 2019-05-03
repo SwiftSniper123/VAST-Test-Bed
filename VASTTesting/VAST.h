@@ -10,7 +10,6 @@
 #include "VType.h"
 #include "EventTree.h"
 
-
 using namespace boost::property_tree;
 
 class VAST 
