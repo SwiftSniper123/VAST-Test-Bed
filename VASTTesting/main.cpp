@@ -32,12 +32,29 @@ int main(int argc, char **argv1)
 	
 	if (mode == 1)
 	{
-		// build components
+		cout << "\n\n=========Scenario Replications=========" << endl;
+		//get file location and name
+		std::string fileName = "";
+		cout << "Please type the configuration file location and name: ";
+		cin >> fileName;
+
+		//parse file
+		VAST *v = new VAST(fileName);
+		cout << "Parsing begins" << endl;
+		v->Parse();
+		cout << "Parsing ends" << endl;
+
+		//run VAST
+		cout << "VAST run begins" << endl;
+		//v->
+
+
+		cout << "VAST run ends" << endl;
 	}
 	else if (mode == 2)
 	{
 		// Unit Tests
-		cout << "\n\n=========Testing=========" << endl;
+		cout << "\n\n=========Tests=========" << endl;
 		::testing::InitGoogleTest(&argc, argv1);
 		RUN_ALL_TESTS();
 		cout << "Test output file location: VASTTesting\\testOutput\\VAST_tests.xml" << endl;
