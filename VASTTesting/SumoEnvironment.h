@@ -1,16 +1,19 @@
 #pragma once
 #include "TraCIAPI.h"
 #include "Environment.h"
+#include "AV.h"
 
 class SumoEnvironment : public Environment
 {
 public:
-	SumoEnvironment(string fileLocation, int AVid, string SUMOexeLocation, int isRandom)
+	SumoEnvironment(string configFileLocation, string SUMOexeLocation, Integer port, Vector3 bounds)
 	{
-		_fileLocation = fileLocation;
-		random = isRandom;
-		_AVid = AVid;
+		_fileLocation = configFileLocation;
+		//random = isRandom;
+		//_AVid = AVid;
 		_SUMOexeLocation = SUMOexeLocation;
+		_port = port;
+		_bounds = bounds;
 	}
 
 	/* Inherited Function from VComponent.  Called by a component
@@ -33,11 +36,18 @@ public:
 
 	void stopReplication(bool another, string runID);
 
+	void setSeed(string seed);
+
+	void addAV(AV *AV);
+
 private:
 	string _fileLocation;
-	int random;
+	int random; //Replace with function for setting the seed?
+	string _seed;
 	string _SUMOexeLocation;
-	string _AVid;
+	Integer _port;
+	vector<string> _AVid;
 	TraCIAPI traci;
 	dataMap currentData;
+	Vector3 _bounds;
 };

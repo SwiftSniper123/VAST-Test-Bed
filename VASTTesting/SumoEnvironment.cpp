@@ -15,7 +15,7 @@ void SumoEnvironment::openEnvironment()
 {
 	string str = _SUMOexeLocation;
 
-	if (random == 1)
+	if (_seed == "r" || _seed == "R")
 	{
 		srand(time(NULL)); //Provides a seed for the random number generator
 
@@ -23,6 +23,11 @@ void SumoEnvironment::openEnvironment()
 
 		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337" + " --seed " + std::to_string(seed);
 
+	}
+
+	else if (!_seed.empty())
+	{
+		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337" + " --seed " + _seed;
 	}
 
 	else
@@ -51,32 +56,34 @@ void SumoEnvironment::getMapInformation()
 	Double acceleration;
 
 	int i = 0;
-
-	for (vector<string>::iterator it = IDlist.begin(); it != IDlist.end(); it++)
+	for (vector<string>::iterator av = _AVid.begin(); av != _AVid.end(); av++)
 	{
-		//checks if the ID is that of the Autonomous vehicle and if so get the information about that
-		if (*it == _AVid)
+		for (vector<string>::iterator it = IDlist.begin(); it != IDlist.end(); it++)
 		{
+			//checks if the ID is that of an Autonomous vehicle and if so get the information about that
 
-			vehicleID[i].value(*it);
-			acceleration = traci.vehicle.getAcceleration(*it);
+			if (*it == *av)
+			{
+				vehicleID[i].value(*it);
+				acceleration = traci.vehicle.getAcceleration(*it);
 
-			velocity[i].value(traci.vehicle.getSpeed(*it));
-			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
+				velocity[i].value(traci.vehicle.getSpeed(*it));
+				libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
 
-			position[i].value(XYZ.x, XYZ.y, XYZ.z);
+				position[i].value(XYZ.x, XYZ.y, XYZ.z);
+			}
+
+			//will get the information needed for other vehicles in the system
+			else
+			{
+				vehicleID[i].value(*it);
+				velocity[i].value(traci.vehicle.getSpeed(*it));
+				libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
+
+				position[i].value(XYZ.x, XYZ.y, XYZ.z);
+			}
+			i++;
 		}
-
-		//will get the information needed for other vehicles in the system
-		else
-		{
-			vehicleID[i].value(*it);
-			velocity[i].value(traci.vehicle.getSpeed(*it));
-			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
-
-			position[i].value(XYZ.x, XYZ.y, XYZ.z);
-		}
-		i++;
 	}
 
 	Array id(vehicleID);
@@ -101,15 +108,28 @@ void SumoEnvironment::changeAVCommand()
 	speed = stod(currentData["TargetVelocity"]->s_value());
 	duration = stod(currentData["Duration"]->s_value());
 
-	if (currentData["AVLogic"] == &one)
+	for (vector<string>::iterator av = _AVid.begin(); av != _AVid.end(); av++)
 	{
-		traci.vehicle.slowDown(_AVid, speed, duration);
-		return;
+		if (currentMap["AVLogic"] == &one)
+		{
+			traci.vehicle.slowDown(*av, speed, duration);
+			return;
+		}
+		if (currentMap["AVLogic"] == &zero)
+		{
+			return;
+		}
 	}
-	if(currentData["AVLogic"] == &zero)
-	{
-		return;
-	}
+}
+
+void SumoEnvironment::setSeed(string seed)
+{
+	_seed = seed;
+}
+
+void SumoEnvironment::addAV(AV *AV)
+{
+	_AVid.push_back(AV->getName());
 }
 
 dataMap SumoEnvironment::callUpdateFunctions()

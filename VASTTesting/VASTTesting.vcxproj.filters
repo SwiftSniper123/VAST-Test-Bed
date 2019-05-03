@@ -112,9 +112,6 @@
     <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
-    <ClInclude Include="ScenarioMetric.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>

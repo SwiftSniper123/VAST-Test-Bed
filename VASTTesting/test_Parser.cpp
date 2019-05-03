@@ -7,7 +7,7 @@ TEST(Test_Parser, TrueInTestVASTLibrary)
 	ASSERT_TRUE(true);
 }
 
-VAST *p = new VAST("VASTConfig.xml");
+VAST *p = new VAST("VASTConfig.xml", "test.db");
 
 /*Tests base VAST class constructor.*/
 TEST(Test_Parser, Constructor)

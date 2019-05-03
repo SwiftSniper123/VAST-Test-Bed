@@ -15,6 +15,7 @@ using std::chrono::milliseconds;
 #include<variant>
 #include "VType.h"
 #include "AV.h"
+#include "SumoEnvironment.h"
 #include <Windows.h>
 #include "VAST.h"
 #include <gtest/gtest.h>
@@ -38,11 +39,29 @@ int main(int argc, char **argv1)
 		cout << "Please type the configuration file location and name: ";
 		cin >> fileName;
 
+		std:string dbName = "";
+		cout << "\nIf desired, provide a database file name (default - VASTDatabase.db): ";
+		cin >> dbName;
+
 		//parse file
-		VAST *v = new VAST(fileName);
+		VAST *v = new VAST(fileName, dbName);
 		cout << "Parsing begins" << endl;
 		v->Parse();
 		cout << "Parsing ends" << endl;
+
+		dataMap envMap = v->_EnvConfig;
+		dataMap configMap = v->_ConfigMap;
+		
+		SumoEnvironment *sumo = new SumoEnvironment(envMap["config_location"]->s_value(), envMap["exe_location"]->s_value(), Integer(envMap["env_obstacle_port"]), Vector3(envMap["Env_bounds"]));
+
+		for (int i = 0; i < v->_AVs.size(); i++)
+		{
+			sumo->addAV(v->_AVs[i]);
+		}		
+
+		v->_EventTree->registerComponent(sumo);
+		v->_EventTree->setFirstComponent(sumo);
+		v->_EventTree->start();
 
 		//run VAST
 		cout << "VAST run begins" << endl;
