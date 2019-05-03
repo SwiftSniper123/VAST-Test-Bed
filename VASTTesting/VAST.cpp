@@ -2,9 +2,15 @@
 
 VAST::VAST() {}
 
-VAST::VAST(string file)
+VAST::VAST(string file, string dbName)
 {
 	_file = file;
+	if (dbName.empty())
+	{
+		_dbName = "VASTDatabase.db";
+	}
+	else
+		_dbName = dbName;
 }
 
 void VAST::Parse()
@@ -231,10 +237,27 @@ void VAST::Parse()
 			{
 				_Env = new Environment("Environment", _EnvMap);
 			}
+			else if (_currentModule == "VAST")
+			{
+				if (Integer(_ConfigMap["num_replications"]).value() > 1)
+				{
+					_EventTree = new EventTree(Double(_ConfigMap["time_Step"]).value(), int(Double(_ConfigMap["time_ratio"]).value() * 100), Double(_ConfigMap["max_run_time"]).value(), Integer(_ConfigMap["num_replications"]).value(), _dbName);
+				}
+				else
+					_EventTree = new EventTree(Double(_ConfigMap["time_Step"]).value(), int(Double(_ConfigMap["time_ratio"]).value() * 100), Double(_ConfigMap["max_run_time"]).value(), _dbName);
+			}
 		}
 	}//
-	
+	//registerMetrics();
+}
 
+void VAST::Register()
+{
+	_EventTree->registerComponent(_Env);
+	for (int i = 0; i < _AVs.size(); i++)
+	{
+		_EventTree->registerComponent(_AVs[i]);
+	}
 }
 
 void VAST::fillMap(string currentModule, string type, string key, string value)

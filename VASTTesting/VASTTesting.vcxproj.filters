@@ -67,6 +67,9 @@
     <ClCompile Include="main.cpp">
       <Filter>VASTScenarioObjectLibrary</Filter>
     </ClCompile>
+    <ClCompile Include="ScenarioMetrics.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
