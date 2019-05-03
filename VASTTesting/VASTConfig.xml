@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST xmlns:dt="urn:schemas-microsoft-com:datatypes">
+    <module module="VAST">
+        <map>
+            <pair type="mandatory">
+                <key>
+                    <name>output_file_location</name>
+                </key>
+                <value>
+                    <name>C:/Scripts/VASTConfig</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>viz_option</name>
+                </key>
+                <value>
+                    <name>true</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>time_ratio</name>
+                </key>
+                <value>
+                    <name>0.01</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>time_step</name>
+                </key>
+                <value>
+                    <name>0.1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>num_replications</name>
+                </key>
+                <value>
+                    <name>1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>seeds</name>
+                </key>
+                <value>
+                    <name>1,2,3</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>max_run_time</name>
+                </key>
+                <value>
+                    <name>1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>metrics</name>
+                </key>
+                <value>
+                    <name>AvgSpeed, AvgAccel, AvgDecel</name>
+                </value>
+            </pair>
+        </map>
+    </module>
+    <module module="Environment">
+        <map>
+            <pair type="mandatory">
+                <key>
+                    <name>env_obstacle_port</name>
+                </key>
+                <value>
+                    <name>11111</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>exe_location</name>
+                </key>
+                <value>
+                    <name>test</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>Env_bounds</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+			<pair type="mandatory">
+                <key>
+                    <name>config_location</name>
+                </key>
+                <value>
+                    <name>C:/Users/jaron/PycharmProjects/SumoTraci/WorkingDir/my_config_file.sumocfg</name>
+                </value>
+            </pair>
+            <pair type="optional">
+                <key>
+                    <name>array</name>
+                </key>
+                <value>
+                    <name>array, 1,2,1</name>
+                </value>
+            </pair>
+        </map>
+    </module>
+    <module module="AV">
+        <map>
+            <pair type="mandatory">
+                <key>
+                    <name>av_name</name>
+                </key>
+                <value>
+                    <name>SmartAlec</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>av_movement_port</name>
+                </key>
+                <value>
+                    <name>12345</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>exe_location</name>
+                </key>
+                <value>
+                    <name>C:/Users/jaron/Documents/InsertRunDB.sql</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_location</name>
+                </key>
+                <value>
+                    <name>1,2,3</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_orientation</name>
+                </key>
+                <value>
+                    <name>3,2,1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_bounds</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="optional">
+                <key>
+                    <name>closest_obs</name>
+                </key>
+                <value>
+                    <name>string, 0</name>
+                </value>
+            </pair>
+            <pair type="optional">
+                <key>
+                    <name>closest_pos</name>
+                </key>
+                <value>
+                    <name>Vector3, 0,0,0</name>
+                </value>
+            </pair>
+			<pair type="optional">
+                <key>
+                    <name>closest_distance</name>
+                </key>
+                <value>
+                    <name>Double, 0.0</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>sensors</name>
+                </key>
+                <value>
+                    <name>ProxSensor</name>
+                </value>
+            </pair>
+        </map>
+    </module>
+    <module module="AV">
+        <map>
+            <pair type="mandatory">
+                <key>
+                    <name>av_name</name>
+                </key>
+                <value>
+                    <name>Unnamed AV</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>av_movement_port</name>
+                </key>
+                <value>
+                    <name>54321</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>exe_location</name>
+                </key>
+                <value>
+                    <name>test</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_location</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_orientation</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_bounds</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="optional">
+                <key>
+                    <name>test</name>
+                </key>
+                <value>
+                    <name>bool, True</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>sensors</name>
+                </key>
+                <value>
+                    <name></name>
+                </value>
+            </pair>
+        </map>
+    </module>
+</VAST>
