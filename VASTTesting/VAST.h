@@ -5,10 +5,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
 
-#include "AV.h"
-#include "Environment.h"
-#include "VType.h"
-#include "EventTree.h"
+#include "VC_HEADERS.h"
 
 using namespace boost::property_tree;
 

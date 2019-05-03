@@ -1,9 +1,5 @@
 #include "gtest/gtest.h"
-#include "EventTree.h"
-#include "Environment.h"
-#include "AV.h"
-#include "Sensor.h"
-#include "Obstacle.h"
+#include "VC_HEADERS.h"
 #include "time.h"
 #include <chrono> //C++ 14 required; sleep_for()
 #include <thread>

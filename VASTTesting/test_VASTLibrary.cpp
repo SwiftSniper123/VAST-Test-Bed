@@ -1,9 +1,5 @@
 #include "gtest/gtest.h"
-#include "Environment.h"
-#include "AV.h"
-#include "Sensor.h"
-#include "Obstacle.h"
-#include "ScenarioMetric.h"
+#include "VC_HEADERS.h"
 
 /*Default true test*/
 TEST(DefaultTest, TrueInTestVASTLibrary)

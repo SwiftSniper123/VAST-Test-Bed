@@ -1,24 +1,46 @@
-#include "ScenarioMetric.h"
+#include "VC_HEADERS.h"
 
-using namespace std;
+ScenarioMetric::ScenarioMetric()
+{}
 
-void ScenarioMetric::calculate()
+ScenarioMetric::ScenarioMetric(string name, dataMap metricData)
 {
-	AverageSpeed avgSp;
-	AverageAcceleration avgAccel;
-	MaximumAcceleration max;
-	MinimumAcceleration min;
-	AverageDeacceleration avgDecel;
-	XYZCoordinates coor;
+	_initialMap = metricData;	
+	_myMap = metricData;
 
-	avgSp.calculate();
-	avgAccel.calculate();
-	max.calculate();
-	min.calculate();
-	avgDecel.calculate();
-	coor.calculate();
+	// add to initial map
+	_initialMap.emplace(ACCELERATION, new Double());
+	_initialMap.emplace(MIN_ACCELERATION, new Double());
+	_initialMap.emplace(AVG_ACCELERATION, new Double());
+	_initialMap.emplace(MAX_ACCELERATION, new Double());
+	_initialMap.emplace(AVG_DECELERATION, new Double());
+	_initialMap.emplace(AVG_SPEED, new Double());
+	_initialMap.emplace(SPEED, new Double());
+	_initialMap.emplace(POSITION, new Double());
 
-	return;
+	// add to current map
+	_myMap.emplace(ACCELERATION, new Double());
+	_myMap.emplace(MIN_ACCELERATION, new Double());
+	_myMap.emplace(AVG_ACCELERATION, new Double());
+	_myMap.emplace(MAX_ACCELERATION, new Double());
+	_myMap.emplace(AVG_DECELERATION, new Double());
+	_myMap.emplace(AVG_SPEED, new Double());
+	_myMap.emplace(SPEED, new Double());
+	_myMap.emplace(POSITION, new Double());
+}
+
+void ScenarioMetric::stopReplication(bool another, string runID)
+{
+	// reset the current map with the initial map
+	_myMap.clear();
+	_myMap.emplace(ACCELERATION, new Double());
+	_myMap.emplace(MIN_ACCELERATION, new Double());
+	_myMap.emplace(AVG_ACCELERATION, new Double());
+	_myMap.emplace(MAX_ACCELERATION, new Double());
+	_myMap.emplace(AVG_DECELERATION, new Double());
+	_myMap.emplace(AVG_SPEED, new Double());
+	_myMap.emplace(SPEED, new Double());
+	_myMap.emplace(POSITION, new Double());
 }
 
 
@@ -29,16 +51,13 @@ class AverageSpeed : public ScenarioMetric
 {
 public:
 	//default constructor
-	AverageSpeed() {};
+	AverageSpeed() { sumAvgSpeed = new Double(); };
 
 	void calculate()
 	{
-		currentAvgSpd.value += stod(_myMap["Speed"]->s_value);
-		totalSpeeds++;
-
-		databaseMap["AverageSpeed"] = &(currentAvgSpd.value / totalSpeeds);
-
-		return;
+		*sumAvgSpeed += ((Double*)_myMap[SPEED])->value();
+		countSpeedUpdates++;
+		_myMap[AVG_SPEED] = new Double(sumAvgSpeed->value() / countSpeedUpdates);
 	}
 
 	VCType getVCType()
@@ -47,8 +66,8 @@ public:
 	}
 
 private:
-	Double currentAvgSpd = 0.0;
-	float totalSpeeds = 0;
+	Double* sumAvgSpeed = nullptr;
+	float countSpeedUpdates = 0;
 };
 
 /*
@@ -58,17 +77,15 @@ class MaximumAcceleration : public ScenarioMetric
 {
 public:
 	//default constructor
-	MaximumAcceleration() {};
+	MaximumAcceleration() { currentMax = new Double(); };
 
 	void calculate()
 	{
-		if (currentMax.value < stod(_myMap["Acceleration"]->s_value))
+		if (currentMax->value() < ((Double*)_myMap[ACCELERATION])->value())
 		{
-			currentMax.value = stod(_myMap["Accelertation"]->s_value);
+			currentMax->value(stod(_myMap[ACCELERATION]->s_value()));
+			_myMap[MAX_ACCELERATION] = currentMax;
 		}
-		databaseMap["MaxAcceleration"] = &currentMax;
-
-		return;
 	}
 
 	VCType getVCType()
@@ -77,7 +94,7 @@ public:
 	}
 
 private:
-	Double currentMax = 0.0;
+	Double* currentMax = nullptr;
 };
 
 /*
@@ -87,17 +104,15 @@ class MinimumAcceleration : public ScenarioMetric
 {
 public:
 	//default constructor
-	MinimumAcceleration() {};
+	MinimumAcceleration() { currentMin = new Double(1000000.0); };
 
 	void calculate()
 	{
-		if (currentMin.value > stod(_myMap["Acceleration"]->s_value))
+		if (currentMin->value() > ((Double*)_myMap[ACCELERATION])->value())
 		{
-			currentMin.value = stod(_myMap["Accelertation"]->s_value);
+			currentMin->value(((Double*)_myMap[ACCELERATION])->value());
+			_myMap[MIN_ACCELERATION] = currentMin;
 		}
-		databaseMap["MinAcceleration"] = &currentMin;
-
-		return;
 	}
 
 	VCType getVCType()
@@ -106,8 +121,8 @@ public:
 	}
 
 private:
-	//set to some unreachable value
-	Double currentMin = 1000000.0;
+	//set to some unreachable value()
+	Double* currentMin = nullptr;
 };
 
 /*
@@ -117,18 +132,16 @@ class AverageAcceleration : public ScenarioMetric
 {
 public:
 	//default constructor
-	AverageAcceleration() {};
+	AverageAcceleration() { sumAcceleration = new Double(); };
 
 	void calculate()
 	{
-		if (stod(_myMap["Acceleration"]->s_value > 0))
+		if (((Double*)_myMap[ACCELERATION])->value() > 0)
 		{
-			averageAcceleration.value += stod(_myMap["Acceleration"]->s_value);
-			totalAccelerations++;
+			*sumAcceleration += ((Double*)_myMap[ACCELERATION])->value();
+			countAccelUpdates++;
+			_initialMap[AVG_ACCELERATION] = new Double(sumAcceleration->value() / countAccelUpdates);
 		}
-		databaseMap["AverageAcceleration"] = &(averageAcceleration.value / totalAccelerations);
-
-		return;
 	}
 
 	VCType getVCType()
@@ -137,9 +150,9 @@ public:
 	}
 
 private:
-	Double averageAcceleration = 0.0;
+	Double* sumAcceleration = nullptr;
 
-	float totalAccelerations = 0;
+	float countAccelUpdates = 0;
 };
 
 /*
@@ -149,18 +162,16 @@ class AverageDeacceleration : public ScenarioMetric
 {
 public:
 	//default constructor
-	AverageDeacceleration() {};
+	AverageDeacceleration() { sumDeacceleration = new Double(); };
 
 	void calculate()
 	{
-		if (stod(_myMap["Acceleration"]->s_value < 0))
+		if (((Double*)_myMap[ACCELERATION])->value() < 0)
 		{
-			averageDeacceleration.value += stod(_myMap["Acceleration"]->s_value);
-			totalDeaccelerations++;
-		}
-		databaseMap["AverageDeacceleration"] = &(averageDeacceleration.value / totalDeaccelerations);
-
-		return;
+			*sumDeacceleration += ((Double*)_myMap[ACCELERATION])->value();
+			countDecelUpdates++;
+			_initialMap[AVG_DECELERATION] = new Double(sumDeacceleration->value() / countDecelUpdates);
+		}		
 	}
 
 	VCType getVCType()
@@ -169,35 +180,60 @@ public:
 	}
 
 private:
-	Double averageDeacceleration = 0.0;
+	Double* sumDeacceleration = nullptr;
 
-	float totalDeaccelerations = 0;
+	float countDecelUpdates = 0;
 
 };
 
 /*
 	holds the X Y and Z coordinates for the vehicle
 */
-class XYZCoordinates : public ScenarioMetric
+// Not using this metric, emf 5/3/2019
+//class XYZCoordinates : public ScenarioMetric
+//{
+//public:
+//
+//	XYZCoordinates() { coordinates = new Vector3(0, 0, 0); };
+//
+//	void calculate()
+//	{
+//		coordinates = ((Vector3*)_myMap[POSITION]);
+//
+//		_initialMap[POSITION] = coordinates;
+//	}
+//
+//	VCType getVCType()
+//	{
+//		return VCType::ScenarioMetric;
+//	}
+//
+//private:
+//	Vector3* coordinates;
+//};
+
+void ScenarioMetric::update(timestamp t, dataMap dataMap)
 {
-public:
+	_myMap[ACCELERATION] = dataMap[ACCELERATION];
+	_myMap[SPEED] = dataMap[SPEED];
+	_myMap[POSITION] = dataMap[POSITION];
 
-	XYZCoordinates() {};
+	calculate();
 
-	void calculate()
-	{
-		coordiantes = _myMap["Position"]->s_value;
+	getEventTree()->addEvent(this, t, _myMap);
+}
 
-		databaseMap["Position"] = &coordiantes;
+void ScenarioMetric::calculate()
+{
+	AverageSpeed avgSp;
+	AverageAcceleration avgAccel;
+	MaximumAcceleration max;
+	MinimumAcceleration min;
+	AverageDeacceleration avgDecel;
 
-		return;
-	}
-
-	VCType getVCType()
-	{
-		return VCType::ScenarioMetric;
-	}
-
-private:
-	Vector3 coordiantes;
-};
+	avgSp.calculate();
+	avgAccel.calculate();
+	max.calculate();
+	min.calculate();
+	avgDecel.calculate();
+}

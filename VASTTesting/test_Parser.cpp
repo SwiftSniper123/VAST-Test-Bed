@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "VAST.h"
-#include "VType.h"
 
 /*Default true test*/
 TEST(Test_Parser, TrueInTestVASTLibrary)

@@ -1,5 +1,4 @@
 #pragma once
-#include "Obstacle.h"
 #include "VComponent.h"
 
 class Environment : public VComponent
@@ -19,7 +18,7 @@ public:
 	external to the Obstacle in order to update data important to the Obstacle.
 	time		timestamp for the update
 	updateMap	data that changed for this update*/
-	void update(timestamp t, dataMap dataMap);
+	virtual void update(timestamp t, dataMap dataMap);
 
 	/* Informs the component that the replication is coming to an end.  This function
 	is called by the EventTree to give the component the opportunity to reset data, or

@@ -1,7 +1,15 @@
+#include "VC_HEADERS.h"
 #include "SumoEnvironment.h"
-#include <chrono>
-#include <thread>
 
+void SumoEnvironment::update(timestamp t, dataMap dataMap)
+{
+	currentData["Duration"] = dataMap["Duration"];
+	currentData["TargetVelocity"] = dataMap["TargetVelocity"];
+
+	currentData = callUpdateFunctions();
+
+	this->getEventTree()->addEvent(this, t, currentData);
+}
 
 void SumoEnvironment::openEnvironment()
 {
@@ -85,21 +93,20 @@ void SumoEnvironment::getMapInformation()
 
 void SumoEnvironment::changeAVCommand()
 {
-	dataMap currentMap = getDataMap();
 	String one("1");
 	String zero("0");
 
 	double speed, duration;
 
-	speed = stod(currentMap["TargetVelocity"]->s_value());
-	duration = stod(currentMap["Duration"]->s_value());
+	speed = stod(currentData["TargetVelocity"]->s_value());
+	duration = stod(currentData["Duration"]->s_value());
 
-	if (currentMap["AVLogic"] == &one)
+	if (currentData["AVLogic"] == &one)
 	{
 		traci.vehicle.slowDown(_AVid, speed, duration);
 		return;
 	}
-	if(currentMap["AVLogic"] == &zero)
+	if(currentData["AVLogic"] == &zero)
 	{
 		return;
 	}
@@ -110,4 +117,9 @@ dataMap SumoEnvironment::callUpdateFunctions()
 	changeAVCommand();
 	getMapInformation();
 	return currentData;
+}
+
+void SumoEnvironment::stopReplication(bool another, string runID)
+{
+
 }

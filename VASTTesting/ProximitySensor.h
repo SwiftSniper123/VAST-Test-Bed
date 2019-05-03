@@ -1,6 +1,5 @@
 #pragma once
-#include "Sensor.h"
-#include "AV.h"
+#include "VC_HEADERS.h"
 #include <cmath>
 
 using std::pair;

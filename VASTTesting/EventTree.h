@@ -3,7 +3,6 @@
 #include <thread>
 #include <set>
 #include "VComponent.h" // timestamp, dataMap
-#include "ScenarioMetric.h"
 #include "sqlite3.h"
 #include <exception>
 
@@ -275,7 +274,7 @@ public:
 	void registerComponent(VComponent* vc);
 
 	/* A Scenario Metric should register themselves with the EventTree.*/
-	void registerMetric(ScenarioMetric* sm);
+	void registerMetric(VComponent* sm);
 
 	/* Reports back the number of components that have been registered in the EventTree.*/
 	int getNumberOfVComp()const;

@@ -1,4 +1,4 @@
-#include "EventTree.h"
+#include "VC_HEADERS.h"
 
 // public functions---------------------------------------//
 
@@ -143,25 +143,35 @@ void EventTree::registerComponent(VComponent* vc)
 	}
 }
 
-void EventTree::registerMetric(ScenarioMetric* sm)
+void EventTree::registerMetric(VComponent* comp)
 {
-	bool running = this->running();
-	// only register components before a set of replications
-	if (!running)
+	ScenarioMetric* sm;
+	if (comp->getVCType() != VComponent::VCType::ScenarioMetric)
 	{
-		tableMap::iterator it;
-		it = _metrics->find(sm);
-		if (it == _metrics->end())
-		{
-			sm->registerEventTree(this);
-			_metrics->emplace(sm, sm->getDataMap());
-		}
+		throw InvalidArgumentException(comp->getName() + " cannot be registered as a metric.");
 	}
 	else
 	{
-		closedatabase();
-		throw OutOfTimeException(sm->getName(), string("register ScenarioMetric"), running);
+		sm = (ScenarioMetric*)comp;
+		bool running = this->running();
+		// only register components before a set of replications
+		if (!running)
+		{
+			tableMap::iterator it;
+			it = _metrics->find(sm);
+			if (it == _metrics->end())
+			{
+				sm->registerEventTree(this);
+				_metrics->emplace(sm, sm->getDataMap());
+			}
+		}
+		else
+		{
+			closedatabase();
+			throw OutOfTimeException(sm->getName(), string("register ScenarioMetric"), running);
+		}
 	}
+	
 }
 
 int EventTree::getNumberOfVComp() const
@@ -193,9 +203,21 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 {
 	double currentSchedulableTime = _simClock < 0? 0: _simClock;
 	
+	// if this is a metric reporting, just update the data in the _metrics tablemap and then return
 	if (_eventSource->getVCType() == VComponent::VCType::ScenarioMetric)
 	{
-
+		map<VComponent*, dataMap>::iterator metricMapIterator;
+		metricMapIterator = _metrics->find(_eventSource);
+		for (auto updateIterator = _eventDataMap.begin();
+			updateIterator != _eventDataMap.end();
+			++updateIterator)
+		{
+			// get the present map's old component data, and the new update data, and overwrite
+			VType* oldData = metricMapIterator->second[updateIterator->first];
+			VType* newData = updateIterator->second;
+			*metricMapIterator->second[updateIterator->first] = *newData;
+		}
+		return;
 	}
 	// if an event is set outside of the run time:
 	if(_eventTime < 0 || _eventTime < currentSchedulableTime - _timeSlice)  // too far left

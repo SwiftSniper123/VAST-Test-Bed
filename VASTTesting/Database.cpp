@@ -4,7 +4,7 @@ ODU Capstone 2018-2019
 Database.cpp
 Definitions for EventTree functions pertaining specifically to the database creation, table creation, insertion, 
 */
-#include "EventTree.h"
+#include "VC_HEADERS.h"
 #include <typeinfo>
 
 void EventTree::opendatabase(string fileName)
