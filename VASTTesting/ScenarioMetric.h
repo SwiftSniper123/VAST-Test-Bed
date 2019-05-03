@@ -16,8 +16,7 @@ public:
 		_myMap = metricData;
 	};
 
-	/* returns the statistical metric value as defined by the extending metric 
-	class.*/
+	/* returns the statistical metric value as defined by the extending metric class.*/
 	virtual void calculate() {};
 
 	/* The inherited update function*/
