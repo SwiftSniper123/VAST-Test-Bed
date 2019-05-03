@@ -49,6 +49,7 @@ void SumoEnvironment::getMapInformation()
 		//checks if the ID is that of the Autonomous vehicle and if so get the information about that
 		if (*it == _AVid)
 		{
+
 			vehicleID[i].value(*it);
 			acceleration = traci.vehicle.getAcceleration(*it);
 
