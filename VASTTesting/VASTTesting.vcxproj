@@ -50,6 +50,7 @@
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="sqlite3ext.h" />
     <ClInclude Include="storage.h" />
+    <ClInclude Include="SumoEnvironment.h" />
     <ClInclude Include="TraCIAPI.h" />
     <ClInclude Include="TraCIConstants.h" />
     <ClInclude Include="TraCIDefs.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="storage.cpp" />
+    <ClCompile Include="SumoEnvironment.cpp" />
     <ClCompile Include="test_Broker.cpp" />
     <ClCompile Include="test_Database.cpp" />
     <ClCompile Include="test_EventTree.cpp" />
