@@ -49,9 +49,9 @@ void SumoEnvironment::getMapInformation()
 		//checks if the ID is that of the Autonomous vehicle and if so get the information about that
 		if (*it == _AVid)
 		{
-			string guy = it->c_str();
-			vehicleID[i].value(guy);
-			acceleration.value(traci.vehicle.getAcceleration(*it));
+
+			vehicleID[i].value(*it);
+			acceleration = traci.vehicle.getAcceleration(*it);
 
 			velocity[i].value(traci.vehicle.getSpeed(*it));
 			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
@@ -62,14 +62,12 @@ void SumoEnvironment::getMapInformation()
 		//will get the information needed for other vehicles in the system
 		else
 		{
-			string guy = it->c_str();
-			vehicleID[i].value(guy);
+			vehicleID[i].value(*it);
 			velocity[i].value(traci.vehicle.getSpeed(*it));
 			libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
 
 			position[i].value(XYZ.x, XYZ.y, XYZ.z);
 		}
-
 		i++;
 	}
 

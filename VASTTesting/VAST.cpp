@@ -15,8 +15,14 @@ void VAST::Parse()
 	string _currentValue;
 	string _type;
 	const string _delim = ", ";
-
-	read_xml(_file, pt1);
+	
+	try {
+		read_xml(_file, pt1);
+	}
+	catch(const std::exception& e) {
+		std::cout << "Invalid File. Ending.";
+		return;
+	}
 	//printTree(pt1, 0);
 
 	//std::cout << "\n\n" << pt1.get<std::string>("VAST.module.map.pair.key");
@@ -31,6 +37,7 @@ void VAST::Parse()
 
 		if (node.first == "module")
 		{
+			dataMap _AVConfig;
 			_currentModule = subtree.get<std::string>("<xmlattr>.module");
 			//std::cout << "module: " << subtree.get<std::string>("<xmlattr>.module") << "\n";
 
@@ -101,7 +108,6 @@ void VAST::Parse()
 										Array *v = new Array(new VType(key.get<string>("name")));
 										_ConfigMap.insert(namedData(_currentKey, v));
 									}
-
 								}
 								
 								if (_currentModule == "Environment")
@@ -121,59 +127,88 @@ void VAST::Parse()
 										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
 										_EnvConfig.insert(namedData(_currentKey, v));
 									}
+									else if (_currentKey == "config_location")
+									{
+										String *v = new String(new VType(key.get<string>("name")));
+										_EnvConfig.insert(namedData(_currentKey, v));
+									}
 									else
 									{
 										size_t pos = _currentValue.find(_delim);
+										size_t endPos = _currentValue.find(_delim) + 2;
 										string _valCopy = _currentValue;
 										_type = _valCopy.substr(0, pos);
-										_currentValue = _currentValue.substr(pos);
+										_currentValue = _currentValue.substr(endPos);
 
 										fillMap(_currentModule, _type, _currentKey, _currentValue);
 									}
 								}
+
 								else if (_currentModule == "AV")
 								{
 									if (_currentKey == "av_name")
 									{
-										String *v = new String(new VType(key.get<string>("name")));
-										_AVConfig.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											String *v = new String(new VType(val));
+											_AVConfig.insert(namedData(_currentKey, v));
+										}
 									}
 									else if (_currentKey == "av_movement_port")
 									{
-										Integer *v = new Integer(new VType(key.get<string>("name")));
-										_AVConfig.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											Integer *v = new Integer(new VType(val));
+											_AVConfig.insert(namedData(_currentKey, v));
+										}
 									}
 									else if (_currentKey == "exe_location")
 									{
-										String *v = new String(new VType(key.get<string>("name")));
-										_AVConfig.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											String *v = new String(new VType(val));
+											_AVConfig.insert(namedData(_currentKey, v));
+										}
 									}
 									else if (_currentKey == "AV_location")
 									{
-										String *v = new String(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											String *v = new String(new VType(val));
+											_AVMap.insert(namedData(_currentKey, v));
+										}
 									}
 									else if (_currentKey == "AV_orientation")
 									{
-										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											Vector3 *v = new Vector3(new VType(val));
+											_AVMap.insert(namedData(_currentKey, v));
+										}
 									}
 									else if (_currentKey == "AV_bounds")
 									{
-										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											Vector3 *v = new Vector3(new VType(val));
+											_AVMap.insert(namedData(_currentKey, v));
+										}
 									}
 									else if (_currentKey == "sensors")
 									{
-										Array *v = new Array(new VType(key.get<string>("name")));
-										_AVConfig.insert(namedData(_currentKey, v));
+										string val = key.get<string>("name");
+										if (!val.empty()) {
+											Array *v = new Array(new VType(val));
+											_AVConfig.insert(namedData(_currentKey, v));
+										}
 									}
 									else
 									{
 										size_t pos = _currentValue.find(_delim);
+										size_t endPos = _currentValue.find(_delim) + 2;
 										string _valCopy = _currentValue;
 										_type = _valCopy.substr(0, pos);
-										_currentValue = _currentValue.substr(pos);
+										_currentValue = _currentValue.substr(endPos);
 
 										fillMap(_currentModule, _type, _currentKey, _currentValue);
 									}
@@ -187,7 +222,8 @@ void VAST::Parse()
 
 			if (_currentModule == "AV")
 			{
-				string name = _AVMap.at("av_name")->s_value();
+				string name = _AVConfig.at("av_name")->s_value();
+				_AVConfigs.push_back(_AVConfig);
 				AV *av = new AV(name, _AVMap);
 				_AVs.push_back(av);
 			}
@@ -198,6 +234,7 @@ void VAST::Parse()
 		}
 	}//
 	
+
 }
 
 void VAST::fillMap(string currentModule, string type, string key, string value)

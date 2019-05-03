@@ -10,7 +10,6 @@
 #include "VType.h"
 #include "EventTree.h"
 
-
 using namespace boost::property_tree;
 
 class VAST 
@@ -29,8 +28,9 @@ private:
 	dataMap _AVMap;
 
 	dataMap _ConfigMap;
-	dataMap _AVConfig;
 	dataMap _EnvConfig;
+
+	vector<dataMap> _AVConfigs;
 
 	string _file;
 	void fillMap(string currentModule, string type, string key, string value);
