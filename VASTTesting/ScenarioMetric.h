@@ -53,4 +53,5 @@ public:
 	//holds the metric information that is needed
 	dataMap _myMap;
 	dataMap _initialMap;
+
 };
