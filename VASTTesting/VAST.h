@@ -19,7 +19,7 @@ public:
 	VAST();
 	VAST(string file);
 	void Parse();
-	dataMap _ConfigMap;
+	
 	EventTree *_EventTree;
 	vector<AV*> _AVs;
 	Environment *_Env;
@@ -27,6 +27,11 @@ public:
 private:
 	dataMap _EnvMap;
 	dataMap _AVMap;
+
+	dataMap _ConfigMap;
+	dataMap _AVConfig;
+	dataMap _EnvConfig;
+
 	string _file;
 	void fillMap(string currentModule, string type, string key, string value);
 	

@@ -109,17 +109,17 @@ void VAST::Parse()
 									if (_currentKey == "env_obstacle_port")
 									{
 										Integer *v = new Integer(new VType(key.get<string>("name")));
-										_EnvMap.insert(namedData(_currentKey, v));
+										_EnvConfig.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "exe_location")
 									{
 										String *v = new String(new VType(key.get<string>("name")));
-										_EnvMap.insert(namedData(_currentKey, v));
+										_EnvConfig.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "Env_bounds")
 									{
 										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
-										_EnvMap.insert(namedData(_currentKey, v));
+										_EnvConfig.insert(namedData(_currentKey, v));
 									}
 									else
 									{
@@ -136,17 +136,17 @@ void VAST::Parse()
 									if (_currentKey == "av_name")
 									{
 										String *v = new String(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										_AVConfig.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "av_movement_port")
 									{
 										Integer *v = new Integer(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										_AVConfig.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "exe_location")
 									{
 										String *v = new String(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										_AVConfig.insert(namedData(_currentKey, v));
 									}
 									else if (_currentKey == "AV_location")
 									{
@@ -166,7 +166,7 @@ void VAST::Parse()
 									else if (_currentKey == "sensors")
 									{
 										Array *v = new Array(new VType(key.get<string>("name")));
-										_AVMap.insert(namedData(_currentKey, v));
+										_AVConfig.insert(namedData(_currentKey, v));
 									}
 									else
 									{
