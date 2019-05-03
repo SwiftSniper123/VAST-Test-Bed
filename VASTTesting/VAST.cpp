@@ -234,6 +234,7 @@ void VAST::Parse()
 		}
 	}//
 	
+
 }
 
 void VAST::fillMap(string currentModule, string type, string key, string value)
