@@ -5,10 +5,12 @@
 class SumoEnvironment : public Environment
 {
 public:
-	SumoEnvironment(string fileLocation, int AVid)
+	SumoEnvironment(string fileLocation, int AVid, string SUMOexeLocation, int isRandom)
 	{
 		_fileLocation = fileLocation;
+		random = isRandom;
 		_AVid = AVid;
+		_SUMOexeLocation = SUMOexeLocation;
 	}
 
 	//Opens the Sumo Environment with the file location
@@ -25,6 +27,8 @@ public:
 
 private:
 	string _fileLocation;
+	int random;
+	string _SUMOexeLocation;
 	string _AVid;
 	TraCIAPI traci;
 	dataMap currentData;

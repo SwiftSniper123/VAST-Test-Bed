@@ -1,17 +1,32 @@
 #include "SumoEnvironment.h"
+#include <chrono>
+#include <thread>
 
 
 void SumoEnvironment::openEnvironment()
 {
-	string str = "gcc ";
+	string str = _SUMOexeLocation;
 
-	str = str + _fileLocation;
+	if (random == 1)
+	{
+		srand(time(NULL)); //Provides a seed for the random number generator
+
+		int seed = rand() % 10000; //Generates a random seed for Sumo
+
+		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337" + " --seed " + std::to_string(seed);
+
+	}
+
+	else
+		str = _SUMOexeLocation + " -c " + _fileLocation + " --remote-port 1337 --full-output localhost:1338";
 
 	const char *command = str.c_str();
 
 	system(command);
 
-	traci.connect("SUMO Connection", 1338);
+	std::this_thread::sleep_for(std::chrono::milliseconds(50000));
+
+	traci.connect("localhost", 1337);
 
 	return;
 }
