@@ -2,6 +2,8 @@
 #include "TraCIAPI.h"
 #include "Environment.h"
 #include "AV.h"
+#include <Windows.h>
+#include <cstdlib>
 
 class SumoEnvironment : public Environment
 {
@@ -64,6 +66,7 @@ private:
 	dataMap _configData;
 	Vector3 _bounds;
 
+	LPWSTR cmdArgs;
 	PROCESS_INFORMATION ProcessInfo; //This is what we get as an [out] parameter
 	STARTUPINFO StartupInfo; //This is an [in] parameter
 };
