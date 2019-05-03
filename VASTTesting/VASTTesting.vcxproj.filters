@@ -68,6 +68,9 @@
     <ClCompile Include="ScenarioMetrics.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="PythonAV.cpp">
+      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
@@ -109,9 +112,6 @@
     <ClInclude Include="EventTree.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
-    <ClInclude Include="ScenarioMetric.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
@@ -128,6 +128,12 @@
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="SumoEnvironment.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VC_HEADERS.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonAV.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>

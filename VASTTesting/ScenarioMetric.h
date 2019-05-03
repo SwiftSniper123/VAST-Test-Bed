@@ -1,37 +1,33 @@
 #pragma once
 #include "VComponent.h"
-#include "VType.h"
-#include "EventTree.h"
+
+static const string ACCELERATION = "Acceleration";
+static const string MIN_ACCELERATION = "MinAcceleration";
+static const string AVG_ACCELERATION = "AvgAcceleration";
+static const string MAX_ACCELERATION = "MaxAcceleration";
+static const string AVG_DECELERATION = "AvgDeceleration";
+static const string AVG_SPEED = "AvgSpeed";
+static const string SPEED = "Speed";
+static const string POSITION = "Position";
+
+using std::string;
 
 /*base class for all metrics in VAST*/
 class ScenarioMetric : public VComponent
 {
 public:
 	/* default constructor*/
-	ScenarioMetric() {};
+	ScenarioMetric();
 
-	/* Constructor to set component data.*/
-	ScenarioMetric(string name, dataMap metricData) 
-	{
-		_myMap = metricData;
-	};
+	/* Constructor to set component data.  This constructor guarantees that all keys are 
+	present in the datamap as initialized zero values.*/
+	ScenarioMetric(string name, dataMap metricData);
 
 	/* returns the statistical metric value as defined by the extending metric class.*/
-	virtual void calculate() {};
+	virtual void calculate();
 
 	/* The inherited update function*/
-	virtual void update(timestamp t, dataMap dataMap)
-	{
-		EventTree *temp = getEventTree();
-
-		_myMap["Acceleration"] = dataMap["Acceleration"];
-		_myMap["Velocity"] = dataMap["Speed"];
-		_myMap["Position"] = dataMap["Position"];
-
-		calculate();
-
-		temp->addEvent(this, t, databaseMap);
-	};
+	void update(timestamp t, dataMap dataMap);
 
 	/* Informs the component that the replication is coming to an end.  This function
 	is called by the EventTree to give the component the opportunity to reset data, or
@@ -51,10 +47,11 @@ public:
 	virtual dataMap getDataMap()
 	{
 		// this is an empty map, the default return from ScenarioMetric
-		return _myMap;
+		return _initialMap;
 	}
 
 	//holds the metric information that is needed
 	dataMap _myMap;
-	dataMap databaseMap;
+	dataMap _initialMap;
+
 };

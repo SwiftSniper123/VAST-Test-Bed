@@ -1,17 +1,26 @@
 #pragma once
 #include "TraCIAPI.h"
 #include "Environment.h"
+#include "AV.h"
 
 class SumoEnvironment : public Environment
 {
 public:
-	SumoEnvironment(string fileLocation, int AVid, string SUMOexeLocation, int isRandom)
+	SumoEnvironment(string configFileLocation, string SUMOexeLocation, Integer port, Vector3 bounds)
 	{
-		_fileLocation = fileLocation;
-		random = isRandom;
-		_AVid = AVid;
+		_fileLocation = configFileLocation;
+		//random = isRandom;
+		//_AVid = AVid;
 		_SUMOexeLocation = SUMOexeLocation;
+		_port = port;
+		_bounds = bounds;
 	}
+
+	/* Inherited Function from VComponent.  Called by a component
+	external to the Obstacle in order to update data important to the Obstacle.
+	time		timestamp for the update
+	updateMap	data that changed for this update*/
+	virtual void update(timestamp t, dataMap dataMap);
 
 	//Opens the Sumo Environment with the file location
 	void openEnvironment();
@@ -22,14 +31,23 @@ public:
 	//sends the new command to the AV in sumo if this is required
 	void changeAVCommand();
 
-	//calls this child classes functions
-	dataMap callUpdateFunctions();
+	//called by the update function to run all of the functions of the child classes
+	virtual dataMap callUpdateFunctions();
+
+	void stopReplication(bool another, string runID);
+
+	void setSeed(string seed);
+
+	void addAV(AV *AV);
 
 private:
 	string _fileLocation;
-	int random;
+	int random; //Replace with function for setting the seed?
+	string _seed;
 	string _SUMOexeLocation;
-	string _AVid;
+	Integer _port;
+	vector<string> _AVid;
 	TraCIAPI traci;
 	dataMap currentData;
+	Vector3 _bounds;
 };

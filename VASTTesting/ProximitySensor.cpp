@@ -1,3 +1,4 @@
+#include "VC_HEADERS.h"
 #include "ProximitySensor.h"
 
 // private functions-------------------------------------------------------------//

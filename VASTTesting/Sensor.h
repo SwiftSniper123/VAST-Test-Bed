@@ -42,7 +42,5 @@ protected:
 	string _name;
 
 	/*data types of sensor*/
-	dataMap _dataMap;
-
-	
+	dataMap _dataMap;	
 };
