@@ -66,6 +66,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ProximitySensor.cpp" />
+    <ClCompile Include="ScenarioMetrics.cpp" />
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="sqlite3.c" />
