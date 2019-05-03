@@ -44,7 +44,6 @@
     <ClInclude Include="EventTree.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ProximitySensor.h" />
-    <ClInclude Include="ScenarioMetric.h" />
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="socket.h" />
     <ClInclude Include="sqlite3.h" />

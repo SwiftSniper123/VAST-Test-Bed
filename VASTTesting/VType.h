@@ -445,7 +445,7 @@ public:
 		VType::type = DOUBLE_TYPE;
 	}
 
-	/*sets the value of the integer*/
+	/*sets the value of the double*/
 	void value(double newVal)
 	{
 		val = newVal;
@@ -454,7 +454,7 @@ public:
 		VType::stringValue = ss.str();
 	}
 
-	/*gets the value of the integer*/
+	/*gets the value of the double*/
 	double value()
 	{
 		return val;

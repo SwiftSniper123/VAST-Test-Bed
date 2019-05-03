@@ -61,9 +61,11 @@
     <ClCompile Include="test_Parser.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="SumoEnvironment.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>VASTScenarioObjectLibrary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,9 +106,6 @@
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="EventTree.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="ScenarioMetric.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
