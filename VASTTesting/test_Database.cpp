@@ -1,6 +1,8 @@
 //#include "Database.cpp"
-#include "EventTree.h"
+#include "VC_HEADERS.h"
 #include "gtest/gtest.h"
+
+using namespace VASTConstants;
 
 // persistent values that can be verified in every test
 static char** colNames = nullptr;
@@ -17,7 +19,7 @@ protected:
 		colValues = new char*[3];
 		colNames[0] = "run_ID";
 		colNames[1] = "AV_ID";
-		colNames[2] = "AV_Name";
+		colNames[2] = "AV_name";
 		colValues[0] = "1";
 		colValues[1] = "1";
 		colValues[2] = "pepper";
@@ -28,16 +30,8 @@ protected:
 
 	virtual void TearDown()
 	{
-		//for (int i = 0; i < 3; i++)
-		//{
-		//	delete colNames[i];
-		//	delete colValues[i];// delete each pointer in char** strings
-		//}
 		delete[] colNames;
 		delete[] colValues;
-		
-		/*colNames = nullptr;
-		colValues = nullptr;*/
 	}
 };
 
@@ -64,7 +58,7 @@ static int callback(void * data, int argc, char **argv, char **azColName)
 TEST_F(DatabaseTest, opendatabase)
 {
 	sqlite3 *db;
-	const char *fileName = "test_opendatabase.db";
+	const char *fileName = TEST_DATABASE_FILENAME;
 
 	//testing opening database function
 	EXPECT_EQ(sqlite3_open(fileName, &db), SQLITE_OK);
@@ -81,7 +75,7 @@ TEST_F(DatabaseTest, createtable)
 	sqlite3 *db;
 	const char *sql;
 	char *zErrMsg = 0;
-	const char *fileName = "test_createtable.db";
+	const char *fileName = TEST_DATABASE_FILENAME;
 
 	EXPECT_EQ(sqlite3_open(fileName, &db), SQLITE_OK);
 
@@ -102,7 +96,7 @@ TEST_F(DatabaseTest, insertdata)
 	sqlite3 *db;
 	const char *sql;
 	char *zErrMsg = 0;
-	const char *fileName = "test_insertdata.db";
+	const char *fileName = TEST_DATABASE_FILENAME;
 
 	EXPECT_EQ(sqlite3_open(fileName, &db), SQLITE_OK);
 
@@ -125,7 +119,7 @@ TEST_F(DatabaseTest, showdata)
 	sqlite3 *db;
 	stringstream ss;
 	char *zErrMsg = 0;
-	const char *fileName = "test_showdata.db";
+	const char *fileName = TEST_DATABASE_FILENAME;
 	string testTable = "AV_Info";
 
 	EXPECT_EQ(sqlite3_open(fileName, &db), SQLITE_OK);
@@ -159,7 +153,7 @@ TEST_F(DatabaseTest, replications)
 	sqlite3 *db;
 	stringstream ss;
 	char *zErrMsg = 0;
-	const char *fileName = "test_showdata.db";
+	const char *fileName = TEST_DATABASE_FILENAME;
 	string testTable = "AV_Info";
 
 	EXPECT_EQ(sqlite3_open(fileName, &db), SQLITE_OK);

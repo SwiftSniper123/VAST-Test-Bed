@@ -1,5 +1,7 @@
 #include "VC_HEADERS.h"
 
+using namespace VASTConstants;
+
 ScenarioMetric::ScenarioMetric()
 {}
 
@@ -211,11 +213,13 @@ private:
 //	Vector3* coordinates;
 //};
 
-void ScenarioMetric::update(timestamp t, dataMap dataMap)
+void ScenarioMetric::update(timestamp t, dataMap updateMap)
 {
-	_myMap[ACCELERATION] = dataMap[ACCELERATION];
-	_myMap[SPEED] = dataMap[SPEED];
-	_myMap[POSITION] = dataMap[POSITION];
+	Array* avListInDataMap = updateMap[AV_LIST];
+	for (int i = 0; i < )
+	_myMap[ACCELERATION] = updateMap[ACCELERATION];
+	_myMap[SPEED] = updateMap[SPEED];
+	_myMap[POSITION] = updateMap[POSITION];
 
 	calculate();
 

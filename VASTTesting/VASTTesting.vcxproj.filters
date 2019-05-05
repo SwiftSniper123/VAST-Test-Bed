@@ -71,6 +71,9 @@
     <ClCompile Include="PythonAV.cpp">
       <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="test_SUMOEnvironment.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
@@ -137,6 +140,9 @@
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="ScenarioMetric.h">
+      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VASTConstants.h">
       <Filter>VASTScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>

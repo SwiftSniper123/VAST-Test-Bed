@@ -132,7 +132,7 @@
             </pair>
             <pair type="mandatory">
                 <key>
-                    <name>exe_location</name>
+                    <name>av_exe_location</name>
                 </key>
                 <value>
                     <name>C:/Users/jaron/source/repos/VAST-Test-Bed/VASTTesting/AVLogic.py</name>
@@ -216,7 +216,7 @@
             </pair>
             <pair type="mandatory">
                 <key>
-                    <name>exe_location</name>
+                    <name>av_exe_location</name>
                 </key>
                 <value>
                     <name>C:/Users/jaron/source/repos/VAST-Test-Bed/VASTTesting/AVLogicCrash.py</name>

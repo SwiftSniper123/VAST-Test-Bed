@@ -4,7 +4,6 @@
 #include "gtest/gtest.h"
 #include <iostream>
 #include <thread> // sleep_for
-#include<variant>
 
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
@@ -12,6 +11,9 @@
 #include "VAST.h"
 #include <Windows.h>
 #include <gtest/gtest.h>
+
+
+using namespace VASTConstants;
 using namespace std::this_thread;     // sleep_for, sleep_until
 
 using std::cin;
@@ -39,7 +41,7 @@ int main(int argc, char **argv1)
 		cout << "Please type the configuration file location and name: ";
 		cin >> fileName;
 
-		string dbName = "VASTDatabase.db";
+		string dbName = DATABASE_FILENAME;
 		//cout << "\nIf desired, provide a database file name (default - VASTDatabase.db): ";
 		//cin >> dbName;
 
@@ -50,12 +52,14 @@ int main(int argc, char **argv1)
 		v->Parse();
 		cout << "Parsing ends" << endl;
 
-		dataMap envMap = v->getEnvConfig();
+		////////////////////////////////////////////////////////
+		// this needs to get sorted out; all that's left is to get maps from VAST object and give them to the generate functions, then register components
+		dataMap envMap = v->getEnvConfigs();
 		vector<dataMap> avMaps = v->getAVConfigs();
 		dataMap configMap = v->getConfig();
 
-		SumoEnvironment *sumo = new SumoEnvironment(envMap, v->_Env->getDataMap());
-		PythonVehicle *firstAV = new PythonVehicle(avMaps[0],v->_AVs[0]->getDataMap());
+		v->generateAV(avMaps[0], v->_AVs[0]->getDataMap());
+		v->generateEnvenvMap(envMap, v->_Env->getDataMap());
 		//PythonVehicle *secondAV = new PythonVehicle(avMaps[1], v->_AVs[1]->getDataMap());
 		ProximitySensor *proxSensor = new ProximitySensor(firstAV, v->_AVs[0]->getDataMap());
 
@@ -64,6 +68,7 @@ int main(int argc, char **argv1)
 		//v->_EventTree->registerComponent(secondAV);
 		v->_EventTree->registerComponent(proxSensor);
 		v->_EventTree->setFirstComponent(sumo);
+		//////////////////////////////////////////////////////////
 
 		sumo->openEnvironment();
 
@@ -102,3 +107,17 @@ void sumoConnection() {
 	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
 	client.close();
 } */
+
+AV* VAST::generateAV(string name, dataMap runData, dataMap configData)
+{
+	
+	PythonVehicle *firstAV = new PythonVehicle(configData, runData);	
+
+	// TODO instantiate sensor and hook it up
+	// instantiate scenario metric
+}
+
+Environment* VAST::generateEnv(string name, dataMap runData, dataMap configData)
+{
+	SumoEnvironment *sumo = new SumoEnvironment(configData, runData);
+}

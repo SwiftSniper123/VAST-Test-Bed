@@ -56,6 +56,7 @@
     <ClInclude Include="TraCIConstants.h" />
     <ClInclude Include="TraCIDefs.h" />
     <ClInclude Include="VAST.h" />
+    <ClInclude Include="VASTConstants.h" />
     <ClInclude Include="VC_HEADERS.h" />
     <ClInclude Include="VComponent.h" />
     <ClInclude Include="VType.h" />
@@ -80,6 +81,7 @@
     <ClCompile Include="test_EventTree.cpp" />
     <ClCompile Include="test_Parser.cpp" />
     <ClCompile Include="test_ProximitySensor.cpp" />
+    <ClCompile Include="test_SUMOEnvironment.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test_VType.cpp" />
@@ -124,7 +126,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
@@ -156,7 +158,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>

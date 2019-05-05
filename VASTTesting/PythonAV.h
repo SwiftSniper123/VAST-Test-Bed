@@ -8,22 +8,7 @@ using namespace std;
 class PythonVehicle : public AV
 {
 public:
-	PythonVehicle(dataMap AVConfigData, dataMap AVRunData)
-	{
-		_configData = AVConfigData;
-		_runData = AVRunData;
-
-		_vehicleID = _configData["av_name"]->s_value();
-		_AVexeLocation = _configData["exe_location"]->s_value();
-		_port = Integer(_configData["av_movement_port"]);
-		_sensors = Array(_configData["sensors"]);
-
-		_bounds = Vector3(_runData["AV_bounds"]);
-		_location = Vector3(_runData["AV_location"]);
-		_orientation = Vector3(_runData["AV_orientation"]);
-		
-
-	}
+	PythonVehicle(dataMap AVConfigData, dataMap AVRunData);
 
 	void update(timestamp t, dataMap dataMap);
 

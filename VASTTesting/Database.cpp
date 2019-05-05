@@ -7,6 +7,22 @@ Definitions for EventTree functions pertaining specifically to the database crea
 #include "VC_HEADERS.h"
 #include <typeinfo>
 
+int EventTree::collisionSearch(void* eventTreePointer, int argc, char **argv, char **azColName)
+{
+	int i;
+	for (i = 0; i < argc; i++) {
+		if (string(azColName[i]).compare("run_ID") == 0)
+		{
+			EventTree* thisEventTree = ((EventTree*)eventTreePointer);
+			if (string(argv[i]).compare(thisEventTree->getRunID()))
+			{
+				thisEventTree->earlyStop();
+			}
+		}
+	}
+	return 0;
+};
+
 void EventTree::opendatabase(string fileName)
 {
 	// if fileName is empty, assign a default name
