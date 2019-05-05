@@ -203,6 +203,9 @@ private:
 	that component.  */
 	void publishUpdates();
 
+	/* Publishes the metric calculations at the end of the run.*/
+	void publishMetrics(string name, dataMap publishMap);
+
 	/*show the data in the database*/
 	void listenForCollision();
 

@@ -54,9 +54,13 @@ int main(int argc, char **argv1)
 
 		////////////////////////////////////////////////////////
 		// this needs to get sorted out; all that's left is to get maps from VAST object and give them to the generate functions, then register components
-		dataMap envMap = v->getEnvConfigs();
-		vector<dataMap> avMaps = v->getAVConfigs();
-		dataMap configMap = v->getConfig();
+		dataMap* getVASTConfig();
+		
+		storedMap* avConfig =  get_AVConfig(string name);
+		storedMap* get_AVRunData(string name);
+		storedMap* get_EnvConfig(string name);
+		storedMap* get_EnvRunData(string name);
+		
 
 		v->generateAV(avMaps[0], v->_AVs[0]->getDataMap());
 		v->generateEnvenvMap(envMap, v->_Env->getDataMap());

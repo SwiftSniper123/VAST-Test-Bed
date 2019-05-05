@@ -7,11 +7,13 @@ Definitions for EventTree functions pertaining specifically to the database crea
 #include "VC_HEADERS.h"
 #include <typeinfo>
 
+using namespace VASTConstants;
+
 int EventTree::collisionSearch(void* eventTreePointer, int argc, char **argv, char **azColName)
 {
 	int i;
 	for (i = 0; i < argc; i++) {
-		if (string(azColName[i]).compare("run_ID") == 0)
+		if (string(azColName[i]).compare(RUN_ID) == 0)
 		{
 			EventTree* thisEventTree = ((EventTree*)eventTreePointer);
 			if (string(argv[i]).compare(thisEventTree->getRunID()))
@@ -28,7 +30,7 @@ void EventTree::opendatabase(string fileName)
 	// if fileName is empty, assign a default name
 	if (fileName.empty())
 	{
-		fileName = "VASTdatabase.db";
+		fileName = DATABASE_FILENAME;
 	}
 	rc = sqlite3_open(fileName.c_str(), &db);
 
@@ -76,7 +78,7 @@ void EventTree::createtable(tableMap* componentsToData, const char* tableType)
 		}
 		else if (string(tableType).compare("Run_Data") == 0)
 		{
-			statement1 << "run_ID INTEGER NOT NULL, sim_Time_Step DOUBLE(10) NOT NULL PRIMARY KEY";
+			statement1 << RUN_ID << " INTEGER NOT NULL, sim_Time_Step DOUBLE(10) NOT NULL PRIMARY KEY";
 		}
 
 		for (auto componentDataMap = component->second.begin(); componentDataMap != component->second.end(); ++componentDataMap)
@@ -183,6 +185,87 @@ void EventTree::publishConfigTable(string tableName, tableMap configurations)
 	}
 }
 
+void EventTree::publishMetrics(string name, dataMap publishMap)
+{
+	stringstream statement1;
+	stringstream statement2;
+	stringstream statement3;
+
+	statement1 << RUN_ID << "," << METRICS << ",";
+	statement2 << getRunID() << "," << name << ",";
+
+	
+	for (auto dataMapIt = publishMap.begin(); dataMapIt != publishMap.end(); ++dataMapIt)
+	{
+		VType* data = dataMapIt->second;
+		if (data->isA(BOOLEAN_TYPE))
+		{
+			bool val = ((Boolean*)data)->value();
+			if (val)
+			{
+				/*print column name */
+				statement1 << statement1.str() << "," << dataMapIt->first;
+				/*print value*/
+				statement2 << statement2.str() << "," << "'true'";
+			}
+			else
+			{
+				/*print column name */
+				statement1 << statement1.str() << "," << dataMapIt->first;
+				/*print value*/
+				statement2 << statement2.str() << "," << "'false'";
+			}
+		}
+		else if (data->isA(VECTOR3_TYPE))
+		{
+			string name = dataMapIt->first;
+			Vector3* vector = new Vector3(data);
+			/*print column name with vector part suffix */
+			statement1 << statement1.str() << "," << name << "_x," << name << "_y," << name << "_z";
+			/*print value*/
+			statement2 << statement2.str() << "," << vector->x() << vector->y() << vector->z();
+		}
+		else if (data->isA(ARRAY_TYPE))
+		{
+			// splice all elements in the array into one column as a string
+			statement1 << statement1.str() << "," << dataMapIt->first;
+			/*print value*/
+			statement2 << statement2.str() << "," << "'" << dataMapIt->second->s_value() << "'";
+		}
+		else
+		{
+			/*print column name , example: SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE */
+			statement1 << statement1.str() << "," << dataMapIt->first;
+			/*print valuse, example: 1,1,0.02,1,0,0,0,90,'SUV',10,2*/
+			statement2 << statement2.str() << "," << dataMapIt->second->s_value();
+		}
+	}
+	/*print full sql statement*/
+	statement3 << " CREATE TABLE IF NOT EXISTS " << component->first->getName() << tableType
+		<< " (" << statement3.str() << "); " << "INSERT INTO Metrics (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
+
+
+	/*example of insert value sql statement
+	sql = "INSERT INTO"\
+		" RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
+		"VALUES (1,1,0.02,1,0,0,0,90,'SUV',10,2); " \
+		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
+		"VALUES (2,1,0.04,1,0,10,0,90,'SUV',10 ,2); "     \
+		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE)" \
+		"VALUES (3,1,0.06,1,0,20,0,0,'SUV',10,2);" \
+		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE)" \
+		"VALUES (4,1,0.08,1,0,30,0,0,'SUV',10,2);";*/
+
+		/* Execute SQL statement */
+	rc = sqlite3_exec(db, statement3.str().c_str(), callback, 0, &zErrMsg);
+
+	if (rc != SQLITE_OK) {
+		closedatabase();
+		throw DatabaseException(zErrMsg);
+		sqlite3_free(zErrMsg);
+	}
+}
+
 void EventTree::publishUpdates()
 {
 	stringstream statement1;
@@ -274,11 +357,11 @@ void EventTree::listenForCollision()
 		statement1 += (mapIterator->first)+" ";
 	}*/
 	/*print show data sql statement example : SELECT * FROM TABLE_NAME */
-	statement1 << "SELECT * from Collisions";
+	statement1 << "SELECT * from Collisions WHERE " << RUN_ID << " = '" << this->getRunID() << "';" ;
 	
 	/* Execute SQL statement */
 	//rc = sqlite3_exec(db, statement2.str().c_str(), callback, (void*)datas, &zErrMsg);
-	rc = sqlite3_exec(db, statement1.str().c_str(), collisionSearch, 0, &zErrMsg);
+	rc = sqlite3_exec(db, statement1.str().c_str(), collisionSearch, this, &zErrMsg);
 
 	if (rc != SQLITE_OK) {
 		closedatabase();

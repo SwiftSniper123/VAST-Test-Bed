@@ -29,6 +29,26 @@ VAST::~VAST()
 	//_SensorConfig->clear();
 }
 
+storedMap* VAST::get_AVConfig(string name)
+{
+
+}
+
+storedMap* VAST::get_AVRunData(string name)
+{
+
+}
+
+storedMap* VAST::get_EnvConfig(string name)
+{
+
+}
+
+storedMap* VAST::get_EnvRunData(string name)
+{
+
+}
+
 vector<AV*>* VAST::getAVs()
 {
 	return _AVs;
