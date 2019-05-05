@@ -1,33 +1,15 @@
 #pragma once
 #include "TraCIAPI.h"
-#include "Environment.h"
-#include "AV.h"
+#include "VC_HEADERS.h"
 #include <Windows.h>
 #include <cstdlib>
 
 class SumoEnvironment : public Environment
 {
 public:
-	SumoEnvironment(dataMap envConfigData, dataMap envRunData)
-	{
-		_configData = envConfigData;
-		_runData = envRunData;
+	SumoEnvironment(dataMap envConfigData, dataMap envRunData);
 
-		_fileLocation = _configData["config_location"]->s_value();
-		_SUMOexeLocation = _configData["exe_location"]->s_value();
-		_port = Integer(_configData["env_obstacle_port"]);
-		_bounds = Vector3(_configData["Env_bounds"]);
-	}
-
-	SumoEnvironment(string configFileLocation, string SUMOexeLocation, Integer port, Vector3 bounds)
-	{
-		_fileLocation = configFileLocation;
-		//random = isRandom;
-		//_AVid = AVid;
-		_SUMOexeLocation = SUMOexeLocation;
-		_port = port;
-		_bounds = bounds;
-	}
+	SumoEnvironment(string configFileLocation, string SUMOexeLocation, Integer port, Vector3 bounds);
 
 	/* Inherited Function from VComponent.  Called by a component
 	external to the Obstacle in order to update data important to the Obstacle.

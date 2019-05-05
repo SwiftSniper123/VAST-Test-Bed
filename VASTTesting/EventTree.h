@@ -6,7 +6,6 @@
 #include "sqlite3.h"
 #include <exception>
 
-
 using namespace std::this_thread;     // sleep_for, sleep_until
 using std::chrono::milliseconds;
 using std::chrono::microseconds;
@@ -208,22 +207,7 @@ private:
 	void listenForCollision();
 
 	/*database callback function checking collision table*/
-	static int collisionSearch(void* eventTreePointer, int argc, char **argv, char **azColName)
-	{
-		int i;
-		for (i = 0; i < argc; i++) {
-			if (string(azColName[i]).compare("run_ID") == 0)
-			{
-				EventTree* thisEventTree = ((EventTree*)eventTreePointer);
-				if (string(argv[i]).compare(thisEventTree->getRunID()))
-				{
-					thisEventTree->earlyStop();
-				}
-			}
-		}
-		printf("\n");
-		return 0;
-	};
+	static int collisionSearch(void* eventTreePointer, int argc, char **argv, char **azColName);
 
 	/*empty callback function to do nothing*/
 	static int callback(void* eventTreePointer, int argc, char **argv, char **azColName)

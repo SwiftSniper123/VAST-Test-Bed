@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
+#include "VC_HEADERS.h"
 #include "ProximitySensor.h"
 
+using namespace VASTConstants;
 /*Default true test*/
 TEST(DefaultTest, TrueInProximitySensor)
 {
@@ -18,9 +20,8 @@ TEST(Test_ProximitySensor, ConstructorAndDestructor)
 	AV* av = new AV();
 	dataMap sensorConfig;
 	
-	sensorConfig.emplace(SENSOR_LOC, new Vector3(0, 0, 0));
-	sensorConfig.emplace(SENSOR_QUAD, new Integer(1));
-	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
+	sensorConfig.emplace(AV_LOCATION, new Vector3(0, 0, 0));
+	
 	sensorConfig.emplace(CLOSEST_ID, new String());
 	sensorConfig.emplace(CLOSEST_POS, new Vector3());
 	sensorConfig.emplace(CLOSEST_DIST, new Double());
@@ -43,9 +44,7 @@ TEST(Test_ProximitySensor, UpdateVsAVUpdate)
 	AV* av = new AV();
 	dataMap sensorConfig;
 	Vector3* psLoc = new Vector3(0, 0, 0);
-	sensorConfig.emplace(SENSOR_LOC, psLoc);
-	sensorConfig.emplace(SENSOR_QUAD, new Integer(4)); // pos x, neg y
-	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
+	sensorConfig.emplace(AV_LOCATION, psLoc);	
 	ProximitySensor* ps = new ProximitySensor(av, sensorConfig);
 
 	// test that nothing is set on these pieces of data
@@ -55,7 +54,6 @@ TEST(Test_ProximitySensor, UpdateVsAVUpdate)
 
 	// create update information
 	dataMap updateMap;
-	updateMap.emplace(SENSOR_QUAD, new Integer(1));
 	updateMap.emplace(OBSTACLE_IDS, new Array("o1,o2,o3"));
 	Vector3* pos_o1 = new Vector3(2.0, -1.0, 0.0);
 	Vector3* pos_o2 = new Vector3(4.0, -111.0, 0.0);
@@ -155,9 +153,7 @@ TEST(Test_ProximitySensor, ReportToAV)
 	
 	// set up PS
 	dataMap sensorConfig;
-	sensorConfig.emplace(SENSOR_LOC, new Vector3(0, 0, 0));
-	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
-	sensorConfig.emplace(SENSOR_QUAD, new Integer(4)); // pos x, neg y
+	sensorConfig.emplace(AV_LOCATION, new Vector3(0, 0, 0));
 	ProximitySensor* ps = new ProximitySensor(av, sensorConfig);
 	
 	// initial AV values for closest ID and Distance are nullptr
@@ -188,14 +184,11 @@ TEST(Test_ProximitySensor, StopReplication)
 	AV* av = new AV();
 	dataMap sensorConfig;
 	Vector3* psLoc = new Vector3(0, 0, 0);
-	sensorConfig.emplace(SENSOR_LOC, psLoc);
-	sensorConfig.emplace(SENSOR_QUAD, new Integer(4)); // pos x, neg y
-	sensorConfig.emplace(SENSOR_DEPTH, new Double(50));
+	sensorConfig.emplace(AV_LOCATION, psLoc);
 	ProximitySensor* ps = new ProximitySensor(av, sensorConfig);
 
 	// create update information
 	dataMap updateMap;
-	updateMap.emplace(SENSOR_QUAD, new Integer(1));
 	updateMap.emplace(OBSTACLE_IDS, new Array("o1,o2,o3"));
 	Vector3* pos_o1 = new Vector3(2.0, -1.0, 0.0);
 	Vector3* pos_o2 = new Vector3(4.0, -111.0, 0.0);
@@ -221,9 +214,7 @@ TEST(Test_ProximitySensor, StopReplication)
 	// and did not set back other persistent data
 	EXPECT_TRUE(!ps->getDataMap().empty());
 	EXPECT_TRUE(ps->getDataMap().size() == sensorConfig.size());
-	EXPECT_EQ(sensorConfig.at(SENSOR_LOC)->s_value(), psLoc->s_value());
-	EXPECT_EQ(sensorConfig.at(SENSOR_QUAD)->s_value(), "4"); // pos x, neg y
-	EXPECT_EQ(sensorConfig.at(SENSOR_DEPTH)->s_value(), "50");
+	EXPECT_EQ(sensorConfig.at(AV_LOCATION)->s_value(), psLoc->s_value());
 
 	// cleanup
 	positions.clear();

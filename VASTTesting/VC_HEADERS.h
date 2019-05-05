@@ -5,3 +5,4 @@
 #include "Obstacle.h"
 #include "ScenarioMetric.h"
 #include "EventTree.h"
+#include "VASTConstants.h"

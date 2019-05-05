@@ -1,15 +1,6 @@
 #pragma once
 #include "VComponent.h"
 
-static const string ACCELERATION = "Acceleration";
-static const string MIN_ACCELERATION = "MinAcceleration";
-static const string AVG_ACCELERATION = "AvgAcceleration";
-static const string MAX_ACCELERATION = "MaxAcceleration";
-static const string AVG_DECELERATION = "AvgDeceleration";
-static const string AVG_SPEED = "AvgSpeed";
-static const string SPEED = "Speed";
-static const string POSITION = "Position";
-
 using std::string;
 
 /*base class for all metrics in VAST*/

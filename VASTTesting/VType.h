@@ -44,7 +44,7 @@ public:
 	{
 		return stringValue;
 	};
-
+	
 	virtual string getSQLite3Text() { return ""; };
 protected:
 	string stringValue;
@@ -125,7 +125,7 @@ public:
 	/* Returns the length of the String value*/
 	int length()
 	{
-		return val.length(); //0 strlen(val.c_str());
+		return int(val.length()); //0 strlen(val.c_str());
 	};
 
 	/*Concatenation with + string*/
@@ -133,7 +133,7 @@ public:
 	{
 		stringstream ss;
 		ss << val << appended;
-		if (ss.gcount() < val.max_size())
+		if (unsigned int(ss.gcount()) < unsigned int(val.max_size()))
 		{
 			val = ss.str();
 			VType::stringValue = val;
@@ -144,14 +144,14 @@ public:
 			// chop off only what will fit
 			try
 			{
-				int amtToKeep = appended.length() - ss.gcount() - val.max_size();
+				size_t amtToKeep = appended.length() - ss.gcount() - val.max_size();
 				if (amtToKeep < 0)
 				{
 					throw amtToKeep;
 				}
 				ss << val << appended.substr(0, amtToKeep); // chop off 
 			}
-			catch (int a)
+			catch (int amtToKeep)
 			{
 				cerr << "String object cannot hold any more of concatenated value: {" 
 					<< appended << "}" << endl;
@@ -181,7 +181,7 @@ public:
 			try
 			{
 				// otherwise chop off only what will fit
-				int amtToKeep = appendedVS.value().length() - ss.gcount() - val.max_size();
+				unsigned int amtToKeep = unsigned int(appendedVS.value().length()) - unsigned int(ss.gcount()) - unsigned int(val.max_size());
 				ss.str("");
 				if (amtToKeep < 0)
 				{
@@ -189,7 +189,7 @@ public:
 				}
 				ss << val << appendedVS.value().substr(0, amtToKeep);
 			}
-			catch (int a)
+			catch (int amtToKeep)
 			{
 				cerr << "String object cannot hold any more of concatenated value: {"
 					<< appendedVS.value() << "}" << endl;
@@ -208,7 +208,7 @@ public:
 		stringstream ss;
 		ss << val << appended;
 		// if what is in the buffer is less than string type's maximum size
-		if (ss.gcount() < val.max_size())
+		if (unsigned int(ss.gcount()) < unsigned int(val.max_size()))
 		{
 			// reset the values for this object
 			val = ss.str();
@@ -224,14 +224,14 @@ public:
 			// otherwise chop off only what will fit
 			try
 			{
-				int amtToKeep = number.length() - ss.gcount() - val.max_size();
+				int amtToKeep = unsigned int(number.length()) - unsigned int(ss.gcount()) - unsigned int(val.max_size());
 				if (amtToKeep < 0)
 				{
 					throw amtToKeep;
 				}
 				ss << val << number.substr(0, amtToKeep); // chop off 
 			}
-			catch (int a)
+			catch (int amtToKeep)
 			{
 				cerr << "String object cannot hold any more of concatenated integer: {"
 					<< number << "}" << endl;
@@ -250,7 +250,7 @@ public:
 		stringstream ss;
 		ss << val << appended;
 		// if what is in the buffer is less than string type's maximum size
-		if (ss.gcount() < val.max_size())
+		if (unsigned int(ss.gcount()) < unsigned int(val.max_size()))
 		{
 			// reset the values for this object
 			val = ss.str();
@@ -266,14 +266,14 @@ public:
 			try
 			{
 				// otherwise chop off only what will fit
-				int amtToKeep = number.length() - ss.gcount() - val.max_size();
+				unsigned int amtToKeep = unsigned int(number.length()) - unsigned int(ss.gcount()) - unsigned int(val.max_size());
 				if (amtToKeep < 0)
 				{
 					throw amtToKeep;
 				}
 				ss << val << number.substr(0, amtToKeep); // chop off 
 			}
-			catch (int a)
+			catch (int amtToKeep)
 			{
 				cerr << "String object cannot hold any more of concatenated double: {"
 					<< number << "}" << endl;
@@ -486,7 +486,7 @@ public:
 
 	/* The cumulative subtraction and assignment operator overloadm,
 	companion to the operator overload for - below.*/
-	Double Double::operator -=(Double& otherDouble)
+	Double operator -=(Double& otherDouble)
 	{
 		val -= otherDouble.value();
 		return Double(val);
@@ -504,7 +504,15 @@ public:
 	Can divide a double with a Double or vice versa.*/
 	Double operator/(const double rhs)
 	{
-		val / rhs;
+		double result = val / rhs;
+		return Double(result);
+	};
+
+	/* The cumulative division  operator overload,
+	Can divide a double with a Double or vice versa.*/
+	Double operator/=(const double rhs)
+	{
+		val /= rhs;
 		return Double(val);
 	};
 
@@ -733,7 +741,7 @@ public:
 		{
 			this->type = i.getType();
 			this->stringValue = i.s_value();
-			this->val - i.val;
+			this->val -= i.val;
 		}
 		return this;     // return the object  
 	}
@@ -833,7 +841,7 @@ public:
 		catch (char s)
 		{
 			cerr << "Boolean cannot be constructed from: {"
-				<< obj->s_value() << "}" << endl;
+				<< obj->s_value() << "}" << s << endl;
 		}
 		VType::type = BOOLEAN_TYPE;
 	};
@@ -953,14 +961,14 @@ inline bool operator||(const bool lhs, Boolean& rhs)
 	return (lhs || rhs.value());
 }
 
-/* Compares a string and String value.  Returns true if identical.*/
-inline bool operator==(const int lhs, Boolean& rhs)
+/* Compares a bool and Boolean value.  Returns true if identical.*/
+inline bool operator==(const bool lhs, Boolean& rhs)
 {
 	return lhs == rhs.value();
 }
 
-/* Compares a string and String value.  Returns true if different.*/
-inline bool operator!=(const int lhs, Boolean& rhs)
+/* Compares a bool and Boolean value.  Returns true if different.*/
+inline bool operator!=(const bool lhs, Boolean& rhs)
 {
 	return lhs != rhs.value();
 }
@@ -981,8 +989,8 @@ private:
 	void parseVector(string parsable)
 	{
 		try {
-			int commaCount = 0;
-			int len = parsable.length();
+			short commaCount = 0;
+			short len = short(parsable.length());
 			for (int j = 0; j < len; j++)
 			{
 				if (parsable[j] == ',')
@@ -1178,9 +1186,8 @@ private:
 	VTypes.  Handles size determination*/
 	void parseAndStow(string parsable)
 	{
-		int commaCount = 0;
-		int len = parsable.length();
-		string** stowables;
+		short commaCount = 0;
+		short len = short(parsable.length());
 		for (int j = 0; j < len; j++)
 		{
 			if (parsable[j] == ',')
@@ -1395,7 +1402,7 @@ public:
 			}
 			else
 			{
-				throw 'e';
+				throw '!';
 			}
 		}
 		catch (int t)
@@ -1404,7 +1411,7 @@ public:
 		}
 		catch (char s)
 		{
-			cerr << "The array passed to this Array VType is empty." << endl;
+			cerr << "The array passed to this Array VType is empty" << s << endl;
 		}
 		stowType = _stowtype;
 		VType::stringValue = newStringValue.str();
@@ -1417,7 +1424,7 @@ public:
 		VType::type = ARRAY_TYPE;
 		stringstream newStringValue;
 		string _stowtype = "";
-		size = objs.size();
+		size = int(objs.size());
 		// VType slots with undefined VType objects in them
 		stowArray = new VType*[size];
 		try
@@ -1457,7 +1464,7 @@ public:
 			}
 			else
 			{
-				throw 'e';
+				throw '!';
 			}
 		}
 		catch (int t)
@@ -1466,7 +1473,7 @@ public:
 		}
 		catch (char s)
 		{
-			cerr << "The vector passed to this Array VType is empty." << endl;
+			cerr << "The vector passed to this Array VType is empty" << s << endl;
 		}
 		stowType = _stowtype;
 		VType::stringValue = newStringValue.str();
@@ -1773,6 +1780,7 @@ public:
 			{
 				this->stowArray[i] = a->stowArray[i];
 			}
+			delete a;
 		}
 		return this;     // return the object  
 	}

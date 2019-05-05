@@ -1,5 +1,27 @@
-#include "VC_HEADERS.h"
 #include "SumoEnvironment.h"
+
+using namespace VASTConstants;
+
+SumoEnvironment::SumoEnvironment(dataMap envConfigData, dataMap envRunData)
+{
+	_configData = envConfigData;
+	_runData = envRunData;
+
+	_fileLocation = _configData[CONFIG_LOCATION]->s_value();
+	_SUMOexeLocation = _configData[EXE_LOCATION]->s_value();
+	_port = Integer(_configData[ENV_OBSTACLE_PORT]);
+	_bounds = Vector3(_configData[ENV_BOUNDS]);
+}
+
+SumoEnvironment::SumoEnvironment(string configFileLocation, string SUMOexeLocation, Integer port, Vector3 bounds)
+{
+	_fileLocation = configFileLocation;
+	//random = isRandom;
+	//_AVid = AVid;
+	_SUMOexeLocation = SUMOexeLocation;
+	_port = port;
+	_bounds = bounds;
+}
 
 LPWSTR ConvertString(const std::string& instr)
 {
@@ -9,7 +31,7 @@ LPWSTR ConvertString(const std::string& instr)
 	if (bufferlen == 0)
 	{
 		// Something went wrong. Perhaps, check GetLastError() and log.
-		return 0;
+		throw InvalidArgumentException("Error converting command arguments.");
 	}
 
 	// Allocate new LPWSTR - must deallocate it later
@@ -28,8 +50,8 @@ LPWSTR ConvertString(const std::string& instr)
 
 void SumoEnvironment::update(timestamp t, dataMap dataMap)
 {
-	currentData["Duration"] = dataMap["Duration"];
-	currentData["TargetVelocity"] = dataMap["TargetVelocity"];
+	currentData[DURATION] = dataMap[DURATION];
+	currentData[TARGET_VELOCITY] = dataMap[TARGET_VELOCITY];
 
 	currentData = callUpdateFunctions();
 
@@ -70,8 +92,8 @@ void SumoEnvironment::openEnvironment()
 	Sleep(5000);
 
 	traci.connect("localhost", 1337);
-	traci.close();
-	std::cout << "TEST";
+	traci.close(); // why are we closing here??
+	std::cout << "Opening connection to SUMO.";
 	this->getEventTree()->start();
 
 	return;
@@ -79,56 +101,32 @@ void SumoEnvironment::openEnvironment()
 
 void SumoEnvironment::getMapInformation()
 {
-	int IDcount = traci.vehicle.getIDCount();
+	//int IDcount = traci.vehicle.getIDCount();
 
 	vector<string> IDlist = traci.vehicle.getIDList();
+	vector<VType*> vehicleIDs;
+	vector<VType*> positions;
+	vector<VType*> velocities;
+	vector<VType*> accelerations;
 
-	String vehicleID[100];
-	Vector3 position[100];
-	Double velocity[100];
-	Double acceleration;
-
-	int i = 0;
-	for (vector<string>::iterator av = _AVid.begin(); av != _AVid.end(); av++)
+	
+	// iterate through the list of SUMO vehicle ids
+	for (int i = 0; i < IDlist.size(); i++)
 	{
-		for (vector<string>::iterator it = IDlist.begin(); it != IDlist.end(); it++)
-		{
-			//checks if the ID is that of an Autonomous vehicle and if so get the information about that
-
-			if (*it == *av)
-			{
-				vehicleID[i].value(*it);
-				acceleration = traci.vehicle.getAcceleration(*it);
-
-				velocity[i].value(traci.vehicle.getSpeed(*it));
-				libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
-
-				position[i].value(XYZ.x, XYZ.y, XYZ.z);
-			}
-
-			//will get the information needed for other vehicles in the system
-			else
-			{
-				vehicleID[i].value(*it);
-				velocity[i].value(traci.vehicle.getSpeed(*it));
-				libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(*it));
-
-				position[i].value(XYZ.x, XYZ.y, XYZ.z);
-			}
-			i++;
-		}
+		string veh = IDlist[i];
+		vehicleIDs.push_back(new String(veh)); // place the vehicle id in the array
+		// query SUMO via traci methods and compile datamap data
+		libsumo::TraCIPosition XYZ(traci.vehicle.getPosition(veh)); 
+		positions.push_back(new Vector3(XYZ.x, XYZ.y, XYZ.z));
+		velocities.push_back(new Double(traci.vehicle.getSpeed(veh)));
+		accelerations.push_back(new Double(traci.vehicle.getAcceleration(veh))); 
 	}
-
-	Array id(vehicleID);
-	Array speed(vehicleID);
-	Array pos(vehicleID);
-
-	currentData["VehicleID"] = &id;
-	currentData["Speed"] = &speed;
-	currentData["Acceleration"] = &acceleration;
-	currentData["Position"] = &pos;
-
-	return;
+	
+	// put data in the map under these rundata keys
+	currentData[OBSTACLE_IDS] = new Array(vehicleIDs);
+	currentData[OBSTACLE_POS] = new Array(positions);;
+	currentData[OBSTACLE_VEL] = new Array(velocities);;
+	currentData[OBSTACLE_ACC] = new Array(accelerations);;
 }
 
 void SumoEnvironment::changeAVCommand()
@@ -146,11 +144,10 @@ void SumoEnvironment::changeAVCommand()
 		if (currentData["AVLogic"] == &one)
 		{
 			traci.vehicle.slowDown(*av, speed, duration);
-			return;
 		}
 		if (currentData["AVLogic"] == &zero)
 		{
-			return;
+			traci.vehicle.setSpeed(*av, speed * 2);
 		}
 	}
 }

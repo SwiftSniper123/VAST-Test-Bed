@@ -31,7 +31,7 @@ TEST(Test_Parser, Parse)
 
 	//ASSERT_NO_FATAL_FAILURE(p->_AV.at(0))
 
-	//VType test = p->_EnvMap.find("env_obstacle_port");
+	//VType test = p->_EnvRun_Data.find("env_obstacle_port");
 	//std::cout << p->env->_env_obstacle_port.value();
 	//ASSERT_TRUE(p->env->_env_obstacle_port == Integer);
 }

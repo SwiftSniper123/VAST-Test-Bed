@@ -1,5 +1,5 @@
 #pragma once
-#include "VC_HEADERS.h"
+#include "Sensor.h"
 #include <cmath>
 
 using std::pair;
@@ -7,15 +7,6 @@ typedef std::invalid_argument InvalidArgumentException;
 typedef std::domain_error UnpredictableBehaviorException;
 typedef pair<String*, Vector3*> locatedObstacle;
 typedef Double distance;
-
-static const string SENSOR_LOC = "sensor_location";
-static const string SENSOR_QUAD = "sensor_viewquadrant";
-static const string SENSOR_DEPTH = "sensor_viewdepth";
-static const string OBSTACLE_IDS = "obstacle_ids";
-static const string OBSTACLE_POS = "obstacle_pos";
-static const string CLOSEST_ID = "closest_obs";
-static const string CLOSEST_POS = "closest_position";
-static const string CLOSEST_DIST = "closest_distance";
 
 /* Senses objects in the environment based on its orientation (i.e. Quad 1 is positive x and positive y),
 as well as it can only sense out to a certain depth.  Obstacles outside that depth are not added to the 
@@ -29,6 +20,14 @@ private:
 	dataMap _currentData;
 
 	timestamp _lastUpdateTime = -1.0;
+
+	string SENSOR_LOC;
+
+	// hard-coded for proof of concept 5/3/2019
+	int SENSOR_QUAD;
+
+	// hard-coded for proof of concept 5/3/2019
+	double SENSOR_DEPTH;
 
 	locatedObstacle* _lastClosestObstacle = nullptr;
 

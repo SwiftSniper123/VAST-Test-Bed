@@ -1,7 +1,6 @@
 #include "VAST.h"
 
-static const string OUTPUT_FILE = "output_file_location";
-static const string VIZ = "viz_option";
+using namespace VASTConstants;
 
 VAST::VAST() {}
 
@@ -10,25 +9,44 @@ VAST::VAST(string file, string dbName)
 	_file = file;
 	if (dbName.empty())
 	{
-		_dbName = "VASTDatabase.db";
+		_dbName = DATABASE_FILENAME;
 	}
 	else
 		_dbName = dbName;
 }
 
-vector<dataMap> VAST::getAVConfigs()
+VAST::~VAST()
 {
-	return _AVConfigs;
+	delete _EventTree;
+	_AVs->clear();
+	_Env->clear();
+
+	_all_AVConfigs->clear();
+	_all_AVRunData->clear();
+	_all_EnvConfigs->clear();
+	_all_EnvRunData->clear();
+	_VASTConfigMap->clear();
+	//_SensorConfig->clear();
 }
 
-dataMap VAST::getEnvConfig()
+vector<AV*>* VAST::getAVs()
 {
-	return _EnvConfig;
+	return _AVs;
 }
 
-dataMap VAST::getConfig()
+vector<Environment*>* VAST::getEnvs()
 {
-	return _ConfigMap;
+	return _Env;
+}
+
+dataMap* VAST::getVASTConfig()
+{
+	return _VASTConfigMap;
+}
+
+EventTree* VAST::getEventTree()
+{
+	return _EventTree;
 }
 
 void VAST::Parse()
@@ -47,227 +65,258 @@ void VAST::Parse()
 		std::cout << "Invalid File. Ending.";
 		return;
 	}
-	//printTree(pt1, 0);
-
-	//std::cout << "\n\n" << pt1.get<string>("VAST.module.map.pair.key");
-	
-	//std::cout << pt1.size;
-	//std::cout << pt1.get_child("VAST.module");
-
-	BOOST_FOREACH(ptree::value_type const& node, pt1.get_child("VAST"))
+	try 
 	{
-		//cerr << node.first.data. << "\n";
-		boost::property_tree::ptree subtree = node.second;
+		//printTree(pt1, 0);
 
-		if (node.first == "module")
+		//std::cout << "\n\n" << pt1.get<string>("VAST.module.map.pair.key");
+
+		//std::cout << pt1.size;
+		//std::cout << pt1.get_child("VAST.module");
+
+		BOOST_FOREACH(ptree::value_type const& node, pt1.get_child(VAST_MODULE))
 		{
-			dataMap _AVConfig;
-			_currentModule = subtree.get<string>("<xmlattr>.module");
-			//std::cout << "module: " << subtree.get<string>("<xmlattr>.module") << "\n";
+			//cerr << node.first.data. << "\n";
+			boost::property_tree::ptree subtree = node.second;
 
-			BOOST_FOREACH(boost::property_tree::ptree::value_type const& map, subtree.get_child("map"))
+			if (node.first == MODULE)
 			{
-				boost::property_tree::ptree subMap = map.second;
+				dataMap _AVConfig;
+				dataMap _AVRun_Data;
+				dataMap _EnvConfig;
+				dataMap _EnvRun_Data;
+				_currentModule = subtree.get<string>("<xmlattr>.module");
+				//std::cout << "module: " << subtree.get<string>("<xmlattr>.module") << "\n";
 
-				BOOST_FOREACH(boost::property_tree::ptree::value_type const& pair, subMap.get_child(""))
+				BOOST_FOREACH(boost::property_tree::ptree::value_type const& map, subtree.get_child(MAP))
 				{
-					//std::cout << "pair: " << pair.first << "\n";
-					boost::property_tree::ptree key = pair.second;
+					boost::property_tree::ptree subMap = map.second;
 
-					string label = pair.first;
-					if (label != "<xmlattr>")
+					BOOST_FOREACH(boost::property_tree::ptree::value_type const& pair, subMap.get_child(""))
 					{
-						if (label == "key")
-						{
-							//std::cout << "Key: " << key.get<string>("name") << "\n";
-							_currentKey = key.get<string>("name");
-						}
-						
-						else if (label == "value")
-						{
-							_currentValue = key.get<string>("name");
-							//std::cout << "Value: " << _currentValue << "\n";
+						//std::cout << "pair: " << pair.first << "\n";
+						boost::property_tree::ptree key = pair.second;
 
-							if (_currentValue != "")
+						string label = pair.first;
+						if (label != "<xmlattr>")
+						{
+							if (label == KEY)
 							{
-								if (_currentModule == "VAST")
-								{
-									if (_currentKey == "output_file_location")
-									{
-										String *v = new String(key.get<string>("name"));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "viz_option")
-									{
-										Boolean *v = new Boolean(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "time_ratio")
-									{
-										Integer *v = new Integer(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "time_step")
-									{
-										Double *v = new Double(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "num_replications")
-									{
-										Integer *v = new Integer(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "seeds")
-									{
-										Array *v = new Array(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "max_run_time")
-									{
-										Double *v = new Double(new VType(key.get<string>("name")));
-										_ConfigMap.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "metrics")
-									{
-										Array *v = new Array(new VType(key.get<string>("name")));
-										_ConfigMap.emplace(_currentKey, v);
-									}
-								}
-								
-								if (_currentModule == "Environment")
-								{
-									if (_currentKey == "env_obstacle_port")
-									{
-										Integer *v = new Integer(new VType(key.get<string>("name")));
-										_EnvConfig.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "exe_location")
-									{
-										String *v = new String(new VType(key.get<string>("name")));
-										_EnvConfig.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "Env_bounds")
-									{
-										Vector3 *v = new Vector3(new VType(key.get<string>("name")));
-										_EnvConfig.insert(namedData(_currentKey, v));
-									}
-									else if (_currentKey == "config_location")
-									{
-										String *v = new String(new VType(key.get<string>("name")));
-										_EnvConfig.insert(namedData(_currentKey, v));
-									}
-									else
-									{
-										size_t pos = _currentValue.find(_delim);
-										size_t endPos = _currentValue.find(_delim) + 2;
-										string _valCopy = _currentValue;
-										_type = _valCopy.substr(0, pos);
-										_currentValue = _currentValue.substr(endPos);
+								//std::cout << "Key: " << key.get<string>("name") << "\n";
+								_currentKey = key.get<string>(NAME);
+							}
 
-										fillMap(_currentModule, _type, _currentKey, _currentValue);
-									}
-								}
+							else if (label == VALUE)
+							{
+								_currentValue = key.get<string>(NAME);
+								//std::cout << "Value: " << _currentValue << "\n";
 
-								else if (_currentModule == "AV")
+								if (_currentValue != "")
 								{
-									if (_currentKey == "av_name")
+									if (_currentModule == VAST_MODULE)
 									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											String *v = new String(new VType(val));
-											_AVConfig.insert(namedData(_currentKey, v));
+										if (_currentKey == OUTPUT_FILE)
+										{
+											String *v = new String(key.get<string>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == VIZ)
+										{
+											Boolean *v = new Boolean(key.get<bool>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == TIME_RATIO)
+										{
+											Integer *v = new Integer(key.get<int>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == TIME_STEP)
+										{
+											Double *v = new Double(key.get<double>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == NUM_REPLCATION)
+										{
+											Integer *v = new Integer(key.get<int>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == SEEDS)
+										{
+											Array *v = new Array(key.get<string>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == MAX_RUN_TIME)
+										{
+											Double *v = new Double(key.get<double>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == METRICS)
+										{
+											Array *v = new Array(key.get<string>(NAME));
+											_VASTConfigMap->insert(namedData(_currentKey, v));
 										}
 									}
-									else if (_currentKey == "av_movement_port")
-									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											Integer *v = new Integer(new VType(val));
-											_AVConfig.insert(namedData(_currentKey, v));
-										}
-									}
-									else if (_currentKey == "exe_location")
-									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											String *v = new String(new VType(val));
-											_AVConfig.insert(namedData(_currentKey, v));
-										}
-									}
-									else if (_currentKey == "AV_location")
-									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											String *v = new String(new VType(val));
-											_AVMap.insert(namedData(_currentKey, v));
-										}
-									}
-									else if (_currentKey == "AV_orientation")
-									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											Vector3 *v = new Vector3(new VType(val));
-											_AVMap.insert(namedData(_currentKey, v));
-										}
-									}
-									else if (_currentKey == "AV_bounds")
-									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											Vector3 *v = new Vector3(new VType(val));
-											_AVMap.insert(namedData(_currentKey, v));
-										}
-									}
-									else if (_currentKey == "sensors")
-									{
-										string val = key.get<string>("name");
-										if (!val.empty()) {
-											Array *v = new Array(new VType(val));
-											_AVConfig.insert(namedData(_currentKey, v));
-										}
-									}
-									else
-									{
-										size_t pos = _currentValue.find(_delim);
-										size_t endPos = _currentValue.find(_delim) + 2;
-										string _valCopy = _currentValue;
-										_type = _valCopy.substr(0, pos);
-										_currentValue = _currentValue.substr(endPos);
 
-										fillMap(_currentModule, _type, _currentKey, _currentValue);
+									if (_currentModule == ENVIRONMENT_MODULE)
+									{
+										if (_currentKey == ENV_OBSTACLE_PORT)
+										{
+											Integer *v = new Integer(key.get<int>(NAME));
+											_EnvConfig.insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == EXE_LOCATION)
+										{
+											String *v = new String(key.get<string>(NAME));
+											_EnvConfig.insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == ENV_BOUNDS)
+										{
+											Vector3 *v = new Vector3(key.get<string>(NAME));
+											_EnvConfig.insert(namedData(_currentKey, v));
+										}
+										else if (_currentKey == CONFIG_LOCATION)
+										{
+											String *v = new String(key.get<string>(NAME));
+											_EnvConfig.insert(namedData(_currentKey, v));
+										}
+										else
+										{
+											// gathering run data fields
+											size_t pos = _currentValue.find(_delim);
+											size_t endPos = _currentValue.find(_delim) + 2;
+											string _valCopy = _currentValue;
+											_type = _valCopy.substr(0, pos);
+											_currentValue = _currentValue.substr(endPos);
+
+											fillMap(_currentModule, _EnvRun_Data, _type, _currentKey, _currentValue);
+										}
+									}
+
+									else if (_currentModule == AV_MODULE)
+									{
+										if (_currentKey == AV_NAME)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												String *v = new String(val);
+												_AVConfig.insert(namedData(_currentKey, v));												
+											}
+										}
+										else if (_currentKey == AV_MOVEMENT_PORT)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												Integer *v = new Integer(new VType(val));
+												_AVConfig.insert(namedData(_currentKey, v));
+											}
+										}
+										else if (_currentKey == AV_EXE_LOCATION)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												String *v = new String(new VType(val));
+												_AVConfig.insert(namedData(_currentKey, v));
+											}
+										}
+										else if (_currentKey == AV_LOCATION)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												String *v = new String(new VType(val));
+												_AVRun_Data.insert(namedData(_currentKey, v));
+											}
+										}
+										else if (_currentKey == AV_ORIENTATION)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												Vector3 *v = new Vector3(new VType(val));
+												_AVRun_Data.insert(namedData(_currentKey, v));
+											}
+										}
+										else if (_currentKey == AV_BOUNDS)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												Vector3 *v = new Vector3(new VType(val));
+												_AVRun_Data.insert(namedData(_currentKey, v));
+											}
+										}
+										else if (_currentKey == SENSORS)
+										{
+											string val = key.get<string>(NAME);
+											if (!val.empty()) {
+												Array *v = new Array(new VType(val));
+												_AVConfig.insert(namedData(_currentKey, v));
+											}
+										}
+										else
+										{
+											size_t pos = _currentValue.find(_delim);
+											size_t endPos = _currentValue.find(_delim) + 2;
+											string _valCopy = _currentValue;
+											_type = _valCopy.substr(0, pos);
+											_currentValue = _currentValue.substr(endPos);
+
+											fillMap(_currentModule, _AVRun_Data, _type, _currentKey, _currentValue);
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-			}
-			//std::cout << std::endl;
+				//std::cout << std::endl;
 
-			if (_currentModule == "AV")
-			{
-				string name = _AVConfig.at("av_name")->s_value();
-				_AVConfigs.push_back(_AVConfig);
-				AV *av = new AV(name, _AVMap);
-				_AVs.push_back(av);
-			}
-			else if (_currentModule == "Environment")
-			{
-				_Env = new Environment("Environment", _EnvMap);
-			}
-			else if (_currentModule == "VAST")
-			{
-				if (Integer(_ConfigMap["num_replications"]).value() > 1)
+				// instantiation and other aggregate data joining
+				if (_currentModule == AV_MODULE)
 				{
-					_EventTree = new EventTree(Double(_ConfigMap["time_step"]).value(), Integer(Double(_ConfigMap["time_ratio"]).value() * 100).value(), Double(_ConfigMap["max_run_time"]).value(), Integer(_ConfigMap["num_replications"]).value(), _dbName);
+					string name = _AVConfig.at(AV_NAME)->s_value();
+
+					// add the AV name to the VAST Config list of AV IDs used by other components like ScenarioMetric
+					if (_VASTConfigMap->find(AV_LIST) != _VASTConfigMap->end() &&
+						_VASTConfigMap->at(AV_LIST)->isA(ARRAY_TYPE))
+					{
+						Array* av_array = ((Array*)_VASTConfigMap->at(AV_LIST));
+						av_array->add(new String(name));
+					}
+
+					// add the AV name to the AV Run data list of AV IDs used by other components like ScenarioMetric
+					if (_AVRun_Data.find(AV_LIST) != _AVRun_Data.end() &&
+						_AVRun_Data[AV_LIST]->isA(ARRAY_TYPE))
+					{
+						Array* av_array = ((Array*)_AVRun_Data[AV_LIST]);
+						av_array->add(new String(name));
+					}
+					
+					// store the config and run data under this AV ID
+					_all_AVConfigs->emplace(name, _AVConfig);
+					_all_AVRunData->emplace(name, _AVRun_Data);
 				}
-				else
+				else if (_currentModule == ENVIRONMENT_MODULE)
 				{
-					_EventTree = new EventTree(Double(_ConfigMap["time_step"]).value(), Integer(Double(_ConfigMap["time_ratio"]).value() * 100).value(), Double(_ConfigMap["max_run_time"]).value(), _dbName);
+					// create an Environment ID based upon the list size, then store config and run data
+					string ID = "" + (int(_all_EnvConfigs->size()) + 1);
+					_all_EnvConfigs->emplace(ID, _EnvConfig);
+					_all_EnvRunData->emplace(ID, _EnvRun_Data);
+				}
+				else if (_currentModule == VAST_MODULE)
+				{					
+					_EventTree = new EventTree(
+						((Double*)_VASTConfigMap->at(TIME_STEP))->value(),
+						((Double*)_VASTConfigMap->at(TIME_RATIO))->value(),
+						((Double*)_VASTConfigMap->at(MAX_RUN_TIME))->value(),
+						((Integer*)_VASTConfigMap->at(NUM_REPLCATION))->value(),
+						_dbName);					
 				}
 			}
 		}
-	}//
+	}
+	catch (...)
+	{
+		throw VASTConfigurationError("VAST configuration has run into an error.");
+	}
+	//
 	//registerMetrics();
 }
 
@@ -281,7 +330,7 @@ void VAST::Register()
 	}
 }*/
 
-void VAST::fillMap(string currentModule, string type, string key, string value)
+void VAST::fillMap(string currentModule, dataMap run_Data, string type, string key, string value)
 {
 	char first = type.at(0);
 	VType *v;
@@ -329,12 +378,12 @@ void VAST::fillMap(string currentModule, string type, string key, string value)
 		break;
 	}
 
-	if (currentModule == "Environment")
+	if (currentModule == ENVIRONMENT_MODULE)
 	{
-		_EnvMap.insert(namedData(key, v));
+		run_Data.insert(namedData(key, v));  // TODO: this should be multiple env run data maps
 	}
-	else if (currentModule == "AV")
+	else if (currentModule == AV_MODULE)
 	{
-		_AVMap.insert(namedData(key, v));
+		run_Data.insert(namedData(key, v)); // TODO: this should be multiple av run data maps
 	}
 }

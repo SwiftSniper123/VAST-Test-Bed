@@ -1,6 +1,7 @@
 #include "VC_HEADERS.h"
 #include "ProximitySensor.h"
 
+using namespace VASTConstants;
 // private functions-------------------------------------------------------------//
 int ProximitySensor::calculateQuadrant(Vector3* vec)
 {
@@ -45,24 +46,11 @@ distance* ProximitySensor::findDistance(Vector3* localVec)
 ProximitySensor::ProximitySensor(AV* owningAV, dataMap initialDataMap)
 	: Sensor("ProximitySensor", initialDataMap)
 {
-	/*
-	if (owningAV == nullptr)
-	{
-		throw InvalidArgumentException("ProximitySensor cannot be instantiated without an owning AV.");
-	}
-	if (initialDataMap.empty())
-	{
-		throw InvalidArgumentException("ProximitySensor cannot be instantiated with an empty datamap of configurations.");
-	}
-	if (initialDataMap.find(CLOSEST_ID) == initialDataMap.end() ||
-		initialDataMap.find(CLOSEST_POS) == initialDataMap.end() ||
-		initialDataMap.find(CLOSEST_DIST) == initialDataMap.end())
-	{
-		throw InvalidArgumentException("ProximitySensor cannot scan without the appropriate sensor parameters.");
-	}*/
 	_owningAV = owningAV;
 	_currentData = initialDataMap;
-
+	SENSOR_LOC = AV_LOCATION;
+	SENSOR_QUAD = 1;
+	SENSOR_DEPTH = 50.0;
 }
 
 ProximitySensor::~ProximitySensor()
@@ -126,18 +114,18 @@ void ProximitySensor::scan()
 	// iterate by size count through Array of obs positions and ids, 
 	if (_currentData.find(OBSTACLE_IDS) != _currentData.end() &&
 		_currentData.find(OBSTACLE_POS) != _currentData.end() &&
-		_currentData.at(OBSTACLE_IDS)->isA(ARRAY_TYPE) &&
-		_currentData.at(OBSTACLE_POS)->isA(ARRAY_TYPE) &&
-		(((Array*)_currentData.at(OBSTACLE_IDS))->arraySize() ==
-		((Array*)_currentData.at(OBSTACLE_POS))->arraySize()))
+		_currentData[OBSTACLE_IDS]->isA(ARRAY_TYPE) &&
+		_currentData[OBSTACLE_POS]->isA(ARRAY_TYPE) &&
+		(((Array*)_currentData[OBSTACLE_IDS])->arraySize() ==
+		((Array*)_currentData[OBSTACLE_POS])->arraySize()))
 	{
-		Array* obs_ids = ((Array*)_currentData.at(OBSTACLE_IDS));
-		Array* obs_poss = ((Array*)_currentData.at(OBSTACLE_POS));
+		Array* obs_ids = ((Array*)_currentData[OBSTACLE_IDS]);
+		Array* obs_poss = ((Array*)_currentData[OBSTACLE_POS]);
 		Vector3* inspectedObstacleLocalPos;
 		Double* inspectedObstacleLocalDist;
 		int inspectedObstacleQuad = 0;
 		int sensorQuad = 0;
-		Double* sensorDepthRange = ((Double*)_currentData.at(SENSOR_DEPTH));
+		//Double* sensorDepthRange = ((Double*)_currentData.at(SENSOR_DEPTH));
 		for (int i = 0; i < obs_ids->arraySize(); i++)
 		{
 			//calculate if they are in the proper quadrant,
@@ -145,19 +133,19 @@ void ProximitySensor::scan()
 			Vector3* thatPos = obs_poss->at_Vector3(i);
 			inspectedObstacleLocalPos = *thatPos - thisPos;
 			inspectedObstacleQuad = calculateQuadrant(inspectedObstacleLocalPos);
-			sensorQuad = ((Integer*)_currentData.at(SENSOR_QUAD))->value();
-			if (sensorQuad == 0 || inspectedObstacleQuad == 0)
+			//sensorQuad = ((Integer*)_currentData.at(SENSOR_QUAD))->value();
+			if (SENSOR_QUAD == 0 || inspectedObstacleQuad == 0)
 			{
 				continue;
 			}
 			else if (sensorQuad == inspectedObstacleQuad)
 			{
 				//and then measure distance,
-				Double* shortestDistance = _lastClosestProximity == nullptr ? new Double(_currentData.at(SENSOR_DEPTH)) : _lastClosestProximity;
+				Double* shortestDistance = _lastClosestProximity == nullptr ? new Double(SENSOR_DEPTH) : _lastClosestProximity;
 				inspectedObstacleLocalDist = findDistance(inspectedObstacleLocalPos);
 				
 				//set variables,
-				if (inspectedObstacleLocalDist->value() < sensorDepthRange->value() && 
+				if (inspectedObstacleLocalDist->value() < SENSOR_DEPTH &&
 					inspectedObstacleLocalDist->value() < shortestDistance->value())
 				{
 					_lastClosestProximity = inspectedObstacleLocalDist;
@@ -174,9 +162,9 @@ Array* ProximitySensor::getObstaclesList()
 {
 	Array* result = nullptr;
 	if (_currentData.find(OBSTACLE_IDS) != _currentData.end() && 
-		_currentData.at(OBSTACLE_IDS)->isA(ARRAY_TYPE))
+		_currentData[OBSTACLE_IDS]->isA(ARRAY_TYPE))
 	{
-		result = new Array(_currentData.at(OBSTACLE_IDS));
+		result = new Array(_currentData[OBSTACLE_IDS]);
 	}
 	// if OBSTACLE_IDS was not found in the data, ignore this and return nullptr
 	return result;

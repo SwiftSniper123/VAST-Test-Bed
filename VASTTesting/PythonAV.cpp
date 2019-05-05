@@ -1,10 +1,30 @@
 #include "VC_HEADERS.h"
 #include "PythonAV.h"
 
+using namespace VASTConstants;
+
+PythonVehicle::PythonVehicle(dataMap AVConfigData, dataMap AVRunData)
+{
+	_configData = AVConfigData;
+	_runData = AVRunData;
+
+	_vehicleID = _configData[AV_NAME]->s_value();
+	_AVexeLocation = _configData[AV_EXE_LOCATION]->s_value();
+	_port = Integer(_configData[AV_MOVEMENT_PORT]);
+	_sensors = Array(_configData[SENSORS]);
+
+	_bounds = Vector3(_runData[AV_BOUNDS]);
+	_location = Vector3(_runData[AV_LOCATION]);
+	_orientation = Vector3(_runData[AV_ORIENTATION]);
+
+
+}
+
 void PythonVehicle::update(timestamp t, dataMap dataMap)
 {
-	currentData["VehicleID"] = dataMap["VehicleID"];
-	currentData["Speed"] = dataMap["Speed"];
+	// used to get VehicleID and speed here
+	currentData[OBSTACLE_IDS] = dataMap[OBSTACLE_IDS]; 
+	currentData[OBSTACLE_POS] = dataMap[OBSTACLE_POS];
 	currentData["Position"] = dataMap["Position"];
 
 	currentData = callUpdateFunctions();
