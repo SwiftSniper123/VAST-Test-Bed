@@ -81,6 +81,7 @@
     <ClCompile Include="test_EventTree.cpp" />
     <ClCompile Include="test_Parser.cpp" />
     <ClCompile Include="test_ProximitySensor.cpp" />
+    <ClCompile Include="test_ScenarioMetrics.cpp" />
     <ClCompile Include="test_SUMOEnvironment.cpp" />
     <ClCompile Include="test_VASTLibrary.cpp" />
     <ClCompile Include="test.cpp" />
