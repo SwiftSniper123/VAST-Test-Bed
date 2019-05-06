@@ -215,8 +215,8 @@ private:
 
 void ScenarioMetric::update(timestamp t, dataMap updateMap)
 {
-	Array* avListInDataMap = updateMap[AV_LIST];
-	for (int i = 0; i < )
+	/*Array* avListInDataMap = updateMap[AV_LIST];
+	for (int i = 0; i < )*/ // Christine is doing this part emf 5/5/2019
 	_myMap[ACCELERATION] = updateMap[ACCELERATION];
 	_myMap[SPEED] = updateMap[SPEED];
 	_myMap[POSITION] = updateMap[POSITION];

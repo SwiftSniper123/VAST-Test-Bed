@@ -180,18 +180,21 @@ int EventTree::getNumberOfVComp() const
 void EventTree::setFirstComponent(VComponent* vc)
 { _leadComponent = vc; }
 
+VComponent* EventTree::getFirstComponent()
+{	return _leadComponent;}
+
 void EventTree::start()
 {
 	// initialize the tables for each component's run data
 	createtable(_componentInitialStateMap, "Run_Data");
-	createtable(_metrics, "Run_Data");
+	//createtable(_metrics, "Run_Data");
 
 	// these need to be composed sometime between parsing and starting emf4/28/2018
 	//createtable(_VASTconfiguration, "Configuration");
 	//createtable(_EnvironmentConfiguration, "Configuration");
 	//createtable(_AVConfiguration, "Configuration"); 
 	
-
+	cout << "Starting " << _numRuns << " replications..." << endl;
 	while (_numRuns > 0)
 	{
 		++_runID;
@@ -435,9 +438,14 @@ void EventTree::replication()
 		}
 
 		stop();
-		if (originalEndTime != _endTime)
+		// console reporting about the replication success or failure
+		if (_endTime != originalEndTime)
 		{
-			cout << 
+			cout << "Run " << _runID << " FAILED at " << _endTime << "." << endl;
+		}
+		else
+		{
+			cout << "Run " << _runID << " SUCCEEDED. " << endl;
 		}
 	}
 }

@@ -1,19 +1,18 @@
 #include "gtest/gtest.h"
 #include "VAST.h"
 
+using namespace VASTConstants;
 /*Default true test*/
 TEST(Test_Parser, TrueInTestVASTLibrary)
 {
 	ASSERT_TRUE(true);
 }
 
-VAST *p = new VAST("VASTConfig.xml", "test.db");
-
 /*Tests base VAST class constructor.*/
 TEST(Test_Parser, Constructor)
 {
 	VAST *v;
-	ASSERT_NO_FATAL_FAILURE(v = new VAST());
+	ASSERT_NO_FATAL_FAILURE(v = new VAST("VASTConfig.xml", TEST_DATABASE_FILENAME));
 
 	ASSERT_NO_FATAL_FAILURE(delete v);
 }
@@ -21,7 +20,8 @@ TEST(Test_Parser, Constructor)
 //Verifies Parsing is constructing the AVs and Environments properly
 TEST(Test_Parser, Parse)
 {
-	p->Parse();
+	VAST *v;
+	ASSERT_NO_THROW(v->Parse());
 
 	// Populate datamap based on results from parsing
 	// Commpare value to verify the configuration map was filled properly

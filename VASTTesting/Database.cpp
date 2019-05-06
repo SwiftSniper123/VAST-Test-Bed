@@ -190,10 +190,11 @@ void EventTree::publishMetrics(string name, dataMap publishMap)
 	stringstream statement1;
 	stringstream statement2;
 	stringstream statement3;
+	stringstream statement4;
 
-	statement1 << RUN_ID << "," << METRICS << ",";
-	statement2 << getRunID() << "," << name << ",";
-
+	statement1 << RUN_ID << "," << METRICS;
+	statement2 << getRunID() << "," << name;
+	statement3 << RUN_ID << " INTEGER NOT NULL, " << METRICS << " varchar(20) NOT NULL";
 	
 	for (auto dataMapIt = publishMap.begin(); dataMapIt != publishMap.end(); ++dataMapIt)
 	{
@@ -204,16 +205,18 @@ void EventTree::publishMetrics(string name, dataMap publishMap)
 			if (val)
 			{
 				/*print column name */
-				statement1 << statement1.str() << "," << dataMapIt->first;
+				statement1 << statement1.str() << ", " << dataMapIt->first;
 				/*print value*/
-				statement2 << statement2.str() << "," << "'true'";
+				statement2 << statement2.str() << ", " << "'true'";
+				statement3 << statement3.str() << ", " << dataMapIt->second->getSQLite3Text();
 			}
 			else
 			{
 				/*print column name */
-				statement1 << statement1.str() << "," << dataMapIt->first;
+				statement1 << statement1.str() << ", " << dataMapIt->first;
 				/*print value*/
-				statement2 << statement2.str() << "," << "'false'";
+				statement2 << statement2.str() << ", " << "'false'";
+				statement3 << statement3.str() << ", " << dataMapIt->first << " " << dataMapIt->second->getSQLite3Text();
 			}
 		}
 		else if (data->isA(VECTOR3_TYPE))
@@ -221,9 +224,10 @@ void EventTree::publishMetrics(string name, dataMap publishMap)
 			string name = dataMapIt->first;
 			Vector3* vector = new Vector3(data);
 			/*print column name with vector part suffix */
-			statement1 << statement1.str() << "," << name << "_x," << name << "_y," << name << "_z";
+			statement1 << statement1.str() << ", " << name << "_x," << name << "_y," << name << "_z";
 			/*print value*/
-			statement2 << statement2.str() << "," << vector->x() << vector->y() << vector->z();
+			statement2 << statement2.str() << ", " << vector->x() << vector->y() << vector->z();
+			statement3 << statement3.str() << ", " << name << "_x DOUBLE, " << name << "_x DOUBLE, " << name << "_x DOUBLE";
 		}
 		else if (data->isA(ARRAY_TYPE))
 		{
@@ -231,6 +235,7 @@ void EventTree::publishMetrics(string name, dataMap publishMap)
 			statement1 << statement1.str() << "," << dataMapIt->first;
 			/*print value*/
 			statement2 << statement2.str() << "," << "'" << dataMapIt->second->s_value() << "'";
+			statement3 << statement3.str() << ", " << dataMapIt->first << " " << dataMapIt->second->getSQLite3Text();
 		}
 		else
 		{
@@ -238,23 +243,12 @@ void EventTree::publishMetrics(string name, dataMap publishMap)
 			statement1 << statement1.str() << "," << dataMapIt->first;
 			/*print valuse, example: 1,1,0.02,1,0,0,0,90,'SUV',10,2*/
 			statement2 << statement2.str() << "," << dataMapIt->second->s_value();
+			statement3 << statement3.str() << ", " << dataMapIt->first << " " << dataMapIt->second->getSQLite3Text();
 		}
 	}
 	/*print full sql statement*/
-	statement3 << " CREATE TABLE IF NOT EXISTS " << component->first->getName() << tableType
-		<< " (" << statement3.str() << "); " << "INSERT INTO Metrics (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
-
-
-	/*example of insert value sql statement
-	sql = "INSERT INTO"\
-		" RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
-		"VALUES (1,1,0.02,1,0,0,0,90,'SUV',10,2); " \
-		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE) "  \
-		"VALUES (2,1,0.04,1,0,10,0,90,'SUV',10 ,2); "     \
-		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE)" \
-		"VALUES (3,1,0.06,1,0,20,0,0,'SUV',10,2);" \
-		"INSERT INTO RUN_DATA (SIM_ID,RUN_ID,TIME_STEP,VECH_ID,VECH_X,VECH_Y,VECH_Z,VECH_ANGLE,VECH_TYPE,VECH_SPEED,VECH_SLOPE)" \
-		"VALUES (4,1,0.08,1,0,30,0,0,'SUV',10,2);";*/
+	statement4 << " CREATE TABLE IF NOT EXISTS " << METRICS << "(" << statement3.str() << ");" 
+		<< " (" << statement3.str() << "); " << "INSERT INTO " << METRICS << " (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
 
 		/* Execute SQL statement */
 	rc = sqlite3_exec(db, statement3.str().c_str(), callback, 0, &zErrMsg);
