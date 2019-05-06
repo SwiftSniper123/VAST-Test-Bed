@@ -101,36 +101,36 @@ Environment* VAST::generateEnv(string name, dataMap runData, dataMap configData)
 	return env;
 }
 
-ScenarioMetric* VAST::generateMetric(string id)
+ScenarioMetric* VAST::generateMetric(string id, string name, dataMap map)
 {
 	ScenarioMetric* metric = nullptr;
 	// AvgSpeed, AvgAccel, AvgDecel // waiting for Christine's classes, emf 5/5/2019
-	/*if (id == AVG_SPEED_METRIC_ID)
+	if (id == AVG_SPEED_METRIC_ID)
 	{
-		metric = new AverageSpeed();
+		metric = new AverageSpeed(name, map);
 	}
 	else if (id == AVG_ACCEL_METRIC_ID)
 	{
-		metric = new AverageAcceleration();
+		metric = new AverageAcceleration(name, map);
 	}
 	else if (id == AVG_DECEL_METRIC_ID)
 	{
-		metric = new AverageDeacceleration();
+		metric = new AverageDeacceleration(name, map);
 	}
 	else if (id == MAX_ACCEL_METRIC_ID)
 	{
-		metric = new MaximumAcceleration();
+		metric = new MaximumAcceleration(name, map);
 	}
 	else if (id == MIN_ACCEL_METRIC_ID)
 	{
-		metric = new MinimumAcceleration();
+		metric = new MinimumAcceleration(name, map);
 	}
 	else
 	{
 		stringstream ss;
 		ss << "Cannot establish scenario metric by the name of " << id;
 		throw VASTConfigurationError(ss.str().c_str());
-	}*/
+	}
 	getEventTree()->registerMetric(metric);
 }
 
