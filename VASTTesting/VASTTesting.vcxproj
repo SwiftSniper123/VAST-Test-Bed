@@ -38,10 +38,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="AV.h" />
+    <ClInclude Include="AverageAcceleration.h" />
+    <ClInclude Include="AverageDeacceleration.h" />
+    <ClInclude Include="AverageSpeed.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="EventTree.h" />
+    <ClInclude Include="MaximumAcceleration.h" />
+    <ClInclude Include="MinimumAcceleration.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ProximitySensor.h" />
     <ClInclude Include="PythonAV.h" />
@@ -63,10 +68,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AV.cpp" />
+    <ClCompile Include="AverageAcceleration.cpp" />
+    <ClCompile Include="AverageDeacceleration.cpp" />
+    <ClCompile Include="AverageSpeed.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="EventTree.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MaximumAcceleration.cpp" />
+    <ClCompile Include="MinimumAcceleration.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ProximitySensor.cpp" />
     <ClCompile Include="PythonAV.cpp" />

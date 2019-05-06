@@ -10,7 +10,7 @@
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
 #include "PythonAV.h"
-#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
+#include "AverageSpeed.h" 
 #include "AverageAcceleration.h"
 #include "AverageDeacceleration.h"
 #include "MaximumAcceleration.h"
