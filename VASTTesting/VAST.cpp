@@ -327,8 +327,6 @@ void VAST::Parse()
 	{
 		throw VASTConfigurationError("VAST configuration has run into an error.");
 	}
-	//
-	//registerMetrics();
 }
 
 
@@ -381,8 +379,6 @@ void VAST::fillMap(string currentModule, dataMap run_Data, string type, string k
 	Vector3 *vec;
 	Array *a;
 
-	//std::cout << first;
-	
 	switch (first)
 	{
 	case 's':

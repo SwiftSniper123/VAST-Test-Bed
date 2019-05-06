@@ -10,7 +10,7 @@ public:
 	/* default constructor*/
 	ScenarioMetric();
 
-	/* Constructor to set component data.  This constructor guarantees that all keys are 
+	/* Constructor to set component data.  This constructor guarantees that all keys are
 	present in the datamap as initialized zero values.*/
 	ScenarioMetric(string name, dataMap metricData);
 
@@ -35,14 +35,14 @@ public:
 	};
 
 	/* Overridden from VComponent.  Returns a copy of the internal data map.*/
-	virtual dataMap getDataMap()
+	/*virtual dataMap getDataMap()
 	{
 		// this is an empty map, the default return from ScenarioMetric
-		return _initialMap;
-	}
+		return _initialMap[0];
+	}*/
 
 	//holds the metric information that is needed
-	dataMap _myMap;
-	dataMap _initialMap;
-
+	vector<dataMap> _myMap;
+	vector<dataMap> _initialMap;
+	int numAVs;
 };

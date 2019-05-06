@@ -9,8 +9,8 @@ namespace VASTConstants
 	// system
 	VASTDefault DATABASE_FILENAME = "VASTDatabase.db";
 	VASTDefault TEST_DATABASE_FILENAME = "DeleteThisDatabase.db";
-	   		
-	// VAST Config
+
+  // VAST Config
 	VASTConstant OUTPUT_FILE = "output_file_location";
 	VASTConstant VIZ = "viz_option";
 	VASTConstant RUN_ID = "run_id";

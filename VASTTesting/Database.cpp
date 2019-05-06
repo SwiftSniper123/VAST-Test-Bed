@@ -6,7 +6,6 @@ Definitions for EventTree functions pertaining specifically to the database crea
 */
 #include "VC_HEADERS.h"
 #include <typeinfo>
-
 using namespace VASTConstants;
 
 int EventTree::collisionSearch(void* eventTreePointer, int argc, char **argv, char **azColName)

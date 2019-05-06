@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "ScenarioMetric.h"
+#include "ScenarioMetrics.cpp"
 
 /* Default test - should always succeed.*/
 TEST(Test_ScenarioMetrics, DefaultTrueMetricTest)
@@ -12,19 +13,18 @@ Procedure: Create one of each extended ScenarioMetric and verify no exceptions.
 Pass: No exceptions in creating or destroying the ScenarioMetrics.
 Fail: An exception was thrown.
 */
-TEST(Test_ScenarioMetrics, MetricConstructors)
-{
-	AverageSpeed* avgSpd;
-	MaximumAcceleration* maxAcc;
-	MinimumAcceleration* minAcc;
-	AverageAcceleration* avgAcc;
-	XYZCoordinates* xyz;
 
-	// TODO: fix this error in the class, then delete it and use the EXPECT statment below to set the variable instead.  
-	 avgSpd = new AverageSpeed(); 
+TEST(Test_ScenarioMetrics, MetricDestructor)
+{
+	// TODO: fix this error in the class, then delete it and use the EXPECT statment below to set the variable instead. 
+
+	dataMap metricData;
+	AverageSpeed *avgSpd = new AverageSpeed("average speed", metricData);
+	//= new AverageSpeed();
 
 	// TEST: that each ScenarioMetric type can be created with no thrown exceptions
-	EXPECT_NO_THROW(avgSpd = new AverageSpeed());
+	//EXPECT_NO_THROW(avgSpd = new AverageSpeed());
+
 
 	// TEST: that each ScenarioMetric can be deleted with no thrown exceptions
 	EXPECT_NO_THROW(delete avgSpd);

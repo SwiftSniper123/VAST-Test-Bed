@@ -10,11 +10,11 @@
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
 #include "PythonAV.h"
-//#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
-//#include "AverageAcceleration.h"
-//#include "AverageDeacceleration.h"
-//#include "MaximumAcceleration.h"
-//#include "MinimumAcceleration.h"
+#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
+#include "AverageAcceleration.h"
+#include "AverageDeacceleration.h"
+#include "MaximumAcceleration.h"
+#include "MinimumAcceleration.h"
 #include "VAST.h"
 
 using namespace VASTConstants;
@@ -61,7 +61,7 @@ int main(int argc, char **argv1)
 	{
 		cout << "\n\n===========Scenario Replications===========" << endl;		
 		v->Register();				
-		
+
 		//run VAST
 		cout << "VAST scenario replication run begins..." << endl;
 		v->getEventTree()->start();
@@ -83,7 +83,6 @@ int main(int argc, char **argv1)
 	}
 	return 0;
 }
-
 
 AV* VAST::generateAV(string name, dataMap runData, dataMap configData)
 {	

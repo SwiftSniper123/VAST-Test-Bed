@@ -42,7 +42,6 @@ public:
 	virtual ScenarioMetric* generateMetric(string name);
 
 private:
-
 	// maps of name to dataMap for every AV and Environment
 	storedMap* _all_AVConfigs = nullptr;
 	storedMap* _all_AVRunData = nullptr;
@@ -56,5 +55,4 @@ private:
 
 	// helper function for parsing the remaining functions in the config sheet once the mandatory items are done
 	void fillMap(string currentModule, dataMap runData, string type, string key, string value);
-
 };
