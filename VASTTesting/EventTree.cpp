@@ -180,18 +180,21 @@ int EventTree::getNumberOfVComp() const
 void EventTree::setFirstComponent(VComponent* vc)
 { _leadComponent = vc; }
 
+VComponent* EventTree::getFirstComponent()
+{	return _leadComponent;}
+
 void EventTree::start()
 {
 	// initialize the tables for each component's run data
 	createtable(_componentInitialStateMap, "Run_Data");
-	createtable(_metrics, "Run_Data");
+	//createtable(_metrics, "Run_Data");
 
 	// these need to be composed sometime between parsing and starting emf4/28/2018
 	//createtable(_VASTconfiguration, "Configuration");
 	//createtable(_EnvironmentConfiguration, "Configuration");
 	//createtable(_AVConfiguration, "Configuration"); 
 	
-
+	cout << "Starting " << _numRuns << " replications..." << endl;
 	while (_numRuns > 0)
 	{
 		++_runID;
@@ -206,17 +209,20 @@ void EventTree::addEvent(VComponent* _eventSource, timestamp _eventTime, dataMap
 	// if this is a metric reporting, just update the data in the _metrics tablemap and then return
 	if (_eventSource->getVCType() == VComponent::VCType::ScenarioMetric)
 	{
-		map<VComponent*, dataMap>::iterator metricMapIterator;
-		metricMapIterator = _metrics->find(_eventSource);
-		for (auto updateIterator = _eventDataMap.begin();
-			updateIterator != _eventDataMap.end();
-			++updateIterator)
-		{
-			// get the present map's old component data, and the new update data, and overwrite
-			VType* oldData = metricMapIterator->second[updateIterator->first];
-			VType* newData = updateIterator->second;
-			*metricMapIterator->second[updateIterator->first] = *newData;
-		}
+		publishMetrics(_eventSource->getName(), _eventDataMap);
+		//not currently used because metrics are not updated live
+		//map<VComponent*, dataMap>::iterator metricMapIterator;
+		//metricMapIterator = _metrics->find(_eventSource);
+		//for (auto updateIterator = _eventDataMap.begin();
+		//	updateIterator != _eventDataMap.end();
+		//	++updateIterator)
+		//{
+		//	// get the present map's old component data, and the new update data, and overwrite
+		//	VType* oldData = metricMapIterator->second[updateIterator->first];
+		//	VType* newData = updateIterator->second;
+		//	*metricMapIterator->second[updateIterator->first] = *newData;
+		//}
+
 		return;
 	}
 	// if an event is set outside of the run time:
@@ -337,6 +343,7 @@ string EventTree::getRunID()
 // ----------------------Private functions ------------------------------------//
 void EventTree::replication()
 {
+	timestamp originalEndTime = _endTime;
 	if (_simClock == -1)
 	{
 		// TODO: add replication ID generator here		
@@ -431,7 +438,15 @@ void EventTree::replication()
 		}
 
 		stop();
-
+		// console reporting about the replication success or failure
+		if (_endTime != originalEndTime)
+		{
+			cout << "Run " << _runID << " FAILED at " << _endTime << "." << endl;
+		}
+		else
+		{
+			cout << "Run " << _runID << " SUCCEEDED. " << endl;
+		}
 	}
 }
 

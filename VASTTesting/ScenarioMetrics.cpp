@@ -7,11 +7,11 @@ ScenarioMetric::ScenarioMetric()
 
 ScenarioMetric::ScenarioMetric(string name, dataMap metricData)
 {
-	Array* avListInDataMap = new Array(metricData[AV_LIST]);
-	Array* obsIDsMap = new Array(metricData[OBSTACLE_IDS]);
-	Array* accMap = new Array(metricData[OBSTACLE_ACC]);
-	Array* speedMap = new Array(metricData[OBSTACLE_VEL]);
-	Array* posMap = new Array(metricData[OBSTACLE_POS]);
+	Array* avListInDataMap = ((Array*)metricData[AV_LIST]);
+	Array* obsIDsMap = ((Array*)metricData[OBSTACLE_IDS]);
+	Array* accMap = ((Array*)metricData[OBSTACLE_ACC]);
+	Array* speedMap = ((Array*)metricData[OBSTACLE_VEL]);
+	Array* posMap = ((Array*)metricData[OBSTACLE_POS]);
 
 	numAVs = avListInDataMap->arraySize();
 
@@ -114,7 +114,7 @@ void ScenarioMetric::update(timestamp t, dataMap updateMap)
 		}
 	}
 
-	calculate();
+	this->calculate();
 
 	delete avListInDataMap;
 	delete obsIDsMap;
@@ -330,4 +330,3 @@ private:
 
 	float countDecelUpdates = 0;
 };
-

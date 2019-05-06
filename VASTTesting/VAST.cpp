@@ -2,8 +2,6 @@
 
 using namespace VASTConstants;
 
-VAST::VAST() {}
-
 VAST::VAST(string file, string dbName)
 {
 	_file = file;
@@ -13,30 +11,43 @@ VAST::VAST(string file, string dbName)
 	}
 	else
 		_dbName = dbName;
+
+	_all_AVConfigs = new storedMap();
+	_all_AVRunData = new storedMap();
+	_all_EnvConfigs = new storedMap();
+	_all_EnvRunData = new storedMap();
+	_VASTConfigMap = new dataMap();
 }
 
 VAST::~VAST()
 {
 	delete _EventTree;
-	_AVs->clear();
-	_Env->clear();
 
 	_all_AVConfigs->clear();
 	_all_AVRunData->clear();
 	_all_EnvConfigs->clear();
 	_all_EnvRunData->clear();
 	_VASTConfigMap->clear();
-	//_SensorConfig->clear();
 }
 
-vector<AV*>* VAST::getAVs()
+storedMap* VAST::get_AVConfig()
 {
-	return _AVs;
+	return _all_AVConfigs;	
 }
 
-vector<Environment*>* VAST::getEnvs()
+storedMap* VAST::get_AVRunData()
 {
-	return _Env;
+	return _all_AVRunData;	
+}
+
+storedMap* VAST::get_EnvConfig()
+{
+	return _all_EnvConfigs;
+}
+
+storedMap* VAST::get_EnvRunData()
+{
+	return _all_EnvRunData;
 }
 
 dataMap* VAST::getVASTConfig()
@@ -316,19 +327,45 @@ void VAST::Parse()
 	{
 		throw VASTConfigurationError("VAST configuration has run into an error.");
 	}
-	//
-	//registerMetrics();
 }
 
-/*
+
 void VAST::Register()
 {
-	_EventTree->registerComponent(_Env);
-	for (int i = 0; i < _AVs.size(); i++)
+	string componentName = "";
+
+	try
 	{
-		_EventTree->registerComponent(_AVs[i]);
+		// AVs
+		for (auto avIterator = get_AVConfig()->begin(); avIterator != get_AVConfig()->end(); ++avIterator)
+		{
+			componentName = avIterator->first;
+			// generate with parsed name, runData, configData
+			AV* av = generateAV(componentName, get_AVRunData()->at(componentName), avIterator->second);
+		}
+
+		// Environments
+		for (auto envIterator = get_EnvConfig()->begin(); envIterator != get_EnvConfig()->end(); ++envIterator)
+		{
+			componentName = envIterator->first;
+			// generate with parsed name, runData, configData
+			Environment* env = generateEnv(componentName, get_EnvRunData()->at(componentName), envIterator->second);
+		}
+
+		// ScenarioMetrics
+		for (int m = 0; m < ((Array*)getVASTConfig()->at(METRICS))->arraySize(); m++)
+		{
+			componentName = ((Array*)getVASTConfig()->at(METRICS))->at_String(m)->value();
+			ScenarioMetric* metric = generateMetric(componentName);
+		}
 	}
-}*/
+	catch (exception e)
+	{
+		stringstream ss;
+		ss << "Something went wrong while trying to establish " << componentName << " in main: " << e.what();
+		throw VASTConfigurationError(ss.str().c_str());
+	}
+}
 
 void VAST::fillMap(string currentModule, dataMap run_Data, string type, string key, string value)
 {
@@ -342,8 +379,6 @@ void VAST::fillMap(string currentModule, dataMap run_Data, string type, string k
 	Vector3 *vec;
 	Array *a;
 
-	//std::cout << first;
-	
 	switch (first)
 	{
 	case 's':

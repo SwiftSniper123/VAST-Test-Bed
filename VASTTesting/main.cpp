@@ -4,14 +4,18 @@
 #include "gtest/gtest.h"
 #include <iostream>
 #include <thread> // sleep_for
+#include <Windows.h>
+#include <gtest/gtest.h>
 
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
 #include "PythonAV.h"
+#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
+#include "AverageAcceleration.h"
+#include "AverageDeacceleration.h"
+#include "MaximumAcceleration.h"
+#include "MinimumAcceleration.h"
 #include "VAST.h"
-#include <Windows.h>
-#include <gtest/gtest.h>
-
 
 using namespace VASTConstants;
 using namespace std::this_thread;     // sleep_for, sleep_until
@@ -22,70 +26,53 @@ using std::endl;
 using std::chrono::milliseconds;
 using std::string;
 
+void unit_test(int argc, char **argv1);
+
 int main(int argc, char **argv1)
 {
 	// ask user for config file
+	//get file location and name
+	string fileName = "";
+	cout << "Please type the configuration file location and name: ";
+	cin >> fileName;
+	cin.clear();
+
+	string dbName;
+	cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
+	cin >> dbName;
+	cin.clear();
+
+	//parse file
+	//VAST *v = new VAST(fileName, dbName);
+	VAST *v = new VAST(fileName, dbName);
+	cout << "Parsing begins...";
+	v->Parse();
+	cout << " parsing finished." << endl << endl;
 
 	// ask user if VAST should be run for scenario replications or for testing
 	int mode;
-	cout << "Run VAST in which of the following modes: \n"
-		<< " 1 - Scenario Replications\n"
-		<< " 2 - Tests" << endl;
+	cout << "Run VAST in which of the following modes: \n\n"
+		<<  "  1 - Scenario Replications\n\n"
+		<<  "  2 - Verification Testing of VAST System\n\n" 
+		<<  "  Mode: ";
 	cin >> mode;
 	
 	if (mode == 1)
 	{
-		cout << "\n\n=========Scenario Replications=========" << endl;
-		//get file location and name
-		string fileName = "";
-		cout << "Please type the configuration file location and name: ";
-		cin >> fileName;
-
-		string dbName = DATABASE_FILENAME;
-		//cout << "\nIf desired, provide a database file name (default - VASTDatabase.db): ";
-		//cin >> dbName;
-
-		//parse file
-		//VAST *v = new VAST(fileName, dbName);
-		VAST *v = new VAST("VASTConfig.xml", "test.db");
-		cout << "Parsing begins" << endl;
-		v->Parse();
-		cout << "Parsing ends" << endl;
-
-		////////////////////////////////////////////////////////
-		// this needs to get sorted out; all that's left is to get maps from VAST object and give them to the generate functions, then register components
-		dataMap envMap = v->getEnvConfigs();
-		vector<dataMap> avMaps = v->getAVConfigs();
-		dataMap configMap = v->getConfig();
-
-		v->generateAV(avMaps[0], v->_AVs[0]->getDataMap());
-		v->generateEnvenvMap(envMap, v->_Env->getDataMap());
-		//PythonVehicle *secondAV = new PythonVehicle(avMaps[1], v->_AVs[1]->getDataMap());
-		ProximitySensor *proxSensor = new ProximitySensor(firstAV, v->_AVs[0]->getDataMap());
-
-		v->_EventTree->registerComponent(sumo);
-		v->_EventTree->registerComponent(firstAV);
-		//v->_EventTree->registerComponent(secondAV);
-		v->_EventTree->registerComponent(proxSensor);
-		v->_EventTree->setFirstComponent(sumo);
-		//////////////////////////////////////////////////////////
-
-		sumo->openEnvironment();
-
-		//v->_EventTree->start(); //May start event tree within sumo environment
+		cout << "\n\n===========Scenario Replications===========" << endl;		
+		v->Register();				
 
 		//run VAST
-		cout << "VAST run begins" << endl;
-
-		cout << "VAST run ends" << endl;
+		cout << "VAST scenario replication run begins..." << endl;
+		v->getEventTree()->start();
+		cout << "VAST scenario run ends with " << v->getEventTree()->getNumberOfEarlyStops() << " failures." << endl;
 	}
 	else if (mode == 2)
 	{
+		cout << "\n\n====Verification Testing of VAST System====" << endl;
 		// Unit Tests
-		cout << "\n\n=========Tests=========" << endl;
-		::testing::InitGoogleTest(&argc, argv1);
-		RUN_ALL_TESTS();
-		cout << "Test output file location: VASTTesting\\testOutput\\VAST_tests.xml" << endl;
+		unit_test(argc, argv1);
+
 		// Integration Tests
 
 	}
@@ -97,27 +84,66 @@ int main(int argc, char **argv1)
 	return 0;
 }
 
-/*
-void sumoConnection() {
-	Client client;
-	client.connect("localhost", 1337);
-	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
-	std::cout << "run 5 steps ...\n";
-	client.simulationStep(5 * 1000);
-	std::cout << "time in ms: " << client.simulation.getCurrentTime() << "\n";
-	client.close();
-} */
-
 AV* VAST::generateAV(string name, dataMap runData, dataMap configData)
-{
-	
-	PythonVehicle *firstAV = new PythonVehicle(configData, runData);	
+{	
+	PythonVehicle* av = new PythonVehicle(configData, runData);
+	getEventTree()->registerComponent(av);
 
-	// TODO instantiate sensor and hook it up
-	// instantiate scenario metric
+	ProximitySensor* sensor = new ProximitySensor(av, runData);
+	return av;	
 }
 
 Environment* VAST::generateEnv(string name, dataMap runData, dataMap configData)
 {
-	SumoEnvironment *sumo = new SumoEnvironment(configData, runData);
+	Environment* env = new SumoEnvironment(configData, runData);
+	getEventTree()->registerComponent(env);
+	getEventTree()->setFirstComponent(env); // NOTE: last in list of env gets to be "first" or lead component
+	return env;
+}
+
+ScenarioMetric* VAST::generateMetric(string id)
+{
+	ScenarioMetric* metric = nullptr;
+	// AvgSpeed, AvgAccel, AvgDecel // waiting for Christine's classes, emf 5/5/2019
+	/*if (id == AVG_SPEED_METRIC_ID)
+	{
+		metric = new AverageSpeed();
+	}
+	else if (id == AVG_ACCEL_METRIC_ID)
+	{
+		metric = new AverageAcceleration();
+	}
+	else if (id == AVG_DECEL_METRIC_ID)
+	{
+		metric = new AverageDeacceleration();
+	}
+	else if (id == MAX_ACCEL_METRIC_ID)
+	{
+		metric = new MaximumAcceleration();
+	}
+	else if (id == MIN_ACCEL_METRIC_ID)
+	{
+		metric = new MinimumAcceleration();
+	}
+	else
+	{
+		stringstream ss;
+		ss << "Cannot establish scenario metric by the name of " << id;
+		throw VASTConfigurationError(ss.str().c_str());
+	}*/
+	getEventTree()->registerMetric(metric);
+}
+
+void unit_test(int uargc, char **uargv1)
+{
+	try
+	{
+		::testing::InitGoogleTest(&uargc, uargv1);
+		RUN_ALL_TESTS();
+		cout << "Test output file location: VASTTesting\\testOutput\\VAST_tests.xml" << endl;
+	}
+	catch (...)
+	{
+		cerr << "VAST unit tests threw an exception during verification.\n";
+	}
 }

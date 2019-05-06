@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono> //C++ 14 required; sleep_for()
 #include <thread>
+#include <iostream>
 #include <set>
 #include "VComponent.h" // timestamp, dataMap
 #include "sqlite3.h"
@@ -9,6 +10,7 @@
 using namespace std::this_thread;     // sleep_for, sleep_until
 using std::chrono::milliseconds;
 using std::chrono::microseconds;
+using std::cout;
 typedef std::invalid_argument InvalidArgumentException;
 typedef double ratio;
 typedef map<VComponent*, dataMap> tableMap;
@@ -203,6 +205,9 @@ private:
 	that component.  */
 	void publishUpdates();
 
+	/* Publishes the metric calculations at the end of the run.*/
+	void publishMetrics(string name, dataMap publishMap);
+
 	/*show the data in the database*/
 	void listenForCollision();
 
@@ -265,6 +270,9 @@ public:
 
 	/* Sets which component is the first to receive updates.*/
 	void setFirstComponent(VComponent* vc);
+
+	/* Returns the pointer to the component that was set as "first" in the lineup for timeslice messages.*/
+	VComponent* getFirstComponent();
 
 	/* Starts the clock by advancing to relative time 0.*/
 	void start();
