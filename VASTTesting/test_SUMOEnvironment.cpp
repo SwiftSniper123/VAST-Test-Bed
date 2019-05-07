@@ -2,7 +2,6 @@
 #include "VC_HEADERS.h"
 #include "SUMOEnvironment.h"
 
- 
 /*Default true test*/
 TEST(DefaultTest, TrueInSumoEnvironment)
 {

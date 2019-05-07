@@ -193,9 +193,10 @@ public:
         std::vector<std::string> getLastStepVehicleIDs(const std::string& edgeID) const;
         int getLaneNumber(const std::string& edgeID) const;
         std::string getStreetName(const std::string& id) const;
-//tempcommment
-////////void adaptTraveltime(const std::string& edgeID, double time, double beginSeconds = 0., double endSeconds = std::numeric_limits<double>::max()) const;
-////////void setEffort(const std::string& edgeID, double effort, double beginSeconds = 0., double endSeconds = std::numeric_limits<double>::max()) const;
+
+        //void adaptTraveltime(const std::string& edgeID, double time, double beginSeconds = 0., double endSeconds = std::numeric_limits<double>::max()) const;
+        //void setEffort(const std::string& edgeID, double effort, double beginSeconds = 0., double endSeconds = std::numeric_limits<double>::max()) const;
+
         void setMaxSpeed(const std::string& edgeID, double speed) const;
 
     private:
@@ -772,8 +773,11 @@ public:
         void openGap(const std::string& vehicleID, double newTau, double duration, double changeRate, double maxDecel) const;
         void setSpeed(const std::string& vehicleID, double speed) const;
         void setSpeedMode(const std::string& vehicleID, int mode) const;
-//tempcomment
-////////void setStop(const std::string vehicleID, const std::string edgeID, const double endPos = 1., const int laneIndex = 0, const double duration = std::numeric_limits<double>::max(),const int flags = 0, const double startPos = std::numeric_limits<int>::min(),const double until = -1) const;
+        /*void setStop(const std::string vehicleID, const std::string edgeID, const double endPos = 1.,
+                     const int laneIndex = 0, const double duration = std::numeric_limits<double>::max(),
+                     const int flags = 0, const double startPos = std::numeric_limits<int>::min(),
+                     const double until = -1) const;*/
+
         void setType(const std::string& vehicleID, const std::string& typeID) const;
         void remove(const std::string& vehicleID, char reason = libsumo::REMOVE_VAPORIZED) const;
         void setColor(const std::string& vehicleID, const libsumo::TraCIColor& c) const;

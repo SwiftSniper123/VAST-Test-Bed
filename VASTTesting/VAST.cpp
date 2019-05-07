@@ -1,7 +1,5 @@
 #include "VAST.h"
 
- 
-
 VAST::VAST(string file, string dbName)
 {
 	_file = file;

@@ -2,8 +2,6 @@
 #include "VC_HEADERS.h"
 #include "gtest/gtest.h"
 
- 
-
 // persistent values that can be verified in every test
 static char** colNames = nullptr;
 static char** colValues = nullptr;

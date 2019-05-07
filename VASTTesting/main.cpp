@@ -10,6 +10,7 @@
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
 #include "PythonAV.h"
+
 #include "AverageSpeed.h" 
 #include "AverageAcceleration.h"
 #include "AverageDeacceleration.h"
@@ -17,7 +18,6 @@
 #include "MinimumAcceleration.h"
 #include "VAST.h"
 
- 
 using namespace std::this_thread;     // sleep_for, sleep_until
 
 using std::cin;
@@ -132,6 +132,7 @@ ScenarioMetric* VAST::generateMetric(string id, dataMap map)
 		throw VASTConfigurationError(ss.str().c_str());
 	}
 	getEventTree()->registerMetric(metric);
+	return metric;
 }
 
 void unit_test(int uargc, char **uargv1)

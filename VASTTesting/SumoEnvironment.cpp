@@ -1,7 +1,5 @@
 #include "SumoEnvironment.h"
 
- 
-
 SumoEnvironment::SumoEnvironment(dataMap envConfigData, dataMap envRunData)
 {
 	_configData = envConfigData;

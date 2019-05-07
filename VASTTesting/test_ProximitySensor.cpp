@@ -2,7 +2,6 @@
 #include "VC_HEADERS.h"
 #include "ProximitySensor.h"
 
- 
 /*Default true test*/
 TEST(DefaultTest, TrueInProximitySensor)
 {

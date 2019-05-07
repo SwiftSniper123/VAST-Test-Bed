@@ -741,6 +741,7 @@ TraCIAPI::EdgeScope::setEffort(const std::string& edgeID, double effort, double 
     myParent.processSet(libsumo::CMD_SET_EDGE_VARIABLE);
 }
 */
+
 void
 TraCIAPI::EdgeScope::setMaxSpeed(const std::string& edgeID, double speed) const {
     tcpip::Storage content;
@@ -2721,7 +2722,7 @@ TraCIAPI::VehicleScope::rerouteTraveltime(const std::string& vehicleID, bool cur
         // updated edge weights with current network traveltimes (at most once per simulation step)
         std::vector<std::string> edges = myParent.edge.getIDList();
         for (std::vector<std::string>::iterator it = edges.begin(); it != edges.end(); ++it) {
-            myParent.edge.adaptTraveltime(*it, myParent.edge.getTraveltime(*it));
+            //myParent.edge.adaptTraveltime(*it, myParent.edge.getTraveltime(*it));
         }
     }
 
@@ -2820,6 +2821,7 @@ TraCIAPI::VehicleScope::setSpeedMode(const std::string& vehicleID, int mode) con
     myParent.createCommand(libsumo::CMD_SET_VEHICLE_VARIABLE, libsumo::VAR_SPEEDSETMODE, vehicleID, &content);
     myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
 }
+
 /*
 void
 TraCIAPI::VehicleScope::setStop(const std::string vehicleID, const std::string edgeID, const double endPos, const int laneIndex,

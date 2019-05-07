@@ -1,77 +1,71 @@
 #pragma once
 #include <string>
-
-namespace
-{
-	typedef const char* VASTDefault;
-	typedef const std::string VASTConstant;
 	
-	// system
-	VASTDefault DATABASE_FILENAME = "VASTDatabase.db";
-	VASTDefault TEST_DATABASE_FILENAME = "DeleteThisDatabase.db";
+// system
+extern const char* DATABASE_FILENAME;
+extern const char* TEST_DATABASE_FILENAME;
 
-  // VAST Config
-	VASTConstant OUTPUT_FILE = "output_file_location";
-	VASTConstant VIZ = "viz_option";
-	VASTConstant RUN_ID = "run_id";
-	VASTConstant TIME_RATIO = "time_ratio";
-	VASTConstant TIME_STEP = "time_step";
-	VASTConstant NUM_REPLCATION = "num_replications";
-	VASTConstant SEEDS = "seeds";
-	VASTConstant MAX_RUN_TIME = "max_run_time";
-	VASTConstant AV_LIST = "av_list"; // also AV run data
-	VASTConstant METRICS = "metrics";
-		
-	// Scenario Metric type ids
-	VASTConstant AVG_SPEED_METRIC_ID = "AvgSpeed";
-	VASTConstant AVG_ACCEL_METRIC_ID = "AvgAccel";
-	VASTConstant AVG_DECEL_METRIC_ID = "AvgDecel";
-	VASTConstant MAX_ACCEL_METRIC_ID = "MaxAccel";
-	VASTConstant MIN_ACCEL_METRIC_ID = "MinAccel";
-	
-	// ScenarioMetric
-	VASTConstant ACCELERATION = "Acceleration";
-	VASTConstant MIN_ACCELERATION = "MinAcceleration";
-	VASTConstant AVG_ACCELERATION = "AvgAcceleration";
-	VASTConstant MAX_ACCELERATION = "MaxAcceleration";
-	VASTConstant AVG_DECELERATION = "AvgDeceleration";
-	VASTConstant AVG_SPEED = "AvgSpeed";
-	VASTConstant SPEED = "Speed";
-	VASTConstant POSITION = "Position";
+// VAST Config
+extern const std::string OUTPUT_FILE;
+extern const std::string VIZ;
+extern const std::string RUN_ID;
+extern const std::string TIME_RATIO;
+extern const std::string TIME_STEP;
+extern const std::string NUM_REPLCATION;
+extern const std::string SEEDS;
+extern const std::string MAX_RUN_TIME;
+extern const std::string AV_LIST; // also AV run data
+extern const std::string METRICS;
 
-	// Environment Config
-	VASTConstant ENV_OBSTACLE_PORT = "env_obstacle_port";
-	VASTConstant EXE_LOCATION = "exe_location";
-	VASTConstant ENV_BOUNDS = "Env_bounds";
-	VASTConstant CONFIG_LOCATION = "config_location";
-	// Environment Run Data
-	VASTConstant OBSTACLE_IDS = "obstacle_ids";
-	VASTConstant OBSTACLE_POS = "obstacle_pos";
-	VASTConstant OBSTACLE_VEL = "obstacle_speeds";
-	VASTConstant OBSTACLE_ACC = "obstacle_accelerations";
-	VASTConstant DURATION = "Duration";
-	VASTConstant TARGET_VELOCITY = "TargetVelocity";
+// Scenario Metric type ids
+extern const std::string AVG_SPEED_METRIC_ID;
+extern const std::string AVG_ACCEL_METRIC_ID;
+extern const std::string AVG_DECEL_METRIC_ID;
+extern const std::string MAX_ACCEL_METRIC_ID;
+extern const std::string MIN_ACCEL_METRIC_ID;
 
-	// AV Config
-	VASTConstant AV_NAME = "av_name";
-	VASTConstant AV_MOVEMENT_PORT = "av_movement_port";
-	VASTConstant AV_EXE_LOCATION = "exe_location";
-	VASTConstant AV_LOCATION = "AV_location";
-	VASTConstant AV_ORIENTATION = "AV_orientation";
-	VASTConstant AV_BOUNDS = "AV_bounds";
-	VASTConstant SENSORS = "sensors";
-	// AV Run Data
-	VASTConstant CLOSEST_ID = "closest_obs";
-	VASTConstant CLOSEST_POS = "closest_position";
-	VASTConstant CLOSEST_DIST = "closest_distance";
+// ScenarioMetric
+extern const std::string ACCELERATION;
+extern const std::string MIN_ACCELERATION;
+extern const std::string AVG_ACCELERATION;
+extern const std::string MAX_ACCELERATION;
+extern const std::string AVG_DECELERATION;
+extern const std::string AVG_SPEED;
+extern const std::string SPEED;
+extern const std::string POSITION;
 
-	// parser
-	VASTConstant MODULE = "module";
-	VASTConstant VAST_MODULE = "VAST";
-	VASTConstant ENVIRONMENT_MODULE = "Environment";
-	VASTConstant AV_MODULE = "AV";
-	VASTConstant MAP = "map";
-	VASTConstant KEY = "key";
-	VASTConstant NAME = "name";
-	VASTConstant VALUE = "value";
-}
+// Environment Config
+extern const std::string ENV_OBSTACLE_PORT;
+extern const std::string EXE_LOCATION;
+extern const std::string ENV_BOUNDS;
+extern const std::string CONFIG_LOCATION;
+// Environment Run Data
+extern const std::string OBSTACLE_IDS;
+extern const std::string OBSTACLE_POS;
+extern const std::string OBSTACLE_VEL;
+extern const std::string OBSTACLE_ACC;
+extern const std::string DURATION;
+extern const std::string TARGET_VELOCITY;
+
+// AV Config
+extern const std::string AV_NAME;
+extern const std::string AV_MOVEMENT_PORT;
+extern const std::string AV_EXE_LOCATION;
+extern const std::string AV_LOCATION;
+extern const std::string AV_ORIENTATION;
+extern const std::string AV_BOUNDS;
+extern const std::string SENSORS;
+// AV Run Data
+extern const std::string CLOSEST_ID;
+extern const std::string CLOSEST_POS;
+extern const std::string CLOSEST_DIST;
+
+// parser
+extern const std::string MODULE;
+extern const std::string VAST_MODULE;
+extern const std::string ENVIRONMENT_MODULE;
+extern const std::string AV_MODULE;
+extern const std::string MAP;
+extern const std::string KEY;
+extern const std::string NAME;
+extern const std::string VALUE;
