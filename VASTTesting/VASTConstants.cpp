@@ -49,7 +49,7 @@ const std::string TARGET_VELOCITY = "TargetVelocity";
 // AV Config
 const std::string AV_NAME = "av_name";
 const std::string AV_MOVEMENT_PORT = "av_movement_port";
-const std::string AV_EXE_LOCATION = "av_exe_location";
+const std::string AV_EXE_LOCATION = "exe_location";
 const std::string AV_LOCATION = "AV_location";
 const std::string AV_ORIENTATION = "AV_orientation";
 const std::string AV_BOUNDS = "AV_bounds";
