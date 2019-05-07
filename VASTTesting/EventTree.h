@@ -120,8 +120,10 @@ private:
 	/* The map of "past" values*/
 	tableMap* _componentInitialStateMap;
 
-	/* The map of "past" values*/
-	tableMap* _componentPresentStateMap;
+	/* The map of "present" values*/
+	//tableMap* _componentPresentStateMap;
+	tableMap *_componentPresentStateMap;
+	map<string, dataMap> *testMap;
 
 	/* Structure for storing incoming Events for later execution.*/
 	struct ComponentEventUpdate

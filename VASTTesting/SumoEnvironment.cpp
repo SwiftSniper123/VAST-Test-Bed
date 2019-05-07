@@ -48,6 +48,13 @@ LPWSTR ConvertString(const std::string& instr)
 
 void SumoEnvironment::update(timestamp t, dataMap dataMap)
 {
+	EventTree *eventTree = this->getEventTree();
+
+	if (eventTree->getCurrentSimTime() == -1)
+	{
+		return;
+	}
+	
 	currentData[DURATION] = dataMap[DURATION];
 	currentData[TARGET_VELOCITY] = dataMap[TARGET_VELOCITY];
 
@@ -162,7 +169,7 @@ void SumoEnvironment::addAV(AV *AV)
 
 dataMap SumoEnvironment::callUpdateFunctions()
 {
-	changeAVCommand();
+	//changeAVCommand();
 	getMapInformation();
 	return currentData;
 }

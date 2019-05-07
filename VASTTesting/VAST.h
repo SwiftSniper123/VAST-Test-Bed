@@ -20,6 +20,8 @@ public:
 	VAST(string file, string dbName);
 	~VAST();
 
+
+
 	// parses the entire config sheet and gathers information for data maps
 	void Parse();
 
@@ -55,5 +57,5 @@ private:
 	string _dbName;	
 
 	// helper function for parsing the remaining functions in the config sheet once the mandatory items are done
-	void fillMap(string currentModule, dataMap runData, string type, string key, string value);
+	void fillMap(string currentModule, dataMap &runData, string type, string key, string value);
 };

@@ -96,7 +96,7 @@ void EventTree::createtable(tableMap* componentsToData, const char* tableType)
 
 	if (rc != SQLITE_OK) {
 		closedatabase();
-		throw DatabaseException(zErrMsg);
+		//throw DatabaseException(zErrMsg);
 		sqlite3_free(zErrMsg);
 	}
 }
@@ -258,6 +258,8 @@ void EventTree::publishMetrics(string name, dataMap publishMap)
 	}
 }
 
+
+
 void EventTree::publishUpdates()
 {
 	stringstream statement1;
@@ -267,6 +269,9 @@ void EventTree::publishUpdates()
 	statement1 << "run_ID,sim_Time_Step";
 	statement2 <<  getRunID() << "," << getCurrentSimTime();
 
+	tableMap::iterator test = _componentInitialStateMap->begin();
+	dataMap env = this->getFirstComponent()->getDataMap();
+	
 	for (auto componentIt = _componentPresentStateMap->begin(); componentIt != _componentPresentStateMap->end(); ++componentIt)
 	{
 		for (auto dataMapIt = componentIt->second.begin(); dataMapIt != componentIt->second.end(); ++dataMapIt)
@@ -315,7 +320,7 @@ void EventTree::publishUpdates()
 			}
 		}
 		/*print full sql statement*/
-		statement3 << "INSERT INTO "<< componentIt->first<<"_Run_Data (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
+		statement3 << "INSERT INTO "<< componentIt->first->getName()<<"_Run_Data (" << statement1.str() << ") VALUES (" << statement2.str() << ");";
 	}
 	
 	/*example of insert value sql statement
@@ -330,7 +335,8 @@ void EventTree::publishUpdates()
 		"VALUES (4,1,0.08,1,0,30,0,0,'SUV',10,2);";*/
 
 		/* Execute SQL statement */
-	rc = sqlite3_exec(db, statement3.str().c_str(), callback, 0, &zErrMsg);
+		rc = sqlite3_exec(db, statement3.str().c_str(), callback, 0, &zErrMsg);
+
 
 	if (rc != SQLITE_OK) {
 		closedatabase();

@@ -264,4 +264,72 @@
             </pair>
         </map>
     </module>
+	<module module="AV">
+        <map>
+            <pair type="mandatory">
+                <key>
+                    <name>av_name</name>
+                </key>
+                <value>
+                    <name>Third AV</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>av_movement_port</name>
+                </key>
+                <value>
+                    <name>11111</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>exe_location</name>
+                </key>
+                <value>
+                    <name>C:/Users/jaron/source/repos/VAST-Test-Bed/VASTTesting/AVLogicCrash.py</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_location</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_orientation</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>AV_bounds</name>
+                </key>
+                <value>
+                    <name>1,1,1</name>
+                </value>
+            </pair>
+            <pair type="optional">
+                <key>
+                    <name>test</name>
+                </key>
+                <value>
+                    <name>bool, True</name>
+                </value>
+            </pair>
+            <pair type="mandatory">
+                <key>
+                    <name>sensors</name>
+                </key>
+                <value>
+                    <name>ProxSensor</name>
+                </value>
+            </pair>
+        </map>
+    </module>
 </VAST>

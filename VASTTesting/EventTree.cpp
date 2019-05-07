@@ -17,7 +17,8 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, string d
 		throw InvalidArgumentException("Run end time must be greater than 0 seconds.");
 	}
 
-	_scenario_ID = rand();
+	_runID = 0;
+	_scenario_ID = 0;
 	_timeSlice = timeSlice;
 	_timeRatio = timeRatio;
 	_endTime = endTime;
@@ -49,7 +50,8 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 		throw InvalidArgumentException("Must have at least one run to test the scenario.");
 	}
 
-	_scenario_ID = rand();
+	_runID = 0;
+	_scenario_ID = 0;
 	_timeSlice = timeSlice;
 	_timeRatio = timeRatio;
 	_endTime = endTime;
@@ -81,6 +83,7 @@ EventTree::EventTree(double timeSlice, ratio timeRatio, double endTime, int numR
 		throw InvalidArgumentException("Must have at least one run to test the scenario.");
 	}
 
+	_runID = 0;
 	_scenario_ID = scenarioID;
 	_timeSlice = timeSlice;
 	_timeRatio = timeRatio;
@@ -327,7 +330,7 @@ string EventTree::getRunID()
 	stringstream ss;
 	/* if the run ID is not zero, the scenario has passed initialization and can 
 		write to the database about replication data.*/
-	if (this->_runID)
+	if (this->_runID > 0)
 	{
 		ss << this->_runID;
 	}

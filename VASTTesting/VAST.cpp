@@ -371,7 +371,8 @@ void VAST::Register()
 	}
 }
 
-void VAST::fillMap(string currentModule, dataMap run_Data, string type, string key, string value)
+// Parses fields that are "Optional" and inserts them into the run_Data map
+void VAST::fillMap(string currentModule, dataMap &run_Data, string type, string key, string value)
 {
 	char first = type.at(0);
 	VType *v;
@@ -419,10 +420,10 @@ void VAST::fillMap(string currentModule, dataMap run_Data, string type, string k
 
 	if (currentModule == ENVIRONMENT_MODULE)
 	{
-		run_Data.insert(namedData(key, v));  // TODO: this should be multiple env run data maps
+		run_Data.insert(namedData(key, v));
 	}
 	else if (currentModule == AV_MODULE)
 	{
-		run_Data.insert(namedData(key, v)); // TODO: this should be multiple av run data maps
+		run_Data.insert(namedData(key, v));
 	}
 }
