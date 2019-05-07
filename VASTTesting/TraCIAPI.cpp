@@ -702,44 +702,44 @@ TraCIAPI::EdgeScope::getStreetName(const std::string& edgeID) const {
 }
 
 
-void
-TraCIAPI::EdgeScope::adaptTraveltime(const std::string& edgeID, double time, double beginSeconds, double endSeconds) const {
-    tcpip::Storage content;
-    content.writeByte(libsumo::TYPE_COMPOUND);
-    if (endSeconds != std::numeric_limits<double>::max()) {
-        content.writeInt(3);
-        content.writeByte(libsumo::TYPE_DOUBLE);
-        content.writeDouble(beginSeconds);
-        content.writeByte(libsumo::TYPE_DOUBLE);
-        content.writeDouble(endSeconds);
-    } else {
-        content.writeInt(1);
-    }
-    content.writeByte(libsumo::TYPE_DOUBLE);
-    content.writeDouble(time);
-    myParent.createCommand(libsumo::CMD_SET_EDGE_VARIABLE, libsumo::VAR_EDGE_TRAVELTIME, edgeID, &content);
-    myParent.processSet(libsumo::CMD_SET_EDGE_VARIABLE);
-}
+//void
+//TraCIAPI::EdgeScope::adaptTraveltime(const std::string& edgeID, double time, double beginSeconds, double endSeconds) const {
+//    tcpip::Storage content;
+//    content.writeByte(libsumo::TYPE_COMPOUND);
+//    if (endSeconds != std::numeric_limits<double>::max()) {
+//        content.writeInt(3);
+//        content.writeByte(libsumo::TYPE_DOUBLE);
+//        content.writeDouble(beginSeconds);
+//        content.writeByte(libsumo::TYPE_DOUBLE);
+//        content.writeDouble(endSeconds);
+//    } else {
+//        content.writeInt(1);
+//    }
+//    content.writeByte(libsumo::TYPE_DOUBLE);
+//    content.writeDouble(time);
+//    myParent.createCommand(libsumo::CMD_SET_EDGE_VARIABLE, libsumo::VAR_EDGE_TRAVELTIME, edgeID, &content);
+//    myParent.processSet(libsumo::CMD_SET_EDGE_VARIABLE);
+//}
 
 
-void
-TraCIAPI::EdgeScope::setEffort(const std::string& edgeID, double effort, double beginSeconds, double endSeconds) const {
-    tcpip::Storage content;
-    content.writeByte(libsumo::TYPE_COMPOUND);
-    if (endSeconds != std::numeric_limits<double>::max()) {
-        content.writeInt(3);
-        content.writeByte(libsumo::TYPE_DOUBLE);
-        content.writeDouble(beginSeconds);
-        content.writeByte(libsumo::TYPE_DOUBLE);
-        content.writeDouble(endSeconds);
-    } else {
-        content.writeInt(1);
-    }
-    content.writeByte(libsumo::TYPE_DOUBLE);
-    content.writeDouble(effort);
-    myParent.createCommand(libsumo::CMD_SET_EDGE_VARIABLE, libsumo::VAR_EDGE_EFFORT, edgeID, &content);
-    myParent.processSet(libsumo::CMD_SET_EDGE_VARIABLE);
-}
+//void
+//TraCIAPI::EdgeScope::setEffort(const std::string& edgeID, double effort, double beginSeconds, double endSeconds) const {
+//    tcpip::Storage content;
+//    content.writeByte(libsumo::TYPE_COMPOUND);
+//    if (endSeconds != std::numeric_limits<double>::max()) {
+//        content.writeInt(3);
+//        content.writeByte(libsumo::TYPE_DOUBLE);
+//        content.writeDouble(beginSeconds);
+//        content.writeByte(libsumo::TYPE_DOUBLE);
+//        content.writeDouble(endSeconds);
+//    } else {
+//        content.writeInt(1);
+//    }
+//    content.writeByte(libsumo::TYPE_DOUBLE);
+//    content.writeDouble(effort);
+//    myParent.createCommand(libsumo::CMD_SET_EDGE_VARIABLE, libsumo::VAR_EDGE_EFFORT, edgeID, &content);
+//    myParent.processSet(libsumo::CMD_SET_EDGE_VARIABLE);
+//}
 
 void
 TraCIAPI::EdgeScope::setMaxSpeed(const std::string& edgeID, double speed) const {
@@ -2721,7 +2721,7 @@ TraCIAPI::VehicleScope::rerouteTraveltime(const std::string& vehicleID, bool cur
         // updated edge weights with current network traveltimes (at most once per simulation step)
         std::vector<std::string> edges = myParent.edge.getIDList();
         for (std::vector<std::string>::iterator it = edges.begin(); it != edges.end(); ++it) {
-            myParent.edge.adaptTraveltime(*it, myParent.edge.getTraveltime(*it));
+            //myParent.edge.adaptTraveltime(*it, myParent.edge.getTraveltime(*it));
         }
     }
 
@@ -2821,29 +2821,29 @@ TraCIAPI::VehicleScope::setSpeedMode(const std::string& vehicleID, int mode) con
     myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
 }
 
-void
-TraCIAPI::VehicleScope::setStop(const std::string vehicleID, const std::string edgeID, const double endPos, const int laneIndex,
-                                const double duration, const int flags, const double startPos, const double until) const {
-    tcpip::Storage content;
-    content.writeUnsignedByte(libsumo::TYPE_COMPOUND);
-    content.writeInt(7);
-    content.writeUnsignedByte(libsumo::TYPE_STRING);
-    content.writeString(edgeID);
-    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
-    content.writeDouble(endPos);
-    content.writeUnsignedByte(libsumo::TYPE_BYTE);
-    content.writeByte(laneIndex);
-    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
-    content.writeDouble(duration);
-    content.writeUnsignedByte(libsumo::TYPE_BYTE);
-    content.writeByte(flags);
-    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
-    content.writeDouble(startPos);
-    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
-    content.writeDouble(until);
-    myParent.createCommand(libsumo::CMD_SET_VEHICLE_VARIABLE, libsumo::CMD_STOP, vehicleID, &content);
-    myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
-}
+//void
+//TraCIAPI::VehicleScope::setStop(const std::string vehicleID, const std::string edgeID, const double endPos, const int laneIndex,
+//                                const double duration, const int flags, const double startPos, const double until) const {
+//    tcpip::Storage content;
+//    content.writeUnsignedByte(libsumo::TYPE_COMPOUND);
+//    content.writeInt(7);
+//    content.writeUnsignedByte(libsumo::TYPE_STRING);
+//    content.writeString(edgeID);
+//    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
+//    content.writeDouble(endPos);
+//    content.writeUnsignedByte(libsumo::TYPE_BYTE);
+//    content.writeByte(laneIndex);
+//    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
+//    content.writeDouble(duration);
+//    content.writeUnsignedByte(libsumo::TYPE_BYTE);
+//    content.writeByte(flags);
+//    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
+//    content.writeDouble(startPos);
+//    content.writeUnsignedByte(libsumo::TYPE_DOUBLE);
+//    content.writeDouble(until);
+//    myParent.createCommand(libsumo::CMD_SET_VEHICLE_VARIABLE, libsumo::CMD_STOP, vehicleID, &content);
+//    myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
+//}
 
 void
 TraCIAPI::VehicleScope::setType(const std::string& vehicleID, const std::string& typeID) const {

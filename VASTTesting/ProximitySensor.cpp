@@ -1,7 +1,6 @@
 #include "VC_HEADERS.h"
 #include "ProximitySensor.h"
 
-using namespace VASTConstants;
 // private functions-------------------------------------------------------------//
 int ProximitySensor::calculateQuadrant(Vector3* vec)
 {

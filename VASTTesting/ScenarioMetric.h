@@ -15,7 +15,7 @@ public:
 	ScenarioMetric(string name, dataMap metricData);
 
 	/* returns the statistical metric value as defined by the extending metric class.*/
-	virtual void calculate();
+	virtual void calculate() = 0;
 
 	/* The inherited update function*/
 	void update(timestamp t, dataMap dataMap);

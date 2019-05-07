@@ -10,14 +10,13 @@
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
 #include "PythonAV.h"
-#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
-#include "AverageAcceleration.h"
-#include "AverageDeacceleration.h"
-#include "MaximumAcceleration.h"
-#include "MinimumAcceleration.h"
+//#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
+//#include "AverageAcceleration.h"
+//#include "AverageDeacceleration.h"
+//#include "MaximumAcceleration.h"
+//#include "MinimumAcceleration.h"
 #include "VAST.h"
 
-using namespace VASTConstants;
 using namespace std::this_thread;     // sleep_for, sleep_until
 
 using std::cin;
@@ -132,6 +131,7 @@ ScenarioMetric* VAST::generateMetric(string id)
 		throw VASTConfigurationError(ss.str().c_str());
 	}*/
 	getEventTree()->registerMetric(metric);
+	return metric;
 }
 
 void unit_test(int uargc, char **uargv1)

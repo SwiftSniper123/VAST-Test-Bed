@@ -1,7 +1,5 @@
 #include "VC_HEADERS.h"
 
-using namespace VASTConstants;
-
 ScenarioMetric::ScenarioMetric()
 {}
 

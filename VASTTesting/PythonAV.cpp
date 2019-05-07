@@ -1,8 +1,6 @@
 #include "VC_HEADERS.h"
 #include "PythonAV.h"
 
-using namespace VASTConstants;
-
 PythonVehicle::PythonVehicle(dataMap AVConfigData, dataMap AVRunData)
 {
 	_configData = AVConfigData;
