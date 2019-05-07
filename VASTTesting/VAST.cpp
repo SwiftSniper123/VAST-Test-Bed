@@ -356,7 +356,8 @@ void VAST::Register()
 		for (int m = 0; m < ((Array*)getVASTConfig()->at(METRICS))->arraySize(); m++)
 		{
 			componentName = ((Array*)getVASTConfig()->at(METRICS))->at_String(m)->value();
-			ScenarioMetric* metric = generateMetric(componentName);
+			//generate with parsed name and datamap
+			ScenarioMetric* metric = generateMetric(componentName, *_VASTConfigMap);
 		}
 	}
 	catch (exception e)
