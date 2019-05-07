@@ -8,6 +8,7 @@ class AverageAcceleration : public ScenarioMetric
 {
 public:
 	//default constructor
+	AverageAcceleration() : ScenarioMetric() {};
 	AverageAcceleration(string name, dataMap metricData) : ScenarioMetric(name, metricData)
 	{
 		for (int n = 0; n < numAVs; n++)

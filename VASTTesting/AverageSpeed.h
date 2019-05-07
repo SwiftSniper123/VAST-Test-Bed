@@ -8,6 +8,7 @@ class AverageSpeed : public ScenarioMetric
 {
 public:
 	//default constructor
+	AverageSpeed() : ScenarioMetric() {};
 	AverageSpeed(string name, dataMap metricData) : ScenarioMetric(name, metricData) { };
 
 	void calculate();

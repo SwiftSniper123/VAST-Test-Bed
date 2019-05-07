@@ -5,43 +5,28 @@ ScenarioMetric::ScenarioMetric()
 
 ScenarioMetric::ScenarioMetric(string name, dataMap metricData)
 {
-	Array* avListInDataMap = ((Array*)metricData[AV_LIST]);
+	/*Array* avListInDataMap = ((Array*)metricData[AV_LIST]);
 	Array* obsIDsMap = ((Array*)metricData[OBSTACLE_IDS]);
 	Array* accMap = ((Array*)metricData[OBSTACLE_ACC]);
 	Array* speedMap = ((Array*)metricData[OBSTACLE_VEL]);
 	Array* posMap = ((Array*)metricData[OBSTACLE_POS]);
 
 	numAVs = avListInDataMap->arraySize();
-
-	for (int j = 0; j < avListInDataMap->arraySize(); j++)
+	cout << numAVs;
+	for (int n = 0; n < numAVs; n++)
 	{
-		for (int n = 0; n < obsIDsMap->arraySize(); n++)
-		{
-			if (avListInDataMap->at_String(j)->value() == obsIDsMap->at_String(n)->value())
-			{
-				//found the matching id
-				// add to initial map
-				_initialMap[n].emplace(ACCELERATION, accMap->at_Double(n));
-				_initialMap[n].emplace(MIN_ACCELERATION, new Double());
-				_initialMap[n].emplace(AVG_ACCELERATION, new Double());
-				_initialMap[n].emplace(MAX_ACCELERATION, new Double());
-				_initialMap[n].emplace(AVG_DECELERATION, new Double());
-				_initialMap[n].emplace(AVG_SPEED, new Double());
-				_initialMap[n].emplace(SPEED, speedMap->at_Double(n));
-				_initialMap[n].emplace(POSITION, posMap->at_Double(n));
-
-				// add to current map
-				_myMap[n].emplace(ACCELERATION, accMap->at_Double(n));
-				_myMap[n].emplace(MIN_ACCELERATION, new Double());
-				_myMap[n].emplace(AVG_ACCELERATION, new Double());
-				_myMap[n].emplace(MAX_ACCELERATION, new Double());
-				_myMap[n].emplace(AVG_DECELERATION, new Double());
-				_myMap[n].emplace(AVG_SPEED, new Double());
-				_myMap[n].emplace(SPEED, speedMap->at_Double(n));
-				_myMap[n].emplace(POSITION, posMap->at_Double(n));
-				break;
-			}
-		}
+		dataMap temp = {};
+		//add to initial data map
+		temp.emplace(ACCELERATION, new Double());
+		temp.emplace(MIN_ACCELERATION, new Double());
+		temp.emplace(AVG_ACCELERATION, new Double());
+		temp.emplace(MAX_ACCELERATION, new Double());
+		temp.emplace(AVG_DECELERATION, new Double());
+		temp.emplace(AVG_SPEED, new Double());
+		temp.emplace(SPEED, new Double());
+		temp.emplace(POSITION, new Double());
+		_initialMap.push_back(temp);
+		_myMap.push_back(temp);
 	}
 
 	//get rid of dangling pointers
@@ -49,7 +34,7 @@ ScenarioMetric::ScenarioMetric(string name, dataMap metricData)
 	delete obsIDsMap;
 	delete accMap;
 	delete speedMap;
-	delete posMap;
+	delete posMap;*/
 }
 
 void ScenarioMetric::stopReplication(bool another, string runID)

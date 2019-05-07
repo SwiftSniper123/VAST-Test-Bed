@@ -8,6 +8,7 @@ class MinimumAcceleration : public ScenarioMetric
 {
 public:
 	//default constructor
+	MinimumAcceleration() : ScenarioMetric() {};
 	MinimumAcceleration(string name, dataMap metricData) : ScenarioMetric(name, metricData)
 	{
 		for (int n = 0; n < numAVs; n++)

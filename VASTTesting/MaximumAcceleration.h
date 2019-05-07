@@ -8,6 +8,7 @@ class MaximumAcceleration : public ScenarioMetric
 {
 public:
 	//default constructor
+	MaximumAcceleration() : ScenarioMetric() {};
 	MaximumAcceleration(string name, dataMap metricData) : ScenarioMetric(name, metricData) { };
 
 	void calculate();

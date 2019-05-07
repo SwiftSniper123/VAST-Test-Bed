@@ -17,6 +17,7 @@
 #include "MaximumAcceleration.h"
 #include "MinimumAcceleration.h"
 #include "VAST.h"
+#include "VASTConstants.h"
 
 using namespace std::this_thread;     // sleep_for, sleep_until
 
@@ -34,7 +35,7 @@ int main(int argc, char **argv1)
 	//get file location and name
 	string fileName = "";
 	cout << "Please type the configuration file location and name: ";
-	//cin >> fileName;
+	cin >> fileName;
 	cin.clear();
 
 	//cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
@@ -65,7 +66,7 @@ int main(int argc, char **argv1)
 		//run VAST
 		cout << "VAST scenario replication run begins..." << endl;
 		v->getEventTree()->start();
-		cout << "VAST scenario run ends with " << v->getEventTree()->getNumberOfEarlyStops() << " failures." << endl;
+		cout << "VAST scenario run ends" << endl; // with " << v->getEventTree()->getNumberOfEarlyStops() << " failures." << endl;
 	}
 	else if (mode == 2)
 	{
@@ -107,26 +108,26 @@ Environment* VAST::generateEnv(string name, dataMap runData, dataMap configData)
 ScenarioMetric* VAST::generateMetric(string id, dataMap map)
 {
 	ScenarioMetric* metric = nullptr;
-	// AvgSpeed, AvgAccel, AvgDecel // waiting for Christine's classes, emf 5/5/2019
-	if (id == AVG_SPEED_METRIC_ID)
+	// AvgSpeed, AvgAccel, AvgDecel 
+	if (id == AVG_SPEED_METRIC_ID || id == " " +AVG_SPEED_METRIC_ID)
 	{
-		metric = new AverageSpeed(id, map);
+		metric = new AverageSpeed();
 	}
-	else if (id == AVG_ACCEL_METRIC_ID)
+	else if (id == AVG_ACCEL_METRIC_ID || id == " " + AVG_ACCEL_METRIC_ID)
 	{
-		metric = new AverageAcceleration(id, map);
+		metric = new AverageAcceleration();
 	}
-	else if (id == AVG_DECEL_METRIC_ID)
+	else if (id == AVG_DECEL_METRIC_ID || id == " " + AVG_DECEL_METRIC_ID)
 	{
-		metric = new AverageDeacceleration(id, map);
+		metric = new AverageDeacceleration();
 	}
-	else if (id == MAX_ACCEL_METRIC_ID)
+	else if (id == MAX_ACCEL_METRIC_ID || id == " " + MAX_ACCEL_METRIC_ID)
 	{
-		metric = new MaximumAcceleration(id, map);
+		metric = new MaximumAcceleration();
 	}
-	else if (id == MIN_ACCEL_METRIC_ID)
+	else if (id == MIN_ACCEL_METRIC_ID || id == " " + MIN_ACCEL_METRIC_ID)
 	{
-		metric = new MinimumAcceleration(id, map);
+		metric = new MinimumAcceleration();
 	}
 	else
 	{
