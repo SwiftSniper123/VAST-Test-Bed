@@ -48,6 +48,7 @@ private:
 	storedMap* _all_EnvConfigs = nullptr;
 	storedMap* _all_EnvRunData = nullptr;
 	dataMap* _VASTConfigMap = nullptr;
+	Array *av_array = new Array();
 	
 	EventTree* _EventTree = nullptr;
 	string _file;

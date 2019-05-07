@@ -280,8 +280,10 @@ void VAST::Parse()
 				// instantiation and other aggregate data joining
 				if (_currentModule == AV_MODULE)
 				{
-					string name = _AVConfig.at(AV_NAME)->s_value();
-
+					VType *name = _AVConfig.at(AV_NAME);
+					av_array->add(name);
+					
+					/*
 					// add the AV name to the VAST Config list of AV IDs used by other components like ScenarioMetric
 					if (_VASTConfigMap->find(AV_LIST) != _VASTConfigMap->end() &&
 						_VASTConfigMap->at(AV_LIST)->isA(ARRAY_TYPE))
@@ -296,11 +298,11 @@ void VAST::Parse()
 					{
 						Array* av_array = ((Array*)_AVRun_Data[AV_LIST]);
 						av_array->add(new String(name));
-					}
+					}*/
 					
 					// store the config and run data under this AV ID
-					_all_AVConfigs->emplace(name, _AVConfig);
-					_all_AVRunData->emplace(name, _AVRun_Data);
+					_all_AVConfigs->emplace(name->s_value(), _AVConfig);
+					_all_AVRunData->emplace(name->s_value(), _AVRun_Data);
 				}
 				else if (_currentModule == ENVIRONMENT_MODULE)
 				{
@@ -319,7 +321,10 @@ void VAST::Parse()
 						_dbName);					
 				}
 			}
+			
+
 		}
+		_VASTConfigMap->insert(namedData(AV_LIST, av_array));
 	}
 	catch (...)
 	{

@@ -13,7 +13,7 @@ const std::string TIME_STEP = "time_step";
 const std::string NUM_REPLCATION = "num_replications";
 const std::string SEEDS = "seeds";
 const std::string MAX_RUN_TIME = "max_run_time";
-const std::string AV_LIST = "av_list"; // also AV run data
+const std::string AV_LIST = "av_list"; //This does not exist in the config file? // also AV run data
 const std::string METRICS = "metrics";
 
 // Scenario Metric type ids

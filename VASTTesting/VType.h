@@ -1179,7 +1179,7 @@ class Array : public VType
 {
 private:
 	string stowType; /* the type that describes all of the stowed objects*/
-	int size; /* the size of the internal array*/
+	int size = 0; /* the size of the internal array*/
 	VType** stowArray; /* the internal array of VTypes "stowed" inside this object*/
 
 	/* Breaks up a string of comma delimited items into an array of
@@ -1519,7 +1519,16 @@ public:
 	add operation will convert the Array stowed type to VType.  */
 	void add(VType* obj)
 	{
-		int newSize = size + 1;
+		int newSize;
+		if (size < 0)
+		{
+			newSize = 1;
+		}
+		else
+		{
+			newSize = size + 1;
+		}
+		
 		stringstream newArrayStringValue;
 		VType** newArray = new VType*[newSize];
 		// add all old objects from the Array to this new larger array string value
