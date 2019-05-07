@@ -101,29 +101,29 @@ Environment* VAST::generateEnv(string name, dataMap runData, dataMap configData)
 	return env;
 }
 
-ScenarioMetric* VAST::generateMetric(string id, string name, dataMap map)
+ScenarioMetric* VAST::generateMetric(string id, dataMap map)
 {
 	ScenarioMetric* metric = nullptr;
 	// AvgSpeed, AvgAccel, AvgDecel // waiting for Christine's classes, emf 5/5/2019
 	if (id == AVG_SPEED_METRIC_ID)
 	{
-		metric = new AverageSpeed(name, map);
+		metric = new AverageSpeed(id, map);
 	}
 	else if (id == AVG_ACCEL_METRIC_ID)
 	{
-		metric = new AverageAcceleration(name, map);
+		metric = new AverageAcceleration(id, map);
 	}
 	else if (id == AVG_DECEL_METRIC_ID)
 	{
-		metric = new AverageDeacceleration(name, map);
+		metric = new AverageDeacceleration(id, map);
 	}
 	else if (id == MAX_ACCEL_METRIC_ID)
 	{
-		metric = new MaximumAcceleration(name, map);
+		metric = new MaximumAcceleration(id, map);
 	}
 	else if (id == MIN_ACCEL_METRIC_ID)
 	{
-		metric = new MinimumAcceleration(name, map);
+		metric = new MinimumAcceleration(id, map);
 	}
 	else
 	{
