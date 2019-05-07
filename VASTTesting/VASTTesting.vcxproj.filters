@@ -1,101 +1,109 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="test.cpp">
       <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="test_VType.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="test_VASTLibrary.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="Environment.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="socket.cpp">
-      <Filter>OpenSourceCode\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="storage.cpp">
-      <Filter>OpenSourceCode\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="TraCIAPI.cpp">
-      <Filter>OpenSourceCode\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="test_Broker.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="AV.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Obstacle.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Sensor.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="test_EventTree.cpp">
-      <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="EventTree.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="sqlite3.c">
-      <Filter>OpenSourceCode\cpp</Filter>
     </ClCompile>
     <ClCompile Include="test_Database.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="Database.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="ProximitySensor.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="test_ProximitySensor.cpp">
+    <ClCompile Include="test_EventTree.cpp">
       <Filter>UnitTests</Filter>
-    </ClCompile>
-    <ClCompile Include="VAST.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
     <ClCompile Include="test_Parser.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SumoEnvironment.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="ScenarioMetrics.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="PythonAV.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="test_SUMOEnvironment.cpp">
+    <ClCompile Include="test_ProximitySensor.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
     <ClCompile Include="test_ScenarioMetrics.cpp">
       <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="VASTConstants.cpp">
-    <ClCompile Include="MaximumAcceleration.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    <ClCompile Include="test_SUMOEnvironment.cpp">
+      <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="MinimumAcceleration.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    <ClCompile Include="test_VASTLibrary.cpp">
+      <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="AverageSpeed.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    <ClCompile Include="test_VType.cpp">
+      <Filter>UnitTests</Filter>
     </ClCompile>
-    <ClCompile Include="AverageDeacceleration.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+    <ClCompile Include="test_Broker.cpp">
+      <Filter>UnitTests</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite3.c">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="storage.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="socket.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="TraCIAPI.cpp">
+      <Filter>OpenSourceCode\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="AV.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
     <ClCompile Include="AverageAcceleration.cpp">
-      <Filter>VASTScenarioObjectLibrary\cpp</Filter>
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="AverageDeacceleration.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="AverageSpeed.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTree.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="MaximumAcceleration.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="MinimumAcceleration.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Obstacle.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="ProximitySensor.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonAV.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="ScenarioMetrics.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="SumoEnvironment.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Sensor.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="VAST.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="VASTConstants.cpp">
+      <Filter>ScenarioObjectLibrary\cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socket.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3.h">
+      <Filter>OpenSourceCode\h</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3ext.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
     <ClInclude Include="storage.h">
@@ -110,74 +118,68 @@
     <ClInclude Include="TraCIDefs.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
-    <ClInclude Include="Broker.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="AV.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="Obstacle.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="Sensor.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="VComponent.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="VType.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="Environment.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="EventTree.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>OpenSourceCode\h</Filter>
     </ClInclude>
-    <ClInclude Include="sqlite3.h">
-      <Filter>OpenSourceCode\h</Filter>
-    </ClInclude>
-    <ClInclude Include="sqlite3ext.h">
-      <Filter>OpenSourceCode\h</Filter>
-    </ClInclude>
-    <ClInclude Include="ProximitySensor.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="VAST.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="SumoEnvironment.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="VC_HEADERS.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="PythonAV.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="ScenarioMetric.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="VASTConstants.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    <ClInclude Include="AV.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="AverageAcceleration.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
-    </ClInclude>
-    <ClInclude Include="AverageSpeed.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
+      <Filter>ScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="AverageDeacceleration.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
+      <Filter>ScenarioObjectLibrary\h</Filter>
     </ClInclude>
-    <ClInclude Include="MinimumAcceleration.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
+    <ClInclude Include="AverageSpeed.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Broker.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTree.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
     </ClInclude>
     <ClInclude Include="MaximumAcceleration.h">
-      <Filter>VASTScenarioObjectLibrary\h</Filter>
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="MinimumAcceleration.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Obstacle.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="ProximitySensor.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonAV.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioMetric.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="Sensor.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="SumoEnvironment.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VAST.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VASTConstants.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VC_HEADERS.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VComponent.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
+    </ClInclude>
+    <ClInclude Include="VType.h">
+      <Filter>ScenarioObjectLibrary\h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -185,25 +187,25 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="UnitTests">
-      <UniqueIdentifier>{7fe756f5-335d-4885-b0ba-a3a34df414ef}</UniqueIdentifier>
+      <UniqueIdentifier>{007a8203-fe6a-4ec1-8871-bb9027128fd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="VASTScenarioObjectLibrary">
-      <UniqueIdentifier>{4abfa362-afce-4f6e-a43a-10d620d01062}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="VASTScenarioObjectLibrary\h">
-      <UniqueIdentifier>{78cb2be2-f84b-4403-b944-95a394aae5d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="VASTScenarioObjectLibrary\cpp">
-      <UniqueIdentifier>{23d31caa-d49e-4b5e-a4de-edc544c03cf8}</UniqueIdentifier>
+    <Filter Include="ScenarioObjectLibrary">
+      <UniqueIdentifier>{732e54f9-75b9-4393-bef1-a7aa0eac0ac8}</UniqueIdentifier>
     </Filter>
     <Filter Include="OpenSourceCode">
-      <UniqueIdentifier>{3f3e6dbe-1918-49e0-9133-6a548a8f9ba9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="OpenSourceCode\h">
-      <UniqueIdentifier>{dbe9d1ba-bb26-4daf-acd3-18265a56eccb}</UniqueIdentifier>
+      <UniqueIdentifier>{3c0375a2-3d3f-4b60-9540-e7ef79cbe754}</UniqueIdentifier>
     </Filter>
     <Filter Include="OpenSourceCode\cpp">
-      <UniqueIdentifier>{c2c01fc1-84bb-4780-a70f-9f698bb5f8c7}</UniqueIdentifier>
+      <UniqueIdentifier>{c3662375-0022-4370-bc38-9953fe69da1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenSourceCode\h">
+      <UniqueIdentifier>{5dc446ac-b08b-400c-92ae-92a48003edf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScenarioObjectLibrary\h">
+      <UniqueIdentifier>{8076850f-00f5-47b3-83af-f8bb19e29dfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScenarioObjectLibrary\cpp">
+      <UniqueIdentifier>{a1b92be2-68cf-4204-8400-c4525b890458}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
