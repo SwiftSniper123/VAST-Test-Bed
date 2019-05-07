@@ -81,6 +81,9 @@ int main(int argc, char **argv1)
 		cout << "Entered " << mode << " which is not an option." << endl;
 		sleep_for(milliseconds(1500));
 	}
+	//run post-simulation visualization with collision detection
+	system("TestAutonomousVehicleDemo.exe");
+
 	return 0;
 }
 
