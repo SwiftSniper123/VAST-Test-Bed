@@ -55,7 +55,7 @@ namespace
 	// AV Config
 	VASTConstant AV_NAME = "av_name";
 	VASTConstant AV_MOVEMENT_PORT = "av_movement_port";
-	VASTConstant AV_EXE_LOCATION = "av_exe_location";
+	VASTConstant AV_EXE_LOCATION = "exe_location";
 	VASTConstant AV_LOCATION = "AV_location";
 	VASTConstant AV_ORIENTATION = "AV_orientation";
 	VASTConstant AV_BOUNDS = "AV_bounds";

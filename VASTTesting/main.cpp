@@ -34,7 +34,7 @@ int main(int argc, char **argv1)
 	//get file location and name
 	string fileName = "";
 	cout << "Please type the configuration file location and name: ";
-	cin >> fileName;
+	//cin >> fileName;
 	cin.clear();
 
 	//cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
@@ -43,6 +43,7 @@ int main(int argc, char **argv1)
 
 	//parse file
 	//VAST *v = new VAST(fileName, dbName);
+	fileName = "VASTConfig.xml"; //temporary manual setting for testing purposes
 	VAST *v = new VAST(fileName, DATABASE_FILENAME);
 	cout << "Parsing begins...";
 	v->Parse();
