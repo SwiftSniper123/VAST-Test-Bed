@@ -1,7 +1,7 @@
 #include "VC_Headers.h"
 #include "AverageDeacceleration.h"
 
-using namespace VASTConstants;
+ 
 
 void AverageDeacceleration::calculate()
 {

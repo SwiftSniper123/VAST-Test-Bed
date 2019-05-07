@@ -1,6 +1,6 @@
 #include "VAST.h"
 
-using namespace VASTConstants;
+ 
 
 VAST::VAST(string file, string dbName)
 {
@@ -138,7 +138,7 @@ void VAST::Parse()
 										}
 										else if (_currentKey == TIME_RATIO)
 										{
-											Integer *v = new Integer(key.get<int>(NAME));
+											Double *v = new Double(key.get<double>(NAME));
 											_VASTConfigMap->insert(namedData(_currentKey, v));
 										}
 										else if (_currentKey == TIME_STEP)

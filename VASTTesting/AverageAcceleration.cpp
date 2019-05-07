@@ -1,7 +1,7 @@
 #include "VC_Headers.h"
 #include "AverageAcceleration.h"
 
-using namespace VASTConstants;
+ 
 
 void AverageAcceleration::calculate()
 {

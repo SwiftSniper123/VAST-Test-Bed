@@ -2,7 +2,7 @@
 #include "VC_HEADERS.h"
 #include "gtest/gtest.h"
 
-using namespace VASTConstants;
+ 
 
 // persistent values that can be verified in every test
 static char** colNames = nullptr;

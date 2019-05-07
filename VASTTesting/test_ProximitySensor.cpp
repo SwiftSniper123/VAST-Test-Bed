@@ -2,7 +2,7 @@
 #include "VC_HEADERS.h"
 #include "ProximitySensor.h"
 
-using namespace VASTConstants;
+ 
 /*Default true test*/
 TEST(DefaultTest, TrueInProximitySensor)
 {

@@ -2,7 +2,7 @@
 #include "VC_HEADERS.h"
 #include "SUMOEnvironment.h"
 
-using namespace VASTConstants;
+ 
 /*Default true test*/
 TEST(DefaultTest, TrueInSumoEnvironment)
 {

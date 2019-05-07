@@ -17,7 +17,7 @@
 #include "MinimumAcceleration.h"
 #include "VAST.h"
 
-using namespace VASTConstants;
+ 
 using namespace std::this_thread;     // sleep_for, sleep_until
 
 using std::cin;
@@ -37,14 +37,13 @@ int main(int argc, char **argv1)
 	cin >> fileName;
 	cin.clear();
 
-	string dbName;
-	cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
-	cin >> dbName;
-	cin.clear();
+	//cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
+	//cin >> dbName;
+	//cin.clear();
 
 	//parse file
 	//VAST *v = new VAST(fileName, dbName);
-	VAST *v = new VAST(fileName, dbName);
+	VAST *v = new VAST(fileName, DATABASE_FILENAME);
 	cout << "Parsing begins...";
 	v->Parse();
 	cout << " parsing finished." << endl << endl;

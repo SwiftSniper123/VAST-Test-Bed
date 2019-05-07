@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace VASTConstants
+namespace
 {
 	typedef const char* VASTDefault;
 	typedef const std::string VASTConstant;

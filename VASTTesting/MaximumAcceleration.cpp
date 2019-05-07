@@ -1,7 +1,7 @@
 #include "VC_Headers.h"
 #include "MaximumAcceleration.h"
 
-using namespace VASTConstants;
+ 
 
 void MaximumAcceleration::calculate()
 {

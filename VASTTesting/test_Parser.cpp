@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "VAST.h"
 
-using namespace VASTConstants;
+ 
 /*Default true test*/
 TEST(Test_Parser, TrueInTestVASTLibrary)
 {

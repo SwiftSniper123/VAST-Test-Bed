@@ -1,7 +1,7 @@
 #include "VC_Headers.h"
 #include "MinimumAcceleration.h"
 
-using namespace VASTConstants;
+ 
 
 void MinimumAcceleration::calculate()
 {

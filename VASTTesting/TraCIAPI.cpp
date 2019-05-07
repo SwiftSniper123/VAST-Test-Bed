@@ -701,7 +701,7 @@ TraCIAPI::EdgeScope::getStreetName(const std::string& edgeID) const {
     return myParent.getString(libsumo::CMD_GET_EDGE_VARIABLE, libsumo::VAR_NAME, edgeID);
 }
 
-
+/*
 void
 TraCIAPI::EdgeScope::adaptTraveltime(const std::string& edgeID, double time, double beginSeconds, double endSeconds) const {
     tcpip::Storage content;
@@ -740,7 +740,7 @@ TraCIAPI::EdgeScope::setEffort(const std::string& edgeID, double effort, double 
     myParent.createCommand(libsumo::CMD_SET_EDGE_VARIABLE, libsumo::VAR_EDGE_EFFORT, edgeID, &content);
     myParent.processSet(libsumo::CMD_SET_EDGE_VARIABLE);
 }
-
+*/
 void
 TraCIAPI::EdgeScope::setMaxSpeed(const std::string& edgeID, double speed) const {
     tcpip::Storage content;
@@ -2714,7 +2714,7 @@ TraCIAPI::VehicleScope::setRoute(const std::string& vehicleID, const std::vector
     myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
 }
 
-
+/*
 void
 TraCIAPI::VehicleScope::rerouteTraveltime(const std::string& vehicleID, bool currentTravelTimes) const {
     if (currentTravelTimes) {
@@ -2731,7 +2731,7 @@ TraCIAPI::VehicleScope::rerouteTraveltime(const std::string& vehicleID, bool cur
     myParent.createCommand(libsumo::CMD_SET_VEHICLE_VARIABLE, libsumo::CMD_REROUTE_TRAVELTIME, vehicleID, &content);
     myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
 }
-
+*/
 void
 TraCIAPI::VehicleScope::moveTo(const std::string& vehicleID, const std::string& laneID, double position) const {
     tcpip::Storage content;
@@ -2820,7 +2820,7 @@ TraCIAPI::VehicleScope::setSpeedMode(const std::string& vehicleID, int mode) con
     myParent.createCommand(libsumo::CMD_SET_VEHICLE_VARIABLE, libsumo::VAR_SPEEDSETMODE, vehicleID, &content);
     myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
 }
-
+/*
 void
 TraCIAPI::VehicleScope::setStop(const std::string vehicleID, const std::string edgeID, const double endPos, const int laneIndex,
                                 const double duration, const int flags, const double startPos, const double until) const {
@@ -2843,7 +2843,7 @@ TraCIAPI::VehicleScope::setStop(const std::string vehicleID, const std::string e
     content.writeDouble(until);
     myParent.createCommand(libsumo::CMD_SET_VEHICLE_VARIABLE, libsumo::CMD_STOP, vehicleID, &content);
     myParent.processSet(libsumo::CMD_SET_VEHICLE_VARIABLE);
-}
+}*/
 
 void
 TraCIAPI::VehicleScope::setType(const std::string& vehicleID, const std::string& typeID) const {

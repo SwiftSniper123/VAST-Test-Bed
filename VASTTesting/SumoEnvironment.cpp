@@ -1,6 +1,6 @@
 #include "SumoEnvironment.h"
 
-using namespace VASTConstants;
+ 
 
 SumoEnvironment::SumoEnvironment(dataMap envConfigData, dataMap envRunData)
 {
