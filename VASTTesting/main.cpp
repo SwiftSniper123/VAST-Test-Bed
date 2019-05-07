@@ -10,11 +10,12 @@
 #include "SumoEnvironment.h"
 #include "ProximitySensor.h"
 #include "PythonAV.h"
-//#include "AverageSpeed.h" // waiting for Christine's classes emf 5/5/2019
-//#include "AverageAcceleration.h"
-//#include "AverageDeacceleration.h"
-//#include "MaximumAcceleration.h"
-//#include "MinimumAcceleration.h"
+
+#include "AverageSpeed.h" 
+#include "AverageAcceleration.h"
+#include "AverageDeacceleration.h"
+#include "MaximumAcceleration.h"
+#include "MinimumAcceleration.h"
 #include "VAST.h"
 
 using namespace std::this_thread;     // sleep_for, sleep_until
@@ -33,17 +34,17 @@ int main(int argc, char **argv1)
 	//get file location and name
 	string fileName = "";
 	cout << "Please type the configuration file location and name: ";
-	cin >> fileName;
+	//cin >> fileName;
 	cin.clear();
 
-	string dbName;
-	cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
-	cin >> dbName;
-	cin.clear();
+	//cout << "\nIf desired, provide a database file name (Press enter to keep the default - VASTDatabase.db): ";
+	//cin >> dbName;
+	//cin.clear();
 
 	//parse file
 	//VAST *v = new VAST(fileName, dbName);
-	VAST *v = new VAST(fileName, dbName);
+	fileName = "VASTConfig.xml"; //temporary manual setting for testing purposes
+	VAST *v = new VAST(fileName, DATABASE_FILENAME);
 	cout << "Parsing begins...";
 	v->Parse();
 	cout << " parsing finished." << endl << endl;
@@ -100,36 +101,36 @@ Environment* VAST::generateEnv(string name, dataMap runData, dataMap configData)
 	return env;
 }
 
-ScenarioMetric* VAST::generateMetric(string id)
+ScenarioMetric* VAST::generateMetric(string id, dataMap map)
 {
 	ScenarioMetric* metric = nullptr;
 	// AvgSpeed, AvgAccel, AvgDecel // waiting for Christine's classes, emf 5/5/2019
-	/*if (id == AVG_SPEED_METRIC_ID)
+	if (id == AVG_SPEED_METRIC_ID)
 	{
-		metric = new AverageSpeed();
+		metric = new AverageSpeed(id, map);
 	}
 	else if (id == AVG_ACCEL_METRIC_ID)
 	{
-		metric = new AverageAcceleration();
+		metric = new AverageAcceleration(id, map);
 	}
 	else if (id == AVG_DECEL_METRIC_ID)
 	{
-		metric = new AverageDeacceleration();
+		metric = new AverageDeacceleration(id, map);
 	}
 	else if (id == MAX_ACCEL_METRIC_ID)
 	{
-		metric = new MaximumAcceleration();
+		metric = new MaximumAcceleration(id, map);
 	}
 	else if (id == MIN_ACCEL_METRIC_ID)
 	{
-		metric = new MinimumAcceleration();
+		metric = new MinimumAcceleration(id, map);
 	}
 	else
 	{
 		stringstream ss;
 		ss << "Cannot establish scenario metric by the name of " << id;
 		throw VASTConfigurationError(ss.str().c_str());
-	}*/
+	}
 	getEventTree()->registerMetric(metric);
 	return metric;
 }

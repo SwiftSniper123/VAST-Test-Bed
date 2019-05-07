@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 05/03/19 15:33:27 by Eclipse SUMO Version 1.1.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="C:/Users/jaron/PycharmProjects/SumoTraci/WorkingDir/my_net.net.xml"/>
+        <route-files value="C:/Users/jaron/PycharmProjects/SumoTraci/WorkingDir/my_route.rou.xml"/>
+    </input>
+
+    <output>
+        <netstate-dump value="C:/Users/jaron/PycharmProjects/SumoTraci/WorkingDir/output.xml"/>
+        <full-output value="localhost:1338"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="2000"/>
+    </time>
+
+    <traci_server>
+        <remote-port value="1337"/>
+    </traci_server>
+
+</configuration>
+-->
+
+<netstate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netstate_file.xsd">

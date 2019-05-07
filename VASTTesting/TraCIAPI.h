@@ -196,6 +196,7 @@ public:
 
         //void adaptTraveltime(const std::string& edgeID, double time, double beginSeconds = 0., double endSeconds = std::numeric_limits<double>::max()) const;
         //void setEffort(const std::string& edgeID, double effort, double beginSeconds = 0., double endSeconds = std::numeric_limits<double>::max()) const;
+
         void setMaxSpeed(const std::string& edgeID, double speed) const;
 
     private:
@@ -776,6 +777,7 @@ public:
                      const int laneIndex = 0, const double duration = std::numeric_limits<double>::max(),
                      const int flags = 0, const double startPos = std::numeric_limits<int>::min(),
                      const double until = -1) const;*/
+
         void setType(const std::string& vehicleID, const std::string& typeID) const;
         void remove(const std::string& vehicleID, char reason = libsumo::REMOVE_VAPORIZED) const;
         void setColor(const std::string& vehicleID, const libsumo::TraCIColor& c) const;

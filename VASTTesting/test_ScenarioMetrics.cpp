@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "ScenarioMetric.h"
+#include "AverageSpeed.h"
 
 /* Default test - should always succeed.*/
 TEST(Test_ScenarioMetrics, DefaultTrueMetricTest)

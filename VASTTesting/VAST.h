@@ -39,7 +39,7 @@ public:
 	/* Implemented in main by user of VAST to specify the types*/
 	virtual AV* generateAV(string name, dataMap runData, dataMap configData);
 	virtual Environment* generateEnv(string name, dataMap runData, dataMap configData);
-	virtual ScenarioMetric* generateMetric(string name);
+	virtual ScenarioMetric* generateMetric(string id, dataMap map);
 
 private:
 	// maps of name to dataMap for every AV and Environment
