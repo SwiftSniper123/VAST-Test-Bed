@@ -87,7 +87,7 @@ void EventTree::createtable(tableMap* componentsToData, const char* tableType)
 		/*print first and rest column name and value type*/
 		statement3 << statement1.str() << statement2.str();
 	    /*this is print all sql statement*/
-		statement4 << " CREATE TABLE IF NOT EXISTS "<< component->first->getName() << tableType 
+		statement4 << " CREATE TABLE IF NOT EXISTS "<< component->first->getName() << "_" << tableType 
 			<< " (" << statement3.str() << ");";
 	}
 
